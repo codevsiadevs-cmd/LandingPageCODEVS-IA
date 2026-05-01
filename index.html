@@ -209,6 +209,7 @@
     /* ——— Hero ——— */
     .hero {
       position: relative;
+      z-index: 0;
       min-height: 100vh;
       padding-top: var(--nav-height);
       display: flex;
@@ -538,6 +539,10 @@
 
     .services__card {
       --reveal-delay: 0ms;
+      --mx: 50%;
+      --my: 50%;
+      --tilt-x: 0deg;
+      --tilt-y: 0deg;
       display: flex;
       flex-direction: column;
       align-items: flex-start;
@@ -557,6 +562,24 @@
         border-bottom-color 0.35s var(--ease-out),
         box-shadow 0.35s var(--ease-out),
         transform 0.38s var(--ease-out);
+      transform-style: preserve-3d;
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    .services__card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0;
+      background:
+        radial-gradient(circle at var(--mx) var(--my), rgba(15, 255, 212, 0.24), transparent 42%),
+        radial-gradient(circle at calc(var(--mx) + 12%) calc(var(--my) - 10%), rgba(123, 97, 255, 0.16), transparent 44%);
+      transition: opacity 0.28s ease;
     }
 
     .services__card--visible {
@@ -569,7 +592,16 @@
       box-shadow:
         0 12px 40px rgba(0, 0, 0, 0.28),
         0 0 0 1px rgba(15, 255, 212, 0.08);
-      transform: translateY(0) scale(1.03);
+      transform: perspective(1000px) rotateX(var(--tilt-x)) rotateY(var(--tilt-y)) translateY(-2px) scale(1.03);
+    }
+
+    .services__card--visible:hover::before {
+      opacity: 1;
+    }
+
+    .services__card > * {
+      position: relative;
+      z-index: 1;
     }
 
     .services__icon {
@@ -992,6 +1024,10 @@
     }
 
     .project-card__inner {
+      --mx: 50%;
+      --my: 50%;
+      --tilt-x: 0deg;
+      --tilt-y: 0deg;
       position: relative;
       display: flex;
       flex-direction: column;
@@ -1003,12 +1039,31 @@
       backdrop-filter: blur(12px) saturate(1.15);
       -webkit-backdrop-filter: blur(12px) saturate(1.15);
       box-shadow: 0 8px 32px rgba(0, 0, 0, 0.22);
-      transition: border-color 0.35s var(--ease-out), box-shadow 0.35s var(--ease-out);
+      transition: border-color 0.35s var(--ease-out), box-shadow 0.35s var(--ease-out), transform 0.32s var(--ease-out);
+      transform-style: preserve-3d;
+      isolation: isolate;
+    }
+
+    .project-card__inner::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0;
+      background: radial-gradient(circle at var(--mx) var(--my), rgba(15, 255, 212, 0.2), transparent 46%);
+      transition: opacity 0.28s ease;
     }
 
     .project-card__inner:hover {
       border-color: rgba(15, 255, 212, 0.2);
       box-shadow: 0 16px 48px rgba(0, 0, 0, 0.3);
+      transform: perspective(1050px) rotateX(var(--tilt-x)) rotateY(var(--tilt-y)) translateY(-2px);
+    }
+
+    .project-card__inner:hover::before {
+      opacity: 1;
     }
 
     .project-card__visual {
@@ -1104,6 +1159,11 @@
       transition: opacity 0.38s var(--ease-out);
     }
 
+    .project-card__inner > * {
+      position: relative;
+      z-index: 1;
+    }
+
     .project-card__inner:hover .project-card__overlay {
       opacity: 1;
       pointer-events: none;
@@ -1144,7 +1204,7 @@
     .proceso {
       position: relative;
       scroll-margin-top: calc(var(--nav-height) + 1rem);
-      background: var(--bg-tech);
+      background: transparent;
       padding: clamp(4rem, 10vw, 6.5rem) clamp(1.25rem, 4vw, 3rem);
     }
 
@@ -1742,10 +1802,10 @@
     .contact {
       scroll-margin-top: calc(var(--nav-height) + 1rem);
       position: relative;
+      z-index: 3;
+      isolation: isolate;
       padding: clamp(4.5rem, 10vw, 7rem) clamp(1.25rem, 4vw, 3rem);
-      background:
-        radial-gradient(circle at 50% 30%, rgba(123, 97, 255, 0.14) 0%, transparent 58%),
-        var(--bg-primary);
+      background: radial-gradient(circle at 50% 28%, rgba(123, 97, 255, 0.1) 0%, transparent 55%);
       overflow: hidden;
     }
 
@@ -1779,10 +1839,10 @@
       max-width: 560px;
       margin: 0 auto;
       text-align: left;
-      background: rgba(26, 34, 53, 0.48);
-      border: 1px solid rgba(42, 52, 80, 0.95);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(14px) saturate(1.15);
+      -webkit-backdrop-filter: blur(14px) saturate(1.15);
       border-radius: 0.75rem;
       padding: clamp(1.1rem, 3vw, 1.5rem);
     }
@@ -3232,6 +3292,33 @@
         { root: null, rootMargin: "0px 0px -8% 0px", threshold: 0.12 }
       );
       revealObserver.observe(servicesSection);
+    }
+
+    if (!prefersReducedMotionGlobal) {
+      const interactiveCardSelector = ".services__card, .project-card__inner";
+      const interactiveCards = document.querySelectorAll(interactiveCardSelector);
+
+      interactiveCards.forEach((card) => {
+        card.addEventListener("pointermove", (event) => {
+          const rect = card.getBoundingClientRect();
+          if (!rect.width || !rect.height) return;
+          const px = ((event.clientX - rect.left) / rect.width) * 100;
+          const py = ((event.clientY - rect.top) / rect.height) * 100;
+          const tiltY = ((px - 50) / 50) * 5.5;
+          const tiltX = ((50 - py) / 50) * 4.8;
+          card.style.setProperty("--mx", `${px}%`);
+          card.style.setProperty("--my", `${py}%`);
+          card.style.setProperty("--tilt-x", `${tiltX.toFixed(2)}deg`);
+          card.style.setProperty("--tilt-y", `${tiltY.toFixed(2)}deg`);
+        });
+
+        card.addEventListener("pointerleave", () => {
+          card.style.setProperty("--mx", "50%");
+          card.style.setProperty("--my", "50%");
+          card.style.setProperty("--tilt-x", "0deg");
+          card.style.setProperty("--tilt-y", "0deg");
+        });
+      });
     }
 
     const techMetricsBlock = document.getElementById("tech-metrics");
