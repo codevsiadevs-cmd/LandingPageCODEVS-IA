@@ -55,33 +55,19 @@
       scroll-behavior: smooth;
     }
 
+    html {
+      background: #0A0F1E;
+    }
+
     body {
       font-family: var(--font-body);
       color: var(--text-primary);
       line-height: 1.6;
       min-height: 100vh;
       -webkit-font-smoothing: antialiased;
-      background-color: var(--bg-primary);
-      background-image:
-        radial-gradient(ellipse 100% 70% at 50% -25%, rgba(70, 78, 95, 0.06), transparent 50%),
-        radial-gradient(ellipse 55% 45% at 85% 35%, rgba(123, 97, 255, 0.035), transparent 48%),
-        radial-gradient(ellipse 50% 40% at 12% 75%, rgba(15, 255, 212, 0.022), transparent 45%),
-        repeating-linear-gradient(
-          0deg,
-          transparent,
-          transparent 71px,
-          rgba(255, 255, 255, 0.01) 71px,
-          rgba(255, 255, 255, 0.01) 72px
-        ),
-        repeating-linear-gradient(
-          90deg,
-          transparent,
-          transparent 71px,
-          rgba(255, 255, 255, 0.01) 71px,
-          rgba(255, 255, 255, 0.01) 72px
-        ),
-        linear-gradient(175deg, #020203 0%, #000000 45%, #000000 100%);
-      background-attachment: fixed;
+      background: #0A0F1E;
+      --section-factor: 1;
+      --vignette-boost: 0;
     }
 
     header,
@@ -89,6 +75,105 @@
     footer {
       position: relative;
       z-index: 2;
+    }
+
+    .bg-layer {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    #bg-grid-canvas {
+      z-index: -3;
+    }
+
+    #bg-particles-canvas {
+      z-index: -2;
+    }
+
+    .bg-nebula {
+      z-index: -1;
+      filter: blur(120px);
+      border-radius: 50%;
+      opacity: 1;
+      will-change: transform, opacity;
+    }
+
+    .bg-nebula--1 {
+      width: 600px;
+      height: 600px;
+      left: -140px;
+      top: -170px;
+      background: rgba(15, 255, 212, 0.04);
+    }
+
+    .bg-nebula--2 {
+      width: 800px;
+      height: 800px;
+      right: -220px;
+      top: 10%;
+      background: rgba(123, 97, 255, 0.05);
+    }
+
+    .bg-nebula--3 {
+      width: 500px;
+      height: 500px;
+      left: -100px;
+      bottom: -120px;
+      background: rgba(10, 79, 255, 0.03);
+    }
+
+    .bg-scanlines {
+      z-index: 100;
+      background: repeating-linear-gradient(
+        180deg,
+        rgba(0, 0, 0, 0.03) 0px,
+        rgba(0, 0, 0, 0.03) 2px,
+        transparent 2px,
+        transparent 4px
+      );
+      mix-blend-mode: soft-light;
+    }
+
+    .bg-vignette {
+      z-index: 99;
+      background:
+        radial-gradient(
+          circle at center,
+          rgba(0, 0, 0, 0) 48%,
+          rgba(0, 0, 0, calc(0.6 + var(--vignette-boost))) 100%
+        ),
+        linear-gradient(
+          180deg,
+          rgba(0, 0, 0, calc(0.12 + var(--vignette-boost))) 0%,
+          transparent 22%,
+          transparent 78%,
+          rgba(0, 0, 0, calc(0.12 + var(--vignette-boost))) 100%
+        );
+    }
+
+    body[data-section="tecnologias"] {
+      background: #0D1528;
+      --section-factor: 1.15;
+    }
+
+    body[data-section="proyectos"] {
+      --section-factor: 1.2;
+    }
+
+    body[data-section="proceso"] {
+      --section-factor: 0.9;
+    }
+
+    body[data-section="contacto"] {
+      --section-factor: 1.08;
+    }
+
+    @media (max-width: 768px) {
+      #bg-grid-canvas,
+      .bg-scanlines {
+        display: none;
+      }
     }
 
     @media (pointer: fine) {
@@ -131,16 +216,18 @@
       align-items: center;
       justify-content: space-between;
       padding: 0 clamp(1.25rem, 4vw, 3rem);
-      transition: background 0.35s var(--ease-out), box-shadow 0.35s var(--ease-out), border-color 0.35s var(--ease-out);
+      transition: background 0.35s var(--ease-out), box-shadow 0.35s var(--ease-out), border-color 0.35s var(--ease-out), transform 0.35s var(--ease-out);
       border-bottom: 1px solid transparent;
     }
 
     .nav--scrolled {
-      background: rgba(0, 0, 0, 0.86);
-      backdrop-filter: blur(16px) saturate(1.35);
-      -webkit-backdrop-filter: blur(16px) saturate(1.35);
-      border-bottom-color: var(--glass-border);
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+      background: rgba(4, 8, 16, 0.82);
+      backdrop-filter: blur(18px) saturate(1.45);
+      -webkit-backdrop-filter: blur(18px) saturate(1.45);
+      border-bottom-color: rgba(128, 150, 190, 0.22);
+      box-shadow:
+        0 10px 32px rgba(0, 0, 0, 0.34),
+        inset 0 1px 0 rgba(255, 255, 255, 0.03);
     }
 
     .scroll-progress {
@@ -175,6 +262,7 @@
       font-size: 1.125rem;
       letter-spacing: 0.04em;
       color: var(--text-primary);
+      text-shadow: 0 0 18px rgba(15, 255, 212, 0.18);
     }
 
     .nav__logo span {
@@ -184,17 +272,38 @@
     .nav__links {
       display: flex;
       gap: clamp(1rem, 3vw, 2rem);
+      align-items: center;
+      padding: 0.35rem 0.5rem;
+      border-radius: 999px;
+      border: 1px solid rgba(128, 150, 190, 0.2);
+      background: rgba(8, 13, 22, 0.54);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
     }
 
     .nav__links a {
+      position: relative;
       font-size: 0.9rem;
-      font-weight: 500;
+      font-weight: 600;
       color: var(--text-secondary);
-      transition: color 0.2s ease;
+      padding: 0.42rem 0.8rem;
+      border-radius: 999px;
+      transition: color 0.2s ease, background 0.25s var(--ease-out), box-shadow 0.25s var(--ease-out), transform 0.2s var(--ease-out);
     }
 
     .nav__links a:hover {
       color: var(--accent-primary);
+      background: rgba(15, 255, 212, 0.08);
+      box-shadow: inset 0 0 0 1px rgba(15, 255, 212, 0.18);
+      transform: translateY(-1px);
+    }
+
+    .nav__links a.nav__link--active {
+      color: #dffff8;
+      background: linear-gradient(120deg, rgba(15, 255, 212, 0.16), rgba(123, 97, 255, 0.18));
+      box-shadow:
+        inset 0 0 0 1px rgba(15, 255, 212, 0.24),
+        0 0 18px rgba(15, 255, 212, 0.16);
     }
 
     @media (max-width: 640px) {
@@ -203,6 +312,36 @@
       }
       .nav__links a {
         font-size: 0.8rem;
+      }
+    }
+
+    @media (max-width: 980px) {
+      .nav {
+        padding: 0.5rem 0.85rem;
+        gap: 0.5rem;
+      }
+      .nav__logo {
+        font-size: 1rem;
+        flex-shrink: 0;
+      }
+      .nav__links {
+        width: 100%;
+        max-width: calc(100vw - 1.8rem);
+        overflow-x: auto;
+        overflow-y: hidden;
+        white-space: nowrap;
+        flex-wrap: nowrap;
+        gap: 0.9rem;
+        padding-bottom: 0.2rem;
+        border-radius: 0.7rem;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+      .nav__links::-webkit-scrollbar {
+        display: none;
+      }
+      .nav__links a {
+        flex: 0 0 auto;
       }
     }
 
@@ -311,6 +450,17 @@
       .hero__canvas-wrap {
         width: min(520px, 92vw);
         height: min(520px, 92vw);
+      }
+      .hero__content {
+        padding-bottom: 4.25rem;
+      }
+      .hero__ctas {
+        width: 100%;
+        flex-direction: column;
+        align-items: center;
+      }
+      .hero__ctas .btn {
+        width: min(100%, 21rem);
       }
     }
 
@@ -2006,6 +2156,53 @@
       }
     }
 
+    @media (max-width: 768px) {
+      .projects__filters {
+        justify-content: flex-start;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 0.2rem;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+      .projects__filters::-webkit-scrollbar {
+        display: none;
+      }
+      .project-filter {
+        flex: 0 0 auto;
+      }
+      .project-card__inner:hover,
+      .services__card--visible:hover {
+        transform: none;
+      }
+      .footer__bottom {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .hero {
+        min-height: 92vh;
+      }
+      .services,
+      .projects,
+      .proceso,
+      .why,
+      .testimonials,
+      .contact {
+        padding-left: 1rem;
+        padding-right: 1rem;
+      }
+      .contact__form-wrap {
+        max-width: 100%;
+      }
+      .hero__canvas-wrap {
+        width: min(420px, 90vw);
+        height: min(420px, 90vw);
+      }
+    }
+
     .footer__brand-title {
       font-family: var(--font-heading);
       font-weight: 800;
@@ -2061,6 +2258,14 @@
   </style>
 </head>
 <body>
+  <canvas class="bg-layer" id="bg-grid-canvas" aria-hidden="true"></canvas>
+  <canvas class="bg-layer" id="bg-particles-canvas" aria-hidden="true"></canvas>
+  <div class="bg-layer bg-nebula bg-nebula--1" id="bg-nebula-1" aria-hidden="true"></div>
+  <div class="bg-layer bg-nebula bg-nebula--2" id="bg-nebula-2" aria-hidden="true"></div>
+  <div class="bg-layer bg-nebula bg-nebula--3" id="bg-nebula-3" aria-hidden="true"></div>
+  <div class="bg-layer bg-vignette" id="bg-vignette" aria-hidden="true"></div>
+  <div class="bg-layer bg-scanlines" id="bg-scanlines" aria-hidden="true"></div>
+
   <div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div>
   <div class="custom-cursor" id="custom-cursor" aria-hidden="true"></div>
 
@@ -3067,11 +3272,18 @@
     import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
     const nav = document.getElementById("site-nav");
+    const navLinks = document.querySelectorAll('.nav__links a[href^="#"]');
     const wrap = document.getElementById("hero-canvas-wrap");
+    const bgGridCanvas = document.getElementById("bg-grid-canvas");
+    const bgParticlesCanvas = document.getElementById("bg-particles-canvas");
+    const nebula1 = document.getElementById("bg-nebula-1");
+    const nebula2 = document.getElementById("bg-nebula-2");
+    const nebula3 = document.getElementById("bg-nebula-3");
     const heroDots = document.querySelector(".hero__bg-dots");
     const scrollProgress = document.getElementById("scroll-progress");
     const customCursor = document.getElementById("custom-cursor");
     const prefersReducedMotionGlobal = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const isMobileBg = window.matchMedia("(max-width: 768px)").matches;
     const supportsScrollTimeline =
       typeof CSS !== "undefined" &&
       typeof CSS.supports === "function" &&
@@ -3081,6 +3293,17 @@
     let previousScrollY = latestScrollY;
     let scrollSpinBoost = 0;
     let glowLevel = 0;
+    let sharedPulse = 0;
+    let sharedScrollVelocity = 0;
+
+    const bgGridCtx = bgGridCanvas ? bgGridCanvas.getContext("2d") : null;
+    const bgParticlesCtx = bgParticlesCanvas ? bgParticlesCanvas.getContext("2d") : null;
+    const particles = [];
+    const particleCount = prefersReducedMotionGlobal ? 0 : (isMobileBg ? 40 : 120);
+    let brainRectCenterX = window.innerWidth * 0.5;
+    let brainRectCenterY = window.innerHeight * 0.5;
+    let gridFlow = 0;
+    let reducedOffscreen = null;
 
     function updateRendererSize() {
       if (!wrap || !renderer) return;
@@ -3088,12 +3311,44 @@
       camera.aspect = 1;
       camera.updateProjectionMatrix();
       renderer.setSize(size, size, false);
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setPixelRatio(isMobileBg ? 1 : Math.min(window.devicePixelRatio, 2));
+    }
+
+    function updateBackgroundCanvasSize() {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      if (bgGridCanvas && bgGridCtx) {
+        bgGridCanvas.width = w;
+        bgGridCanvas.height = h;
+      }
+      if (bgParticlesCanvas && bgParticlesCtx) {
+        bgParticlesCanvas.width = w;
+        bgParticlesCanvas.height = h;
+      }
+    }
+
+    function initParticles() {
+      particles.length = 0;
+      for (let i = 0; i < particleCount; i += 1) {
+        const cyan = Math.random() < 0.6;
+        particles.push({
+          x: Math.random() * window.innerWidth,
+          y: Math.random() * window.innerHeight,
+          z: Math.random(),
+          r: 1 + Math.random() * 2,
+          c: cyan ? "15,255,212" : "123,97,255",
+          vx: (Math.random() - 0.5) * 0.2,
+          vy: (Math.random() - 0.5) * 0.2,
+          a: 0.24 + Math.random() * 0.45,
+          phase: Math.random() * Math.PI * 2,
+        });
+      }
     }
 
     function updateGlobalScrollEffects() {
       latestScrollY = window.scrollY;
       nav.classList.toggle("nav--scrolled", latestScrollY > 80);
+      sharedScrollVelocity = latestScrollY - previousScrollY;
 
       if (!prefersReducedMotionGlobal) {
         if (heroDots) {
@@ -3104,10 +3359,41 @@
       }
       previousScrollY = latestScrollY;
 
+      const sections = [
+        "inicio",
+        "servicios",
+        "tecnologias",
+        "proyectos",
+        "proceso",
+        "contacto",
+      ];
+      let currentSection = "inicio";
+      for (let i = 0; i < sections.length; i += 1) {
+        const sec = document.getElementById(sections[i]);
+        if (!sec) continue;
+        const r = sec.getBoundingClientRect();
+        if (r.top <= window.innerHeight * 0.45 && r.bottom >= window.innerHeight * 0.35) {
+          currentSection = sections[i];
+          break;
+        }
+      }
+      document.body.dataset.section = currentSection;
+
+      const maxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
+      const progress = Math.min(Math.max(latestScrollY / maxScroll, 0), 1);
+      const edgeBoost = Math.abs(progress - 0.5) * 2;
+      document.body.style.setProperty("--vignette-boost", (edgeBoost * 0.12).toFixed(3));
+
       if (scrollProgress && !supportsScrollTimeline) {
-        const maxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
         const progress = Math.min(Math.max(latestScrollY / maxScroll, 0), 1);
         scrollProgress.style.transform = `scaleX(${progress})`;
+      }
+
+      if (navLinks.length) {
+        navLinks.forEach((link) => {
+          const id = link.getAttribute("href")?.slice(1);
+          link.classList.toggle("nav__link--active", id === currentSection);
+        });
       }
     }
     updateGlobalScrollEffects();
@@ -3156,8 +3442,15 @@
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1;
     wrap.appendChild(renderer.domElement);
+    updateBackgroundCanvasSize();
+    initParticles();
+    if (typeof OffscreenCanvas !== "undefined" && !isMobileBg) {
+      reducedOffscreen = new OffscreenCanvas(1, 1);
+    }
     window.addEventListener("resize", () => {
       updateRendererSize();
+      updateBackgroundCanvasSize();
+      initParticles();
     });
     updateRendererSize();
 
@@ -3236,6 +3529,99 @@
       }
     );
 
+    function drawPerspectiveGrid(docProgress) {
+      if (!bgGridCtx || !bgGridCanvas || prefersReducedMotionGlobal || isMobileBg) return;
+      const w = bgGridCanvas.width;
+      const h = bgGridCanvas.height;
+      const horizonY = h * 0.38;
+      const sectionFactor = Number(getComputedStyle(document.body).getPropertyValue("--section-factor")) || 1;
+      bgGridCtx.clearRect(0, 0, w, h);
+      bgGridCtx.lineWidth = 1;
+
+      const baseAlpha = 0.06 + sharedPulse * 0.09;
+      const speed = Math.min(Math.abs(sharedScrollVelocity) * 0.005, 2.2) + docProgress * 0.45;
+      gridFlow = (gridFlow + speed * sectionFactor) % 70;
+
+      for (let i = 0; i < 24; i += 1) {
+        const t = i / 23;
+        const x = t * w;
+        bgGridCtx.beginPath();
+        bgGridCtx.strokeStyle = `rgba(15,255,212,${(baseAlpha * (0.55 + t * 0.45)).toFixed(4)})`;
+        bgGridCtx.moveTo(x, h);
+        bgGridCtx.lineTo(w * 0.5, horizonY);
+        bgGridCtx.stroke();
+      }
+
+      for (let y = horizonY; y < h + 80; y += 28) {
+        const depth = (y - horizonY + gridFlow) / Math.max(h - horizonY, 1);
+        const yy = horizonY + ((depth % 1) * (h - horizonY));
+        const widthFactor = Math.pow((yy - horizonY) / Math.max(h - horizonY, 1), 1.5);
+        const halfW = (w * 0.48) * widthFactor;
+        const alpha = baseAlpha * (0.25 + widthFactor * 1.2);
+        bgGridCtx.beginPath();
+        bgGridCtx.strokeStyle = `rgba(15,255,212,${alpha.toFixed(4)})`;
+        bgGridCtx.moveTo(w * 0.5 - halfW, yy);
+        bgGridCtx.lineTo(w * 0.5 + halfW, yy);
+        bgGridCtx.stroke();
+      }
+    }
+
+    function drawParticles(docProgress, time) {
+      if (!bgParticlesCtx || !bgParticlesCanvas || prefersReducedMotionGlobal) return;
+      const w = bgParticlesCanvas.width;
+      const h = bgParticlesCanvas.height;
+      const trail = Math.min(Math.abs(sharedScrollVelocity) / 220, 0.3);
+      bgParticlesCtx.fillStyle = `rgba(10,15,30,${Math.max(0.08, 0.2 - trail).toFixed(3)})`;
+      bgParticlesCtx.fillRect(0, 0, w, h);
+
+      const sectionFactor = Number(getComputedStyle(document.body).getPropertyValue("--section-factor")) || 1;
+      const attractPower = isMobileBg ? 0.008 : 0.016;
+      for (let i = 0; i < particles.length; i += 1) {
+        const p = particles[i];
+        const fx = Math.cos(time * 0.4 + p.phase) * 0.14;
+        const fy = Math.sin(time * 0.35 + p.phase) * 0.14;
+        const dx = brainRectCenterX - p.x;
+        const dy = brainRectCenterY - p.y;
+        const d2 = dx * dx + dy * dy;
+        const attract = 1 / Math.max(d2 * 0.002, 1);
+        p.vx += dx * attract * attractPower * sectionFactor;
+        p.vy += dy * attract * attractPower * sectionFactor;
+        p.vx *= 0.985;
+        p.vy *= 0.985;
+        p.x += p.vx + fx;
+        p.y += p.vy + fy;
+        if (p.x < -20) p.x = w + 20;
+        if (p.x > w + 20) p.x = -20;
+        if (p.y < -20) p.y = h + 20;
+        if (p.y > h + 20) p.y = -20;
+        bgParticlesCtx.beginPath();
+        bgParticlesCtx.fillStyle = `rgba(${p.c},${Math.min(0.95, p.a + sharedPulse * 0.4).toFixed(3)})`;
+        bgParticlesCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        bgParticlesCtx.fill();
+      }
+    }
+
+    function updateNebula(docProgress, mouseXNorm, mouseYNorm) {
+      if (!nebula1 || !nebula2 || !nebula3 || prefersReducedMotionGlobal) return;
+      const section = document.body.dataset.section || "inicio";
+      const sectionFactor = Number(getComputedStyle(document.body).getPropertyValue("--section-factor")) || 1;
+      const orbit = performance.now() * 0.00005;
+      const parallaxX = isMobileBg ? 0 : mouseXNorm * 2;
+      const parallaxY = isMobileBg ? 0 : mouseYNorm * 2;
+      const centerPullX = ((brainRectCenterX / Math.max(window.innerWidth, 1)) - 0.5) * 240;
+      const centerPullY = ((brainRectCenterY / Math.max(window.innerHeight, 1)) - 0.5) * 200;
+
+      nebula1.style.transform = `translate3d(${Math.sin(orbit) * 36 + parallaxX}px, ${Math.cos(orbit) * 30 + parallaxY}px, 0)`;
+      nebula3.style.transform = `translate3d(${Math.cos(orbit * 0.9) * 30 - parallaxX * 0.8}px, ${Math.sin(orbit * 0.7) * 26 - parallaxY * 0.7}px, 0)`;
+      nebula2.style.transform = `translate3d(${Math.sin(orbit * 1.1) * 26 + centerPullX * 0.25}px, ${Math.cos(orbit * 0.8) * 28 + centerPullY * 0.25}px, 0)`;
+
+      const base2 = 0.05 + sharedPulse * 0.03;
+      const sectionBoost = section === "proyectos" ? 1.35 : section === "contacto" ? 1.25 : 1;
+      nebula2.style.opacity = String(Math.min(0.14, base2 * sectionBoost * sectionFactor));
+      nebula1.style.opacity = String(Math.min(0.11, (0.04 + docProgress * 0.02) * sectionFactor));
+      nebula3.style.opacity = String(Math.min(0.1, (0.03 + docProgress * 0.016) * sectionFactor));
+    }
+
     const clock = new THREE.Clock();
     function animate() {
       requestAnimationFrame(animate);
@@ -3243,11 +3629,17 @@
       const t = clock.elapsedTime;
       const docMaxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
       const docProgress = Math.min(Math.max(latestScrollY / docMaxScroll, 0), 1);
+      const wrapRect = wrap ? wrap.getBoundingClientRect() : null;
+      if (wrapRect) {
+        brainRectCenterX = wrapRect.left + wrapRect.width * 0.5;
+        brainRectCenterY = wrapRect.top + wrapRect.height * 0.5;
+      }
 
       if (prefersReducedMotionGlobal) {
         spinGroup.rotation.y += dt * 0.18;
         tiltGroup.rotation.x = 0;
         tiltGroup.rotation.y = 0;
+        sharedPulse = 0;
       } else {
         currentMouseX += (targetMouseX - currentMouseX) * 0.05;
         currentMouseY += (targetMouseY - currentMouseY) * 0.05;
@@ -3266,13 +3658,27 @@
 
       const pulse = (Math.sin(t * 2.2) + 1) * 0.5;
       const pulseIntensity = 0.8 + pulse * 1.7;
+      if (!prefersReducedMotionGlobal) {
+        sharedPulse += (pulse - sharedPulse) * 0.22;
+      }
       const targetGlow = docProgress > 0.5 ? (docProgress - 0.5) * 2 : 0;
       glowLevel += (targetGlow - glowLevel) * 0.06;
-      innerPulseLight.intensity = pulseIntensity + glowLevel * 0.35;
-      pulseColor.copy(cyanColor).lerp(purpleColor, pulse);
-      innerPulseLight.color.copy(pulseColor);
-      dir.intensity = 1.1 + glowLevel * 0.7;
-      fill.intensity = 0.55 + glowLevel * 0.5;
+      if (prefersReducedMotionGlobal) {
+        innerPulseLight.intensity = 0.95;
+        innerPulseLight.color.set(0x0fffd4);
+        dir.intensity = 0.9;
+        fill.intensity = 0.45;
+      } else {
+        innerPulseLight.intensity = pulseIntensity + glowLevel * 0.35;
+        pulseColor.copy(cyanColor).lerp(purpleColor, pulse);
+        innerPulseLight.color.copy(pulseColor);
+        dir.intensity = 1.1 + glowLevel * 0.7;
+        fill.intensity = 0.55 + glowLevel * 0.5;
+      }
+
+      drawPerspectiveGrid(docProgress);
+      drawParticles(docProgress, t);
+      updateNebula(docProgress, currentMouseX * 0.02, currentMouseY * 0.02);
 
       renderer.render(scene, camera);
     }
