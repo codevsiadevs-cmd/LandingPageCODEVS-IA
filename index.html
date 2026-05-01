@@ -265,8 +265,8 @@
       top: 50%;
       right: auto;
       bottom: auto;
-      width: min(420px, 86vw);
-      height: min(420px, 86vw);
+      width: min(840px, 94vw);
+      height: min(840px, 94vw);
       margin: 0;
       flex-shrink: 0;
       transform: translate(-50%, -50%);
@@ -308,8 +308,8 @@
 
     @media (max-width: 768px) {
       .hero__canvas-wrap {
-        width: min(260px, 88vw);
-        height: min(260px, 88vw);
+        width: min(520px, 92vw);
+        height: min(520px, 92vw);
       }
     }
 
@@ -3087,8 +3087,8 @@
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
-    camera.position.set(0, 0.2, 3.2);
-    const baseCameraZ = 3.2;
+    camera.position.set(0, 0.2, 2.95);
+    const baseCameraZ = 2.95;
     let targetCameraZ = baseCameraZ;
 
     let renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -3163,7 +3163,7 @@
         const box = new THREE.Box3().setFromObject(model);
         const size = box.getSize(new THREE.Vector3());
         const maxDim = Math.max(size.x, size.y, size.z) || 1;
-        const scale = 1.6 / maxDim;
+        const scale = 1.95 / maxDim;
         model.scale.setScalar(scale);
         box.setFromObject(model);
         const center = box.getCenter(new THREE.Vector3());
