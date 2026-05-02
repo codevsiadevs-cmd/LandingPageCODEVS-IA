@@ -13,6 +13,13 @@
   --nav-height: 4.25rem;
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --bg-tech: #020304;
+  /* Velo sobre la red neuronal (#bg-neural-canvas) en secciones donde debe verse */
+  --bg-tech-over-neural: linear-gradient(
+    180deg,
+    rgba(2, 3, 4, 0.82) 0%,
+    rgba(2, 3, 4, 0.58) 48%,
+    rgba(2, 3, 4, 0.82) 100%
+  );
 }
 
 *,

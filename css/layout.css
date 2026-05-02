@@ -305,7 +305,9 @@
 /* ——— Tecnologías ——— */
 .tech {
   scroll-margin-top: calc(var(--nav-height) + 1rem);
-  background: var(--bg-tech);
+  background:
+    radial-gradient(ellipse 88% 56% at 50% 38%, rgba(123, 97, 255, 0.075) 0%, transparent 58%),
+    var(--bg-tech-over-neural);
   padding: clamp(4rem, 10vw, 6.5rem) 0;
   overflow: hidden;
 }
@@ -713,7 +715,9 @@
 /* ——— Testimonios ——— */
 .testimonials {
   scroll-margin-top: calc(var(--nav-height) + 1rem);
-  background: var(--bg-tech);
+  background:
+    radial-gradient(ellipse 82% 52% at 50% 32%, rgba(15, 255, 212, 0.055) 0%, transparent 56%),
+    var(--bg-tech-over-neural);
   padding: clamp(4rem, 10vw, 6.5rem) clamp(1.25rem, 4vw, 3rem);
 }
 
