@@ -1,0 +1,89 @@
+:root {
+  --bg-primary: #000000;
+  --bg-elevated: #050608;
+  --accent-primary: #0FFFD4;
+  --accent-secondary: #7B61FF;
+  --surface-card: #0c0e12;
+  --text-primary: #eef1f7;
+  --text-secondary: #8b95a8;
+  --font-heading: "Syne", system-ui, sans-serif;
+  --font-body: "IBM Plex Sans", system-ui, sans-serif;
+  --glass-border: rgba(180, 195, 220, 0.08);
+  --glass-bg: rgba(10, 12, 16, 0.78);
+  --nav-height: 4.25rem;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --bg-tech: #020304;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+html {
+  background: #0A0F1E;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--text-primary);
+  line-height: 1.6;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  background: #0A0F1E;
+  --section-factor: 1;
+  --vignette-boost: 0;
+}
+
+header,
+main,
+footer {
+  position: relative;
+  z-index: 2;
+}
+
+body[data-section="tecnologias"] {
+  background: #0D1528;
+  --section-factor: 1.15;
+}
+
+body[data-section="proyectos"] {
+  --section-factor: 1.2;
+}
+
+body[data-section="proceso"] {
+  --section-factor: 0.9;
+}
+
+body[data-section="contacto"] {
+  --section-factor: 1.08;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+ul {
+  list-style: none;
+}
+
+img,
+canvas {
+  display: block;
+  max-width: 100%;
+}

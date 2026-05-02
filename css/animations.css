@@ -1,0 +1,106 @@
+@keyframes pageProgressGrow {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+@supports (animation-timeline: scroll()) {
+  .scroll-progress {
+    animation: pageProgressGrow linear both;
+    animation-timeline: scroll();
+  }
+}
+
+@keyframes heroDotsPulse {
+  0%,
+  100% {
+    opacity: 0.2;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.45;
+    transform: scale(1.02);
+  }
+}
+
+@keyframes scrollPulse {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: scaleY(0.6);
+  }
+  50% {
+    opacity: 1;
+    transform: scaleY(1);
+  }
+}
+
+@keyframes scrollBounce {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.5;
+  }
+  50% {
+    transform: translateY(6px);
+    opacity: 1;
+  }
+}
+
+@keyframes servicesCardReveal {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(1);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes techMarqueeScroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes techMetricReveal {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes procesoLineDraw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@supports (view-timeline-name: --proceso-line) {
+  #proceso {
+    view-timeline-name: --proceso-line;
+    view-timeline-axis: block;
+  }
+
+  .proceso__line-path--scroll {
+    animation: procesoLineDraw linear forwards;
+    animation-timeline: --proceso-line;
+    animation-range: entry 8% exit 72%;
+  }
+}
+
+@keyframes whyBorderGlow {
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
