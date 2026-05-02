@@ -136,17 +136,20 @@ function initProjectsFan() {
     card.dataset.fanOffset = String(d);
 
     /*
-     * Escalera vertical espejo: misma ranura desde el hueco → mismo translateY en izq. y der.
-     * Así la 2.ª tarjeta del bloque derecho queda a la misma altura que la 2.ª del izquierdo.
+     * Escalera desde el hueco (izq./der. comparten tyStep). En el bloque derecho, la rotación +°
+     * baja más el borde superior que la −° del izquierdo; sumamos extraRem por ranura para alinear.
      */
     const tyStepRem = 0.62;
+    /* Extras derechos: 2.ª alineada con la izq.; 3.ª como antes (gran subida) + un poco más. */
+    const rightTyExtraRem = [0, 2.2, 4.05];
     let tyRem = 0;
     if (idxInVis < mid && leftCount > 1) {
       const slot = mid - 1 - idxInVis;
       tyRem = -slot * tyStepRem;
     } else if (idxInVis >= mid && rightCount > 1) {
       const slot = idxInVis - mid;
-      tyRem = -slot * tyStepRem;
+      const extra = rightTyExtraRem[slot] ?? rightTyExtraRem[rightTyExtraRem.length - 1];
+      tyRem = -slot * tyStepRem - extra;
     }
 
     card.style.setProperty("--fan-tx", `${txRem}rem`);
