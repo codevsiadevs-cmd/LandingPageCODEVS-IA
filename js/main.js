@@ -4,5 +4,6 @@ import { updateBackgroundCanvasSize, initParticles } from "./background.js";
 import "./three-scene.js";
 import "./interactions.js";
 import "./sections.js";
+import "./projects-fan.js";
 
 updateGlobalScrollEffects();

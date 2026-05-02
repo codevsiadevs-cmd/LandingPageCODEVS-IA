@@ -89,39 +89,6 @@ if (projectsSection && projectCards.length) {
   projectsReveal.observe(projectsSection);
 }
 
-const projectFilterBtns = document.querySelectorAll(".project-filter");
-const projectGridCards = document.querySelectorAll("#projects-grid .project-card");
-const PROJECT_FILTER_MS = 340;
-
-projectFilterBtns.forEach((btn) => {
-  btn.addEventListener("click", () => {
-    const filter = btn.dataset.filter;
-    projectFilterBtns.forEach((b) => {
-      const on = b === btn;
-      b.classList.toggle("project-filter--active", on);
-      b.setAttribute("aria-pressed", on ? "true" : "false");
-    });
-    projectGridCards.forEach((card) => {
-      const cats = (card.dataset.categories || "").split(/\s+/).filter(Boolean);
-      const show = filter === "all" || cats.includes(filter);
-      if (show) {
-        card.style.removeProperty("display");
-        card.removeAttribute("hidden");
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => card.classList.remove("project-card--filtered-out"));
-        });
-      } else {
-        card.classList.add("project-card--filtered-out");
-        window.setTimeout(() => {
-          if (card.classList.contains("project-card--filtered-out")) {
-            card.style.display = "none";
-          }
-        }, PROJECT_FILTER_MS);
-      }
-    });
-  });
-});
-
 const procesoSection = document.getElementById("proceso");
 const procesoSteps = procesoSection ? procesoSection.querySelectorAll(".proceso-step") : [];
 const prefersReducedMotionProceso = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
