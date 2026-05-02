@@ -12,6 +12,11 @@
   z-index: -2;
 }
 
+/* Red neuronal Codrops: DEBAJO de main (z-index 5), ENCIMA del vignette (oscurece bordes) */
+#bg-neural-canvas {
+  z-index: 4;
+}
+
 .bg-nebula {
   z-index: -1;
   filter: blur(120px);
@@ -57,7 +62,7 @@
 }
 
 .bg-vignette {
-  z-index: 99;
+  z-index: 3;
   background:
     radial-gradient(
       circle at center,

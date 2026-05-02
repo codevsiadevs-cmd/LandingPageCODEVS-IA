@@ -42,11 +42,15 @@ body {
   --vignette-boost: 0;
 }
 
-header,
+header {
+  position: relative;
+}
+
+/* Por encima del canvas neuronal (#bg-neural-canvas z-index 4) y del vignette */
 main,
 footer {
   position: relative;
-  z-index: 2;
+  z-index: 5;
 }
 
 body[data-section="tecnologias"] {

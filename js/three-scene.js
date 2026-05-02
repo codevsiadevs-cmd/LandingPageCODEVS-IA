@@ -10,6 +10,7 @@ import {
   updateNebula,
   syncBrainRectFromWrap,
 } from "./background.js";
+import { drawNeuralNetwork, initNeuralBackground } from "./neural-background.js";
 
 const wrap = document.getElementById("hero-canvas-wrap");
 
@@ -37,6 +38,8 @@ window.addEventListener("resize", () => {
   initParticles();
 });
 updateRendererSize();
+
+initNeuralBackground();
 
 export let targetMouseX = 0;
 export let targetMouseY = 0;
@@ -177,6 +180,7 @@ function animate() {
 
   drawPerspectiveGrid(docProgress);
   drawParticles(docProgress, t);
+  drawNeuralNetwork();
   updateNebula(docProgress, currentMouseX * 0.02, currentMouseY * 0.02);
 
   renderer.render(scene, camera);
