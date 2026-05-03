@@ -5,5 +5,6 @@ import "./three-scene.js";
 import "./interactions.js";
 import "./sections.js";
 import "./projects-fan.js";
+import "./music-toggle.js";
 
 updateGlobalScrollEffects();

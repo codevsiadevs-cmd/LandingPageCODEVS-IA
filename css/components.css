@@ -1157,3 +1157,179 @@
 .footer__list a:hover {
   color: var(--accent-primary);
 }
+
+/* ——— WhatsApp flotante ——— */
+.whatsapp-float {
+  position: fixed;
+  right: clamp(1rem, 3.5vw, 1.85rem);
+  bottom: max(1.15rem, env(safe-area-inset-bottom, 0px));
+  z-index: 160;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.4rem;
+  height: 3.4rem;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #25d366 0%, #128c7e 100%);
+  color: #fff;
+  box-shadow:
+    0 6px 20px rgba(0, 0, 0, 0.38),
+    0 0 0 0 rgba(37, 211, 102, 0.4);
+  transition: transform 0.28s var(--ease-out), box-shadow 0.28s ease;
+}
+
+.whatsapp-float:hover {
+  transform: scale(1.07);
+  box-shadow:
+    0 8px 26px rgba(0, 0, 0, 0.42),
+    0 0 0 6px rgba(37, 211, 102, 0.12);
+}
+
+.whatsapp-float:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 3px;
+}
+
+.whatsapp-float__pulse {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid rgba(37, 211, 102, 0.55);
+  pointer-events: none;
+  z-index: 0;
+  animation: whatsappFloatPulse 2.25s ease-out infinite;
+}
+
+.whatsapp-float__icon {
+  position: relative;
+  z-index: 1;
+  width: 1.9rem;
+  height: 1.9rem;
+  display: block;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .whatsapp-float__pulse {
+    animation: none;
+  }
+}
+
+@keyframes whatsappFloatPulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.85;
+  }
+  70% {
+    transform: scale(1.38);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1.38);
+    opacity: 0;
+  }
+}
+
+/* ——— Música de fondo (toggle) — visual tipo Skiper25 / waveform ——— */
+.site-music-audio {
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.music-toggle {
+  --music-toggle-pad-y: 14px;
+  --music-toggle-pad-x: 14px;
+  position: fixed;
+  left: clamp(1rem, 3.5vw, 1.85rem);
+  bottom: max(1.15rem, env(safe-area-inset-bottom, 0px));
+  z-index: 159;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--music-toggle-pad-y) var(--music-toggle-pad-x);
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(2, 3, 4, 0.94);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.45);
+  cursor: pointer;
+  transition:
+    padding 0.55s cubic-bezier(0.34, 1.45, 0.64, 1),
+    border-color 0.25s ease,
+    box-shadow 0.35s ease;
+}
+
+.music-toggle:hover,
+.music-toggle:active {
+  --music-toggle-pad-y: 18px;
+  --music-toggle-pad-x: 22px;
+}
+
+.music-toggle:focus-visible {
+  outline: 2px solid rgba(238, 241, 247, 0.35);
+  outline-offset: 3px;
+}
+
+.music-toggle--playing {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.music-toggle--error {
+  border-color: rgba(255, 120, 120, 0.45);
+}
+
+.music-toggle__inner {
+  display: flex;
+  height: 18px;
+  width: auto;
+  min-width: 21px;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  border-radius: 9999px;
+  animation: musicToggleInnerIn 0.55s cubic-bezier(0.34, 1.45, 0.64, 1) both;
+}
+
+.music-toggle__bar {
+  width: 1px;
+  min-height: 4px;
+  height: 4px;
+  border-radius: 9999px;
+  background: var(--text-primary);
+  align-self: center;
+  transition: height 0.14s cubic-bezier(0.22, 1.2, 0.36, 1);
+  transform-origin: center center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .music-toggle {
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .music-toggle:hover,
+  .music-toggle:active {
+    --music-toggle-pad-y: 14px;
+    --music-toggle-pad-x: 14px;
+  }
+
+  .music-toggle__inner {
+    animation: none;
+  }
+
+  .music-toggle__bar {
+    transition: height 0.35s ease;
+  }
+}
+
+@keyframes musicToggleInnerIn {
+  from {
+    opacity: 0;
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
