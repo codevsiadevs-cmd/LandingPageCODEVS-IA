@@ -3,6 +3,7 @@ import {
   isMobileBg,
   sceneMotion,
   sharedScrollVelocity,
+  sectionFactor,
 } from "./scroll.js";
 
 const bgGridCanvas = document.getElementById("bg-grid-canvas");
@@ -11,10 +12,16 @@ const nebula1 = document.getElementById("bg-nebula-1");
 const nebula2 = document.getElementById("bg-nebula-2");
 const nebula3 = document.getElementById("bg-nebula-3");
 
-export const bgGridCtx = bgGridCanvas ? bgGridCanvas.getContext("2d") : null;
-export const bgParticlesCtx = bgParticlesCanvas ? bgParticlesCanvas.getContext("2d") : null;
+/**
+ * En móvil deshabilitamos por completo los canvas de grid y partículas: ni
+ * pedimos contexto 2D ni los animamos. Las funciones drawPerspectiveGrid /
+ * drawParticles ya hacen early-return si el ctx es null.
+ */
+export const bgGridCtx = bgGridCanvas && !isMobileBg ? bgGridCanvas.getContext("2d") : null;
+export const bgParticlesCtx =
+  bgParticlesCanvas && !isMobileBg ? bgParticlesCanvas.getContext("2d") : null;
 export const particles = [];
-export const particleCount = prefersReducedMotionGlobal ? 0 : isMobileBg ? 40 : 120;
+export const particleCount = prefersReducedMotionGlobal || isMobileBg ? 0 : 120;
 let brainRectCenterX = window.innerWidth * 0.5;
 let brainRectCenterY = window.innerHeight * 0.5;
 export let gridFlow = 0;
@@ -61,7 +68,6 @@ export function drawPerspectiveGrid(docProgress) {
   const w = bgGridCanvas.width;
   const h = bgGridCanvas.height;
   const horizonY = h * 0.38;
-  const sectionFactor = Number(getComputedStyle(document.body).getPropertyValue("--section-factor")) || 1;
   bgGridCtx.clearRect(0, 0, w, h);
   bgGridCtx.lineWidth = 1;
 
@@ -101,7 +107,6 @@ export function drawParticles(docProgress, time) {
   bgParticlesCtx.fillStyle = `rgba(10,15,30,${Math.max(0.08, 0.2 - trail).toFixed(3)})`;
   bgParticlesCtx.fillRect(0, 0, w, h);
 
-  const sectionFactor = Number(getComputedStyle(document.body).getPropertyValue("--section-factor")) || 1;
   const attractPower = isMobileBg ? 0.008 : 0.016;
   for (let i = 0; i < particles.length; i += 1) {
     const p = particles[i];
@@ -131,7 +136,6 @@ export function drawParticles(docProgress, time) {
 export function updateNebula(docProgress, mouseXNorm, mouseYNorm) {
   if (!nebula1 || !nebula2 || !nebula3 || prefersReducedMotionGlobal) return;
   const section = document.body.dataset.section || "inicio";
-  const sectionFactor = Number(getComputedStyle(document.body).getPropertyValue("--section-factor")) || 1;
   const orbit = performance.now() * 0.00005;
   const parallaxX = isMobileBg ? 0 : mouseXNorm * 2;
   const parallaxY = isMobileBg ? 0 : mouseYNorm * 2;

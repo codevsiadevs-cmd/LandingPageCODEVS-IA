@@ -180,19 +180,6 @@ if (testimonialsSection && testimonialCards.length) {
   testimonialsReveal.observe(testimonialsSection);
 }
 
-const contactForm = document.getElementById("contact-form");
-const contactSuccess = document.getElementById("contact-success");
-if (contactForm && contactSuccess) {
-  contactForm.addEventListener("submit", (event) => {
-    event.preventDefault();
-    contactSuccess.classList.add("contact__success--visible");
-    contactForm.reset();
-    window.setTimeout(() => {
-      contactSuccess.classList.remove("contact__success--visible");
-    }, 4200);
-  });
-}
-
 const footer = document.getElementById("site-footer");
 if (footer) {
   const footerObserver = new IntersectionObserver(

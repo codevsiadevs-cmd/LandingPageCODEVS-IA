@@ -20,6 +20,68 @@ export let latestScrollY = window.scrollY;
 export let previousScrollY = latestScrollY;
 export let sharedScrollVelocity = 0;
 
+/**
+ * Cache reactivo de --section-factor: lo refrescamos sólo cuando cambia
+ * `body.data-section` (vía MutationObserver) en vez de leerlo con
+ * getComputedStyle dentro del loop de animación.
+ */
+export let sectionFactor = 1;
+
+function refreshSectionFactor() {
+  const raw = Number(getComputedStyle(document.body).getPropertyValue("--section-factor"));
+  sectionFactor = Number.isFinite(raw) && raw > 0 ? raw : 1;
+}
+
+refreshSectionFactor();
+
+if (typeof MutationObserver !== "undefined") {
+  const sectionFactorMo = new MutationObserver(refreshSectionFactor);
+  sectionFactorMo.observe(document.body, {
+    attributes: true,
+    attributeFilter: ["data-section"],
+  });
+}
+
+/**
+ * Cache de geometría de las secciones en coordenadas del documento (offsetTop/offsetHeight),
+ * que NO cambian al hacer scroll. Sólo se recalculan cuando el layout cambia
+ * (resize, font/img load, contenido), vía ResizeObserver y `load`.
+ */
+const SECTION_IDS = [
+  "inicio",
+  "servicios",
+  "tecnologias",
+  "proyectos",
+  "proceso",
+  "contacto",
+];
+
+/** @type {{ id: string, top: number, bottom: number }[]} */
+let sectionRects = [];
+let cachedDocMaxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
+
+function recalcSectionRects() {
+  const next = [];
+  for (let i = 0; i < SECTION_IDS.length; i += 1) {
+    const el = document.getElementById(SECTION_IDS[i]);
+    if (!el) continue;
+    const top = el.offsetTop;
+    const bottom = top + el.offsetHeight;
+    next.push({ id: SECTION_IDS[i], top, bottom });
+  }
+  sectionRects = next;
+  cachedDocMaxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
+}
+
+recalcSectionRects();
+
+if (typeof ResizeObserver !== "undefined") {
+  const layoutRo = new ResizeObserver(() => recalcSectionRects());
+  layoutRo.observe(document.body);
+}
+window.addEventListener("load", recalcSectionRects);
+window.addEventListener("resize", recalcSectionRects, { passive: true });
+
 export function updateGlobalScrollEffects() {
   latestScrollY = window.scrollY;
   nav.classList.toggle("nav--scrolled", latestScrollY > 80);
@@ -37,27 +99,22 @@ export function updateGlobalScrollEffects() {
   }
   previousScrollY = latestScrollY;
 
-  const sections = [
-    "inicio",
-    "servicios",
-    "tecnologias",
-    "proyectos",
-    "proceso",
-    "contacto",
-  ];
   let currentSection = "inicio";
-  for (let i = 0; i < sections.length; i += 1) {
-    const sec = document.getElementById(sections[i]);
-    if (!sec) continue;
-    const r = sec.getBoundingClientRect();
-    if (r.top <= window.innerHeight * 0.45 && r.bottom >= window.innerHeight * 0.35) {
-      currentSection = sections[i];
+  const vh = window.innerHeight;
+  for (let i = 0; i < sectionRects.length; i += 1) {
+    const r = sectionRects[i];
+    const vpTop = r.top - latestScrollY;
+    const vpBottom = r.bottom - latestScrollY;
+    if (vpTop <= vh * 0.45 && vpBottom >= vh * 0.35) {
+      currentSection = r.id;
       break;
     }
   }
-  document.body.dataset.section = currentSection;
+  if (document.body.dataset.section !== currentSection) {
+    document.body.dataset.section = currentSection;
+  }
 
-  const maxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
+  const maxScroll = cachedDocMaxScroll;
   const progress = Math.min(Math.max(latestScrollY / maxScroll, 0), 1);
   const edgeBoost = Math.abs(progress - 0.5) * 2;
   document.body.style.setProperty("--vignette-boost", (edgeBoost * 0.12).toFixed(3));
@@ -75,4 +132,20 @@ export function updateGlobalScrollEffects() {
   }
 }
 
-window.addEventListener("scroll", updateGlobalScrollEffects, { passive: true });
+/**
+ * rAF-coalesced scroll listener: agrupa múltiples eventos `scroll` en un único
+ * tick por frame para evitar re-leer y re-pintar más de una vez por frame.
+ */
+let scrollRafPending = false;
+window.addEventListener(
+  "scroll",
+  () => {
+    if (scrollRafPending) return;
+    scrollRafPending = true;
+    requestAnimationFrame(() => {
+      updateGlobalScrollEffects();
+      scrollRafPending = false;
+    });
+  },
+  { passive: true }
+);

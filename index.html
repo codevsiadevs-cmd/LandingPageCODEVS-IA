@@ -5,23 +5,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="CODEVS IA — Desarrollo de software a medida potenciado con inteligencia artificial." />
   <meta name="theme-color" content="#000000" />
+  <link rel="canonical" href="https://www.codevsia.dev/" />
   <meta property="og:title" content="CODEVS IA — Software e inteligencia artificial" />
   <meta property="og:description" content="Desarrollo de software a medida, potenciado con IA para empresas que quieren crecer." />
   <meta property="og:type" content="website" />
-  <meta property="og:image" content="./assets/images/og-cover.png" />
+  <meta property="og:url" content="https://www.codevsia.dev/" />
+  <meta property="og:image" content="https://www.codevsia.dev/assets/images/og-cover.png" />
+  <meta property="og:image:alt" content="CODEVS IA — Construimos el futuro con código e inteligencia" />
   <meta property="og:locale" content="es_ES" />
   <meta property="twitter:card" content="summary_large_image" />
   <meta property="twitter:title" content="CODEVS IA — Software e inteligencia artificial" />
   <meta property="twitter:description" content="Construimos el futuro con código e inteligencia." />
+  <meta property="twitter:image" content="https://www.codevsia.dev/assets/images/og-cover.png" />
   <title>CODEVS IA — Software e inteligencia artificial</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='10' fill='%230FFFD4'/%3E%3C/svg%3E" type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <script type="importmap">
   {
     "imports": {
-      "three": "https://cdnjs.cloudflare.com/ajax/libs/three.js/0.164.1/three.module.min.js",
+      "three": "https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.min.js",
       "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.164.1/examples/jsm/"
     }
   }
@@ -31,6 +36,22 @@
   <link rel="stylesheet" href="./css/components.css" />
   <link rel="stylesheet" href="./css/animations.css" />
   <link rel="stylesheet" href="./css/responsive.css" />
+  <link rel="modulepreload" href="./js/main.js" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "CODEVS IA",
+    "url": "https://www.codevsia.dev",
+    "logo": "https://www.codevsia.dev/assets/images/logo-watermark.svg",
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "contactType": "customer service",
+      "availableLanguage": "Spanish"
+    },
+    "sameAs": []
+  }
+  </script>
 </head>
 <body>
   <canvas class="bg-layer" id="bg-grid-canvas" aria-hidden="true"></canvas>
@@ -66,6 +87,21 @@
       <div class="hero__canvas-wrap" id="hero-canvas-wrap">
         <!-- Three.js WebGL canvas se inserta aquí -->
         <span class="hero__canvas-tooltip" aria-hidden="true">CODEVS IA</span>
+        <div
+          class="glb-progress"
+          id="glb-progress"
+          role="progressbar"
+          aria-label="Cargando modelo 3D"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          aria-valuenow="0"
+          aria-hidden="true"
+        >
+          <div class="glb-progress__track">
+            <div class="glb-progress__bar"></div>
+          </div>
+          <span class="glb-progress__label" id="glb-progress-label">Cargando 0%</span>
+        </div>
       </div>
 
       <div class="hero__content">
@@ -946,9 +982,8 @@
         </div>
       </div>
     </section>
-  </main>
 
-  <section class="contact" id="contacto" aria-labelledby="contact-heading">
+    <section class="contact" id="contacto" aria-labelledby="contact-heading">
     <div class="contact__inner">
       <div class="contact__logo-watermark" aria-hidden="true">
         <img src="./assets/images/logo-watermark.svg" width="520" height="520" alt="" />
@@ -957,18 +992,63 @@
       <p class="contact__subtitle">Cuéntanos tu idea. Respondemos en menos de 24 horas.</p>
 
       <div class="contact__form-wrap">
-        <form id="contact-form" class="contact__grid">
+        <form id="contact-form" class="contact__grid" novalidate>
+          <!-- Web3Forms: reemplaza YOUR_WEB3FORMS_KEY por tu clave real (https://web3forms.com) -->
+          <input type="hidden" name="access_key" value="YOUR_WEB3FORMS_KEY" />
+          <input type="hidden" name="subject" value="Nuevo mensaje desde CODEVS IA" />
+          <input type="hidden" name="redirect" value="false" />
+          <input
+            type="checkbox"
+            name="botcheck"
+            class="contact__honeypot"
+            tabindex="-1"
+            autocomplete="off"
+            aria-hidden="true"
+          />
+
           <div class="contact__field">
             <label class="contact__label" for="contact-name">Nombre completo</label>
-            <input class="contact__control" id="contact-name" name="name" type="text" placeholder="Tu nombre" required />
+            <input
+              class="contact__control"
+              id="contact-name"
+              name="name"
+              type="text"
+              placeholder="Tu nombre"
+              autocomplete="name"
+              required
+              minlength="2"
+              aria-describedby="contact-name-error"
+              aria-invalid="false"
+            />
+            <p id="contact-name-error" class="contact__error-msg" role="alert" aria-live="polite"></p>
           </div>
+
           <div class="contact__field">
             <label class="contact__label" for="contact-email">Email</label>
-            <input class="contact__control" id="contact-email" name="email" type="email" placeholder="nombre@empresa.com" required />
+            <input
+              class="contact__control"
+              id="contact-email"
+              name="email"
+              type="email"
+              placeholder="nombre@empresa.com"
+              autocomplete="email"
+              required
+              aria-describedby="contact-email-error"
+              aria-invalid="false"
+            />
+            <p id="contact-email-error" class="contact__error-msg" role="alert" aria-live="polite"></p>
           </div>
+
           <div class="contact__field">
             <label class="contact__label" for="contact-type">Tipo de proyecto</label>
-            <select class="contact__control" id="contact-type" name="projectType" required>
+            <select
+              class="contact__control"
+              id="contact-type"
+              name="projectType"
+              required
+              aria-describedby="contact-type-error"
+              aria-invalid="false"
+            >
               <option value="">Selecciona una opción</option>
               <option>Web</option>
               <option>Móvil</option>
@@ -977,16 +1057,35 @@
               <option>Consultoría</option>
               <option>Otro</option>
             </select>
+            <p id="contact-type-error" class="contact__error-msg" role="alert" aria-live="polite"></p>
           </div>
+
           <div class="contact__field">
             <label class="contact__label" for="contact-message">Cuéntanos tu proyecto</label>
-            <textarea class="contact__control" id="contact-message" name="message" rows="4" placeholder="Objetivo, plazo y contexto" required></textarea>
+            <textarea
+              class="contact__control"
+              id="contact-message"
+              name="message"
+              rows="4"
+              placeholder="Objetivo, plazo y contexto"
+              required
+              minlength="10"
+              aria-describedby="contact-message-error"
+              aria-invalid="false"
+            ></textarea>
+            <p id="contact-message-error" class="contact__error-msg" role="alert" aria-live="polite"></p>
           </div>
+
           <div class="contact__actions">
-            <button class="contact__submit" type="submit">Enviar mensaje</button>
+            <button class="contact__submit" type="submit" id="contact-submit">
+              <span class="contact__submit-label">Enviar mensaje</span>
+            </button>
           </div>
         </form>
-        <p id="contact-success" class="contact__success">¡Mensaje enviado! Te contactamos pronto 🚀</p>
+        <p id="contact-success" class="contact__success" role="status" aria-live="polite">
+          ¡Mensaje enviado! Te contactamos pronto 🚀
+        </p>
+        <p id="contact-error" class="contact__error" role="alert" aria-live="assertive"></p>
 
         <div class="contact__info">
           <a href="mailto:hola@codevsia.dev">
@@ -1014,7 +1113,8 @@
         </div>
       </div>
     </div>
-  </section>
+    </section>
+  </main>
 
   <footer class="footer" id="site-footer">
     <div class="footer__inner">

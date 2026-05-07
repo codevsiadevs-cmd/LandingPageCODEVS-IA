@@ -1,5 +1,6 @@
 @media (max-width: 768px) {
   #bg-grid-canvas,
+  #bg-particles-canvas,
   .bg-scanlines {
     display: none;
   }

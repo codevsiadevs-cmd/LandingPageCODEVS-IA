@@ -1,5 +1,6 @@
 import * as THREE from "three";
 import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
 import { latestScrollY, sceneMotion, prefersReducedMotionGlobal, isMobileBg } from "./scroll.js";
 
 import {
@@ -14,6 +15,24 @@ import { drawNeuralNetwork, initNeuralBackground } from "./neural-background.js"
 
 const wrap = document.getElementById("hero-canvas-wrap");
 
+/**
+ * Cache del rect del wrap del cerebro: el wrap es position:fixed centrado, así
+ * que sólo cambia cuando el viewport cambia de tamaño. Lo refrescamos vía
+ * ResizeObserver (y resize) en lugar de leerlo cada frame.
+ */
+let wrapRect = wrap ? wrap.getBoundingClientRect() : null;
+
+function refreshWrapRect() {
+  if (!wrap) return;
+  wrapRect = wrap.getBoundingClientRect();
+}
+
+if (wrap && typeof ResizeObserver !== "undefined") {
+  const wrapResizeObserver = new ResizeObserver(refreshWrapRect);
+  wrapResizeObserver.observe(wrap);
+}
+window.addEventListener("resize", refreshWrapRect, { passive: true });
+
 let reducedOffscreen = null;
 
 export const scene = new THREE.Scene();
@@ -27,6 +46,15 @@ renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 1;
 wrap.appendChild(renderer.domElement);
+
+// WebGL context loss/restore: evita que el navegador “mate” la página al recuperar GPU.
+renderer.domElement.addEventListener("webglcontextlost", (event) => {
+  event.preventDefault();
+});
+renderer.domElement.addEventListener("webglcontextrestored", () => {
+  updateRendererSize();
+});
+
 updateBackgroundCanvasSize();
 initParticles();
 if (typeof OffscreenCanvas !== "undefined" && !isMobileBg) {
@@ -74,7 +102,10 @@ const cyanColor = new THREE.Color(0x0fffd4);
 const purpleColor = new THREE.Color(0x7b61ff);
 const pulseColor = new THREE.Color();
 
+let fallbackMesh = null;
+
 function addFallbackMesh() {
+  if (fallbackMesh) return;
   const geo = new THREE.IcosahedronGeometry(0.95, 1);
   const mat = new THREE.MeshStandardMaterial({
     color: 0x1a2235,
@@ -91,34 +122,106 @@ function addFallbackMesh() {
   );
   mesh.add(line);
   tiltGroup.add(mesh);
+  fallbackMesh = mesh;
+}
+
+function removeFallbackMesh() {
+  if (!fallbackMesh) return;
+  tiltGroup.remove(fallbackMesh);
+  fallbackMesh.traverse((node) => {
+    if (node.geometry?.dispose) node.geometry.dispose();
+    if (node.material) {
+      if (Array.isArray(node.material)) node.material.forEach((m) => m.dispose?.());
+      else node.material.dispose?.();
+    }
+  });
+  fallbackMesh = null;
 }
 
 const loader = new GLTFLoader();
-loader.load(
-  "./assets/3d/logo.glb",
-  (gltf) => {
-    const model = gltf.scene;
-    const box = new THREE.Box3().setFromObject(model);
-    const size = box.getSize(new THREE.Vector3());
-    const maxDim = Math.max(size.x, size.y, size.z) || 1;
-    const scale = 1.95 / maxDim;
-    model.scale.setScalar(scale);
-    box.setFromObject(model);
-    const center = box.getCenter(new THREE.Vector3());
-    model.position.sub(center);
-    tiltGroup.add(model);
-  },
-  undefined,
-  () => {
-    addFallbackMesh();
-  }
-);
+const dracoLoader = new DRACOLoader();
+dracoLoader.setDecoderPath("https://www.gstatic.com/draco/versioned/decoders/1.5.6/");
+loader.setDRACOLoader(dracoLoader);
+
+const progressEl = document.getElementById("glb-progress");
+const progressLabelEl = document.getElementById("glb-progress-label");
+
+function setGlbProgress(pct) {
+  if (!progressEl) return;
+  const value = Math.max(0, Math.min(100, pct));
+  const rounded = Math.round(value);
+  progressEl.style.setProperty("--glb-progress", `${value}%`);
+  progressEl.setAttribute("aria-valuenow", String(rounded));
+  progressEl.setAttribute("aria-hidden", "false");
+  progressEl.classList.add("glb-progress--visible");
+  if (progressLabelEl) progressLabelEl.textContent = `Cargando ${rounded}%`;
+}
+
+function hideGlbProgress() {
+  if (!progressEl) return;
+  progressEl.classList.remove("glb-progress--visible");
+  progressEl.setAttribute("aria-hidden", "true");
+}
+
+let glbLoadTriggered = false;
+
+function loadHeroModel() {
+  if (glbLoadTriggered) return;
+  glbLoadTriggered = true;
+  setGlbProgress(0);
+
+  loader.load(
+    "./assets/3d/logo.glb",
+    (gltf) => {
+      removeFallbackMesh();
+      const model = gltf.scene;
+      const box = new THREE.Box3().setFromObject(model);
+      const size = box.getSize(new THREE.Vector3());
+      const maxDim = Math.max(size.x, size.y, size.z) || 1;
+      const scale = 1.95 / maxDim;
+      model.scale.setScalar(scale);
+      box.setFromObject(model);
+      const center = box.getCenter(new THREE.Vector3());
+      model.position.sub(center);
+      tiltGroup.add(model);
+      setGlbProgress(100);
+      window.setTimeout(hideGlbProgress, 380);
+    },
+    (xhr) => {
+      if (xhr && xhr.total) {
+        setGlbProgress((xhr.loaded / xhr.total) * 100);
+      }
+    },
+    () => {
+      hideGlbProgress();
+    }
+  );
+}
+
+addFallbackMesh();
+
+if (wrap && typeof IntersectionObserver !== "undefined") {
+  const heroIo = new IntersectionObserver(
+    (entries, obs) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        loadHeroModel();
+        obs.disconnect();
+      });
+    },
+    { root: null, threshold: 0.05, rootMargin: "0px 0px 10% 0px" }
+  );
+  heroIo.observe(wrap);
+} else {
+  loadHeroModel();
+}
 
 let glowLevel = 0;
 
 function updateRendererSize() {
   if (!wrap || !renderer) return;
-  const size = Math.max(Math.round(wrap.getBoundingClientRect().width), 1);
+  refreshWrapRect();
+  const size = Math.max(Math.round(wrapRect ? wrapRect.width : wrap.clientWidth), 1);
   camera.aspect = 1;
   camera.updateProjectionMatrix();
   renderer.setSize(size, size, false);
@@ -132,7 +235,6 @@ function animate() {
   const t = clock.elapsedTime;
   const docMaxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
   const docProgress = Math.min(Math.max(latestScrollY / docMaxScroll, 0), 1);
-  const wrapRect = wrap ? wrap.getBoundingClientRect() : null;
   if (wrapRect) {
     syncBrainRectFromWrap(wrapRect);
   }

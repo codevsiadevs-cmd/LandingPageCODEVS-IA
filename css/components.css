@@ -15,6 +15,13 @@
 /* Red neuronal Codrops: DEBAJO de main (z-index 5), ENCIMA del vignette (oscurece bordes) */
 #bg-neural-canvas {
   z-index: 4;
+  will-change: transform;
+}
+
+/* Promueve el bloque del hero a su propia capa GPU para abaratar composiciones
+   (equivalente al .large-header del demo Codrops). */
+.hero {
+  will-change: transform;
 }
 
 .bg-nebula {
@@ -174,6 +181,42 @@
   transition: opacity 0.28s ease;
 }
 
+/*
+ * ::after = anillo de luz cyan que “sube” desde el borde inferior al superior.
+ * Truco: gradiente vertical recortado a un anillo de 1px usando dos máscaras
+ * con composite exclude (estándar) y xor (Safari).
+ */
+.services__card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  pointer-events: none;
+  z-index: 0;
+  background: linear-gradient(
+    0deg,
+    rgba(15, 255, 212, 0.85) 0%,
+    rgba(15, 255, 212, 0.5) 25%,
+    rgba(123, 97, 255, 0.45) 60%,
+    rgba(123, 97, 255, 0) 100%
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  opacity: 0;
+  transform: translateY(18%) scaleY(0.6);
+  transform-origin: bottom center;
+  transition:
+    opacity 0.35s ease,
+    transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
 .services__card--visible {
   animation: servicesCardReveal 0.72s var(--ease-out) var(--reveal-delay) forwards;
 }
@@ -183,12 +226,18 @@
   border-bottom-color: var(--accent-primary);
   box-shadow:
     0 12px 40px rgba(0, 0, 0, 0.28),
+    0 8px 32px rgba(0, 200, 255, 0.15),
     0 0 0 1px rgba(15, 255, 212, 0.08);
   transform: perspective(1000px) rotateX(var(--tilt-x)) rotateY(var(--tilt-y)) translateY(-2px) scale(1.03);
 }
 
 .services__card--visible:hover::before {
   opacity: 1;
+}
+
+.services__card--visible:hover::after {
+  opacity: 1;
+  transform: translateY(0) scaleY(1);
 }
 
 .services__card > * {
@@ -201,11 +250,20 @@
   height: 3rem;
   flex-shrink: 0;
   color: var(--accent-primary);
+  transition:
+    transform 0.2s ease-out,
+    filter 0.2s ease-out;
+  transform-origin: center;
 }
 
 .services__icon svg {
   width: 100%;
   height: 100%;
+}
+
+.services__card--visible:hover .services__icon {
+  transform: scale(1.15);
+  filter: brightness(1.3);
 }
 
 .services__card-name {
@@ -214,6 +272,7 @@
   font-size: 1.125rem;
   letter-spacing: -0.01em;
   color: var(--text-primary);
+  transition: transform 250ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .services__card-desc {
@@ -221,6 +280,28 @@
   color: var(--text-secondary);
   line-height: 1.6;
   flex-grow: 1;
+  transition: transform 250ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.services__card--visible:hover .services__card-name,
+.services__card--visible:hover .services__card-desc {
+  transform: translateY(-4px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .services__card * {
+    transition: none !important;
+  }
+  .services__card::before,
+  .services__card::after {
+    transition: none !important;
+  }
+  .services__card--visible:hover .services__icon,
+  .services__card--visible:hover .services__card-name,
+  .services__card--visible:hover .services__card-desc {
+    transform: none;
+    filter: none;
+  }
 }
 
 .services__tags {
@@ -1087,6 +1168,118 @@
 .contact__success--visible {
   opacity: 1;
   transform: translateY(0);
+}
+
+.contact__error {
+  margin-top: 0.95rem;
+  text-align: center;
+  color: #ff8a8a;
+  font-weight: 600;
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+.contact__error--visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.contact__error-msg {
+  font-size: 0.78rem;
+  color: #ff8a8a;
+  line-height: 1.35;
+  margin-top: 0.1rem;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: opacity 0.2s ease, max-height 0.25s ease;
+}
+
+.contact__error-msg--visible {
+  opacity: 1;
+  max-height: 3rem;
+}
+
+.contact__control[aria-invalid="true"] {
+  border-color: rgba(255, 138, 138, 0.55);
+  box-shadow: 0 0 0 3px rgba(255, 138, 138, 0.12);
+}
+
+.contact__submit:disabled,
+.contact__submit[aria-busy="true"] {
+  cursor: progress;
+  opacity: 0.7;
+  transform: none;
+  box-shadow: none;
+}
+
+.contact__submit:disabled::before,
+.contact__submit[aria-busy="true"]::before {
+  display: none;
+}
+
+.contact__honeypot {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ——— Progreso de carga del modelo 3D (logo.glb) ——— */
+.glb-progress {
+  position: absolute;
+  left: 50%;
+  bottom: 14%;
+  transform: translateX(-50%);
+  width: min(62%, 240px);
+  z-index: 3;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+.glb-progress--visible {
+  opacity: 1;
+}
+
+.glb-progress__track {
+  position: relative;
+  height: 2px;
+  background: rgba(15, 255, 212, 0.14);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.glb-progress__bar {
+  position: absolute;
+  inset: 0;
+  width: var(--glb-progress, 0%);
+  background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+  box-shadow: 0 0 12px rgba(15, 255, 212, 0.45);
+  transition: width 0.18s ease;
+}
+
+.glb-progress__label {
+  display: block;
+  margin-top: 0.4rem;
+  text-align: center;
+  font-family: var(--font-heading);
+  font-size: 0.65rem;
+  letter-spacing: 0.18em;
+  color: var(--accent-primary);
+  text-transform: uppercase;
+  opacity: 0.9;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .glb-progress,
+  .glb-progress__bar {
+    transition: none;
+  }
 }
 
 .contact__info {
