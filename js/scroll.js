@@ -1,5 +1,7 @@
 const nav = document.getElementById("site-nav");
 const navLinks = document.querySelectorAll('.nav__links a[href^="#"]');
+const navLinksContainer = document.querySelector(".nav__links");
+const navIndicator = document.querySelector(".nav-indicator");
 const heroDots = document.querySelector(".hero__bg-dots");
 const scrollProgress = document.getElementById("scroll-progress");
 
@@ -53,6 +55,8 @@ const SECTION_IDS = [
   "tecnologias",
   "proyectos",
   "proceso",
+  "nosotros",
+  "testimonios",
   "contacto",
 ];
 
@@ -82,9 +86,32 @@ if (typeof ResizeObserver !== "undefined") {
 window.addEventListener("load", recalcSectionRects);
 window.addEventListener("resize", recalcSectionRects, { passive: true });
 
+/**
+ * Posiciona la pildorita .nav-indicator debajo del link activo.
+ * Lee offsetLeft/offsetWidth (sin forzar reflow extra: ya estamos dentro del
+ * mismo frame que actualiza .nav__link--active) y aplica left/width inline.
+ */
+function updateNavIndicator() {
+  if (!navIndicator || !navLinksContainer) return;
+  const activeLink = navLinksContainer.querySelector("a.nav__link--active");
+  if (!activeLink) {
+    navIndicator.classList.remove("nav-indicator--active");
+    navIndicator.style.width = "0px";
+    return;
+  }
+  const left = activeLink.offsetLeft;
+  const width = activeLink.offsetWidth;
+  navIndicator.style.left = `${left}px`;
+  navIndicator.style.width = `${width}px`;
+  navIndicator.classList.add("nav-indicator--active");
+}
+
+window.addEventListener("resize", updateNavIndicator, { passive: true });
+window.addEventListener("load", updateNavIndicator);
+
 export function updateGlobalScrollEffects() {
   latestScrollY = window.scrollY;
-  nav.classList.toggle("nav--scrolled", latestScrollY > 80);
+  nav.classList.toggle("nav--scrolled", latestScrollY > 50);
   sharedScrollVelocity = latestScrollY - previousScrollY;
 
   if (!prefersReducedMotionGlobal) {
@@ -99,17 +126,41 @@ export function updateGlobalScrollEffects() {
   }
   previousScrollY = latestScrollY;
 
+  /*
+   * Detección robusta de la sección activa.
+   *
+   * Antes usábamos un test de “sección que cruza el tercio superior”, que
+   * fallaba para las secciones cortas del final (#nosotros, #testimonios,
+   * #contacto): cuando alguna no llegaba a tapar el threshold, la barra se
+   * quedaba mostrando #proceso. Ahora elegimos la sección con mayor área
+   * visible dentro del viewport y forzamos #contacto cuando el usuario llega
+   * al fondo del documento (margen de 80px), para que la última sección
+   * siempre quede marcada aunque mida menos que la ventana.
+   *
+   * Trabajamos con `sectionRects` (offsetTop/Height en coords de documento)
+   * para no provocar reflows extra: traducimos a coords de viewport restando
+   * `latestScrollY`.
+   */
   let currentSection = "inicio";
   const vh = window.innerHeight;
-  for (let i = 0; i < sectionRects.length; i += 1) {
-    const r = sectionRects[i];
-    const vpTop = r.top - latestScrollY;
-    const vpBottom = r.bottom - latestScrollY;
-    if (vpTop <= vh * 0.45 && vpBottom >= vh * 0.35) {
-      currentSection = r.id;
-      break;
+  const isNearDocumentBottom = latestScrollY >= cachedDocMaxScroll - 80;
+
+  if (isNearDocumentBottom) {
+    currentSection = "contacto";
+  } else {
+    let maxVisibility = 0;
+    for (let i = 0; i < sectionRects.length; i += 1) {
+      const r = sectionRects[i];
+      const visibleTop = Math.max(0, r.top - latestScrollY);
+      const visibleBottom = Math.min(vh, r.bottom - latestScrollY);
+      const visibleHeight = Math.max(0, visibleBottom - visibleTop);
+      if (visibleHeight > maxVisibility) {
+        maxVisibility = visibleHeight;
+        currentSection = r.id;
+      }
     }
   }
+
   if (document.body.dataset.section !== currentSection) {
     document.body.dataset.section = currentSection;
   }
@@ -129,6 +180,7 @@ export function updateGlobalScrollEffects() {
       const id = link.getAttribute("href")?.slice(1);
       link.classList.toggle("nav__link--active", id === currentSection);
     });
+    updateNavIndicator();
   }
 }
 

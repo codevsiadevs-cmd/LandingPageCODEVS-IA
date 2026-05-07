@@ -990,20 +990,41 @@
   line-height: 1.6;
 }
 
+/* Color del cursor por sección. Lo expone como CSS variable que reutilizan
+   el cursor principal, los puntos de trail y las partículas del burst. */
+body { --cursor-color: #00d4ff; }
+body[data-section="inicio"]      { --cursor-color: #00d4ff; }
+body[data-section="servicios"]   { --cursor-color: #7c3aed; }
+body[data-section="tecnologias"] { --cursor-color: #06b6d4; }
+body[data-section="proyectos"]   { --cursor-color: #f59e0b; }
+body[data-section="proceso"]     { --cursor-color: #10b981; }
+body[data-section="nosotros"]    { --cursor-color: #3b82f6; }
+body[data-section="testimonios"] { --cursor-color: #ec4899; }
+body[data-section="contacto"]    { --cursor-color: #00d4ff; }
+
 .custom-cursor {
+  --cursor-x: 0px;
+  --cursor-y: 0px;
+  --cursor-scale: 1;
   position: fixed;
   top: 0;
   left: 0;
   width: 16px;
   height: 16px;
-  border: 1.5px solid var(--accent-primary);
+  border: 1.5px solid var(--cursor-color, var(--accent-primary));
   border-radius: 50%;
   pointer-events: none;
   z-index: 220;
   opacity: 0;
-  transform: translate(-50%, -50%);
-  transition: width 0.25s var(--ease-out), height 0.25s var(--ease-out), border-color 0.25s ease, background 0.25s ease, opacity 0.25s ease;
+  transform: translate(var(--cursor-x), var(--cursor-y)) translate(-50%, -50%) scale(var(--cursor-scale));
+  transition:
+    background-color 300ms ease,
+    border-color 300ms ease,
+    opacity 250ms ease,
+    mix-blend-mode 0s,
+    transform 0s;
   background: rgba(15, 255, 212, 0);
+  will-change: transform, background-color, border-color;
 }
 
 .custom-cursor--visible {
@@ -1011,10 +1032,74 @@
 }
 
 .custom-cursor--active {
-  width: 32px;
-  height: 32px;
-  background: rgba(15, 255, 212, 0.18);
-  border-color: rgba(15, 255, 212, 0.8);
+  --cursor-scale: 2.5;
+  background: var(--cursor-color, rgba(15, 255, 212, 0.2));
+  border-color: var(--cursor-color, rgba(15, 255, 212, 0.8));
+  mix-blend-mode: difference;
+}
+
+/* Trail dots: 8 puntos siguiendo al cursor con retraso creciente.
+   La posición la setea JS en --tx/--ty cada frame; el color es la variable
+   global --cursor-color con transición suave entre secciones. */
+.cursor-trail {
+  --tx: 0px;
+  --ty: 0px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--trail-size, 4px);
+  height: var(--trail-size, 4px);
+  border-radius: 50%;
+  background: var(--cursor-color, var(--accent-primary));
+  pointer-events: none;
+  z-index: 219;
+  opacity: 0;
+  transform: translate(var(--tx), var(--ty)) translate(-50%, -50%);
+  transition: background-color 300ms ease, opacity 250ms ease;
+  will-change: transform, opacity;
+  box-shadow: 0 0 8px var(--cursor-color, rgba(15, 255, 212, 0.6));
+}
+
+.cursor-trail--visible {
+  opacity: var(--trail-opacity, 0.7);
+}
+
+/* Partículas del click-burst (4 por click). Se generan en JS, animan vía CSS
+   y se eliminan tras 400ms. */
+.cursor-burst-particle {
+  --burst-dx: 0px;
+  --burst-dy: 0px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--cursor-color, var(--accent-primary));
+  box-shadow: 0 0 8px var(--cursor-color, rgba(15, 255, 212, 0.7));
+  pointer-events: none;
+  z-index: 219;
+  will-change: transform, opacity;
+  animation: cursorBurst 400ms ease-out forwards;
+}
+
+@keyframes cursorBurst {
+  0% {
+    transform: translate(var(--burst-x, 0px), var(--burst-y, 0px)) translate(-50%, -50%) translate(0, 0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--burst-x, 0px), var(--burst-y, 0px)) translate(-50%, -50%)
+      translate(var(--burst-dx), var(--burst-dy)) scale(0.4);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cursor-trail,
+  .cursor-burst-particle {
+    display: none !important;
+  }
 }
 
 .contact__inner {
@@ -1793,6 +1878,99 @@ textarea.contact__control:not(:placeholder-shown) ~ .contact__label {
   }
   .project-card,
   .project-card--inview {
+    transition: none !important;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Navbar enhancements (scroll-triggered glass + border draw + active indicator
+ *   + hover underline). Las reglas base de .nav / .nav--scrolled / .nav__links
+ *   viven en layout.css; aquí sólo añadimos los efectos y pseudo-elementos.
+ * --------------------------------------------------------------------------- */
+
+/* Línea decorativa que se "dibuja" left → right cuando aparece la barra glass. */
+.nav::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  height: 1px;
+  width: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--accent-primary) 28%,
+    var(--accent-secondary) 72%,
+    transparent 100%
+  );
+  pointer-events: none;
+  transition: width 600ms ease-out;
+  box-shadow: 0 0 12px rgba(15, 255, 212, 0.45);
+  opacity: 0;
+}
+
+.nav--scrolled::after {
+  width: 100%;
+  opacity: 1;
+}
+
+/* Indicador deslizante que sigue al link activo. JS (scroll.js) actualiza sus
+   estilos inline `left` y `width` al cambiar la sección activa. */
+.nav-indicator {
+  position: absolute;
+  left: 0;
+  bottom: 0.22rem;
+  height: 2px;
+  width: 0;
+  border-radius: 1px;
+  background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+  box-shadow: 0 0 10px rgba(15, 255, 212, 0.6);
+  pointer-events: none;
+  opacity: 0;
+  transform: translateZ(0);
+  transition:
+    left 300ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    width 300ms ease,
+    opacity 200ms ease;
+}
+
+.nav-indicator--active {
+  opacity: 1;
+}
+
+/* Underline expandiéndose desde el centro al hacer hover sobre cada link. */
+.nav__links a::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 0.18rem;
+  width: calc(100% - 1.6rem);
+  height: 1.5px;
+  background: var(--accent-primary);
+  border-radius: 1px;
+  transform: translateX(-50%) scaleX(0);
+  transform-origin: center;
+  transition: transform 200ms ease;
+  pointer-events: none;
+  opacity: 0.95;
+}
+
+.nav__links a:hover::after,
+.nav__links a:focus-visible::after {
+  transform: translateX(-50%) scaleX(1);
+}
+
+/* En el link activo el indicator deslizante ya marca la posición — evitamos
+   duplicar la línea bajo el texto. */
+.nav__links a.nav__link--active::after {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav,
+  .nav::after,
+  .nav-indicator,
+  .nav__links a::after {
     transition: none !important;
   }
 }
