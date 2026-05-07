@@ -61,3 +61,36 @@ if (!prefersReducedMotionGlobal) {
     });
   });
 }
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ * Submit button ripple
+ * Crea un <span class="contact__ripple"> en el punto del click y lo elimina
+ * cuando termina la animación CSS. Si el usuario activa con teclado (sin
+ * coords), se centra el ripple. Respeta prefers-reduced-motion.
+ * ─────────────────────────────────────────────────────────────────────────── */
+const contactSubmitBtn = document.querySelector(".contact__submit");
+if (contactSubmitBtn) {
+  contactSubmitBtn.addEventListener("click", (event) => {
+    if (contactSubmitBtn.disabled) return;
+    if (prefersReducedMotionGlobal) return;
+
+    const rect = contactSubmitBtn.getBoundingClientRect();
+    let x = event.clientX - rect.left;
+    let y = event.clientY - rect.top;
+    const isKeyboardActivation = event.detail === 0 || (event.clientX === 0 && event.clientY === 0);
+    if (isKeyboardActivation) {
+      x = rect.width / 2;
+      y = rect.height / 2;
+    }
+
+    const ripple = document.createElement("span");
+    ripple.className = "contact__ripple";
+    ripple.style.left = `${x}px`;
+    ripple.style.top = `${y}px`;
+    contactSubmitBtn.appendChild(ripple);
+
+    const cleanup = () => ripple.remove();
+    ripple.addEventListener("animationend", cleanup, { once: true });
+    setTimeout(cleanup, 700);
+  });
+}

@@ -1007,40 +1007,39 @@
           />
 
           <div class="contact__field">
-            <label class="contact__label" for="contact-name">Nombre completo</label>
             <input
               class="contact__control"
               id="contact-name"
               name="name"
               type="text"
-              placeholder="Tu nombre"
+              placeholder=" "
               autocomplete="name"
               required
               minlength="2"
               aria-describedby="contact-name-error"
               aria-invalid="false"
             />
+            <label class="contact__label" for="contact-name">Nombre completo</label>
             <p id="contact-name-error" class="contact__error-msg" role="alert" aria-live="polite"></p>
           </div>
 
           <div class="contact__field">
-            <label class="contact__label" for="contact-email">Email</label>
             <input
               class="contact__control"
               id="contact-email"
               name="email"
               type="email"
-              placeholder="nombre@empresa.com"
+              placeholder=" "
               autocomplete="email"
               required
               aria-describedby="contact-email-error"
               aria-invalid="false"
             />
+            <label class="contact__label" for="contact-email">Email</label>
             <p id="contact-email-error" class="contact__error-msg" role="alert" aria-live="polite"></p>
           </div>
 
-          <div class="contact__field">
-            <label class="contact__label" for="contact-type">Tipo de proyecto</label>
+          <div class="contact__field contact__field--select">
             <select
               class="contact__control"
               id="contact-type"
@@ -1049,7 +1048,7 @@
               aria-describedby="contact-type-error"
               aria-invalid="false"
             >
-              <option value="">Selecciona una opción</option>
+              <option value="" disabled selected hidden></option>
               <option>Web</option>
               <option>Móvil</option>
               <option>IA</option>
@@ -1057,22 +1056,23 @@
               <option>Consultoría</option>
               <option>Otro</option>
             </select>
+            <label class="contact__label" for="contact-type">Tipo de proyecto</label>
             <p id="contact-type-error" class="contact__error-msg" role="alert" aria-live="polite"></p>
           </div>
 
-          <div class="contact__field">
-            <label class="contact__label" for="contact-message">Cuéntanos tu proyecto</label>
+          <div class="contact__field contact__field--textarea">
             <textarea
               class="contact__control"
               id="contact-message"
               name="message"
               rows="4"
-              placeholder="Objetivo, plazo y contexto"
+              placeholder=" "
               required
               minlength="10"
               aria-describedby="contact-message-error"
               aria-invalid="false"
             ></textarea>
+            <label class="contact__label" for="contact-message">Cuéntanos tu proyecto</label>
             <p id="contact-message-error" class="contact__error-msg" role="alert" aria-live="polite"></p>
           </div>
 
@@ -1083,7 +1083,11 @@
           </div>
         </form>
         <p id="contact-success" class="contact__success" role="status" aria-live="polite">
-          ¡Mensaje enviado! Te contactamos pronto 🚀
+          <svg class="contact__success-check" viewBox="0 0 52 52" aria-hidden="true">
+            <circle class="contact__success-check-circle" cx="26" cy="26" r="22" fill="none" stroke-width="3" />
+            <path class="contact__success-check-mark" d="M14 27l8 8 16-18" fill="none" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+          <span class="contact__success-text">¡Mensaje enviado! Te contactamos pronto 🚀</span>
         </p>
         <p id="contact-error" class="contact__error" role="alert" aria-live="assertive"></p>
 

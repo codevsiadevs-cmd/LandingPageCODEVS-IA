@@ -2,6 +2,7 @@ const form = document.getElementById("contact-form");
 const successEl = document.getElementById("contact-success");
 const errorEl = document.getElementById("contact-error");
 const submitBtn = document.getElementById("contact-submit");
+const formWrap = form ? form.closest(".contact__form-wrap") : null;
 
 if (form && successEl && errorEl && submitBtn) {
   const labelEl = submitBtn.querySelector(".contact__submit-label");
@@ -73,6 +74,10 @@ if (form && successEl && errorEl && submitBtn) {
     if (errorTimer) window.clearTimeout(errorTimer);
     errorEl.classList.remove("contact__error--visible");
     successEl.classList.add("contact__success--visible");
+    if (formWrap) {
+      formWrap.classList.add("is-success");
+      window.setTimeout(() => formWrap.classList.remove("is-success"), 700);
+    }
     if (successTimer) window.clearTimeout(successTimer);
     successTimer = window.setTimeout(() => {
       successEl.classList.remove("contact__success--visible");

@@ -1,97 +1,237 @@
-const servicesSection = document.getElementById("servicios");
-const serviceCards = document.querySelectorAll(".services__card");
-if (servicesSection && serviceCards.length) {
-  const revealObserver = new IntersectionObserver(
-    (entries, obs) => {
+import { prefersReducedMotionGlobal } from "./scroll.js";
+
+/**
+ * Helper: observe an element once with IntersectionObserver, then unobserve.
+ */
+function observeOnce(target, onEnter, options = {}) {
+  if (!target) return;
+  const obs = new IntersectionObserver(
+    (entries, o) => {
       entries.forEach((entry) => {
         if (!entry.isIntersecting) return;
-        serviceCards.forEach((card) => card.classList.add("services__card--visible"));
-        obs.unobserve(entry.target);
+        onEnter(entry);
+        o.unobserve(entry.target);
       });
     },
-    { root: null, rootMargin: "0px 0px -8% 0px", threshold: 0.12 }
+    { root: null, rootMargin: "0px 0px -8% 0px", threshold: 0.12, ...options }
   );
-  revealObserver.observe(servicesSection);
+  obs.observe(target);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ * #servicios — cards staggered from bottom (80ms per card)
+ * Reuses the existing servicesCardReveal keyframe (already supports
+ * --reveal-delay) and the .services__card--visible trigger class.
+ * ─────────────────────────────────────────────────────────────────────────── */
+{
+  const sec = document.getElementById("servicios");
+  const cards = sec ? sec.querySelectorAll(".services__card") : [];
+  if (sec && cards.length) {
+    cards.forEach((card, i) => {
+      const delay = prefersReducedMotionGlobal ? 0 : i * 80;
+      card.style.setProperty("--reveal-delay", `${delay}ms`);
+    });
+    observeOnce(sec, () => {
+      cards.forEach((c) => c.classList.add("services__card--visible"));
+    });
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ * #tecnologias — tech badges cascade left → right (20ms per badge).
+ * El marquee infinito vive en el track padre; aquí solo animamos cada badge
+ * desde translateX(-20px) opacity:0 a su estado normal una sola vez.
+ * ─────────────────────────────────────────────────────────────────────────── */
+{
+  const sec = document.getElementById("tecnologias");
+  const badges = sec ? sec.querySelectorAll(".tech-badge") : [];
+  if (sec && badges.length) {
+    badges.forEach((b, i) => {
+      const delay = prefersReducedMotionGlobal ? 0 : i * 20;
+      b.style.setProperty("--cascade-delay", `${delay}ms`);
+    });
+    observeOnce(
+      sec,
+      () => {
+        sec.classList.add("tech--cascading");
+      },
+      { rootMargin: "0px 0px -10% 0px", threshold: 0.1 }
+    );
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ * #proyectos — fade in from sides with 120ms stagger.
+ * Odd → translateX(-30px), Even → translateX(30px). Implementado vía CSS
+ * variable --reveal-x que se compone con la transformación final del fan-stage
+ * (translateX(-50%) ...) sin romper el layout.
+ * ─────────────────────────────────────────────────────────────────────────── */
+{
+  const sec = document.getElementById("proyectos");
+  const cards = sec ? sec.querySelectorAll(".project-card") : [];
+  if (sec && cards.length) {
+    cards.forEach((c, i) => {
+      const delay = prefersReducedMotionGlobal ? 0 : i * 120;
+      c.style.setProperty("--reveal-delay", `${delay}ms`);
+      const offset = prefersReducedMotionGlobal ? "0px" : i % 2 === 0 ? "-30px" : "30px";
+      c.style.setProperty("--reveal-x", offset);
+    });
+    observeOnce(
+      sec,
+      () => {
+        cards.forEach((c) => c.classList.add("project-card--inview"));
+      },
+      { rootMargin: "0px 0px -8% 0px", threshold: 0.06 }
+    );
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ * #proceso — typewriter-style left border per step (scaleY 0 → 1, top origin).
+ * Stagger 120ms por paso. La línea decorativa global (proceso-line-svg) y los
+ * dots iluminados se manejan más abajo (lógica preexistente).
+ * ─────────────────────────────────────────────────────────────────────────── */
+{
+  const sec = document.getElementById("proceso");
+  const steps = sec ? sec.querySelectorAll(".proceso-step") : [];
+  if (sec && steps.length) {
+    steps.forEach((s, i) => {
+      const delay = prefersReducedMotionGlobal ? 0 : i * 120;
+      s.style.setProperty("--reveal-delay", `${delay}ms`);
+    });
+    observeOnce(
+      sec,
+      () => {
+        steps.forEach((s) => s.classList.add("proceso-step--inview"));
+      },
+      { rootMargin: "0px 0px -10% 0px", threshold: 0.1 }
+    );
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ * Stats count-up con requestAnimationFrame (1200ms, easeOutCubic).
+ * Reemplaza al setInterval anterior. Se aplica a:
+ *   • .tech-metric__value (sección #tecnologias / #tech-metrics)
+ *   • cualquier [data-target] dentro de #nosotros (futuro-friendly)
+ * ─────────────────────────────────────────────────────────────────────────── */
+function countUpRAF(el, duration = 1200) {
+  const target = Number(el.dataset.target);
+  if (!Number.isFinite(target)) return;
+  const prefix = el.dataset.prefix ?? "";
+  const suffix = el.dataset.suffix ?? "";
+  const start = performance.now();
+  const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
+  function frame(now) {
+    const t = Math.min(1, (now - start) / duration);
+    const v = target * easeOutCubic(t);
+    el.textContent = prefix + Math.round(v) + suffix;
+    if (t < 1) requestAnimationFrame(frame);
+    else el.textContent = prefix + target + suffix;
+  }
+  requestAnimationFrame(frame);
+}
+
+function setStaticValues(els) {
+  els.forEach((el) => {
+    const prefix = el.dataset.prefix ?? "";
+    const suffix = el.dataset.suffix ?? "";
+    el.textContent = prefix + el.dataset.target + suffix;
+  });
 }
 
 const techMetricsBlock = document.getElementById("tech-metrics");
-const techMetricEls = document.querySelectorAll(".tech-metric");
-const techValueEls = techMetricsBlock
-  ? techMetricsBlock.querySelectorAll(".tech-metric__value")
-  : [];
-
-function runCounterWithInterval(el) {
-  const target = Number(el.dataset.target);
-  if (Number.isNaN(target)) return;
-  const prefix = el.dataset.prefix ?? "";
-  const suffix = el.dataset.suffix ?? "";
-  const duration = 1700;
-  const steps = 48;
-  const stepMs = Math.max(16, Math.floor(duration / steps));
-  let current = 0;
-  const increment = target / steps;
-  const id = setInterval(() => {
-    current += increment;
-    if (current >= target) {
-      current = target;
-      clearInterval(id);
-    }
-    el.textContent = prefix + Math.round(current) + suffix;
-  }, stepMs);
-}
+const techMetricEls = techMetricsBlock ? techMetricsBlock.querySelectorAll(".tech-metric") : [];
+const techValueEls = techMetricsBlock ? techMetricsBlock.querySelectorAll(".tech-metric__value") : [];
 
 if (techMetricsBlock && techMetricEls.length && techValueEls.length) {
-  let techMetricsActivated = false;
-  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-
-  const activateTechMetrics = () => {
-    techMetricEls.forEach((node) => node.classList.add("tech-metric--visible"));
-    if (prefersReducedMotion) {
-      techValueEls.forEach((el) => {
-        const prefix = el.dataset.prefix ?? "";
-        const suffix = el.dataset.suffix ?? "";
-        el.textContent = prefix + el.dataset.target + suffix;
-      });
+  let activated = false;
+  const activate = () => {
+    techMetricEls.forEach((n) => n.classList.add("tech-metric--visible"));
+    if (prefersReducedMotionGlobal) {
+      setStaticValues(techValueEls);
     } else {
-      techValueEls.forEach((el) => runCounterWithInterval(el));
+      techValueEls.forEach((el) => countUpRAF(el, 1200));
     }
   };
-
-  const techMetricsObserver = new IntersectionObserver(
-    (entries, obs) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting || techMetricsActivated) return;
-        techMetricsActivated = true;
-        activateTechMetrics();
-        obs.unobserve(entry.target);
+  const obs = new IntersectionObserver(
+    (entries, o) => {
+      entries.forEach((e) => {
+        if (!e.isIntersecting || activated) return;
+        activated = true;
+        activate();
+        o.unobserve(e.target);
       });
     },
     { root: null, rootMargin: "0px 0px -10% 0px", threshold: 0.18 }
   );
-  techMetricsObserver.observe(techMetricsBlock);
+  obs.observe(techMetricsBlock);
 }
 
-const projectsSection = document.getElementById("proyectos");
-const projectCards = projectsSection
-  ? projectsSection.querySelectorAll(".project-card")
-  : [];
-if (projectsSection && projectCards.length) {
-  const projectsReveal = new IntersectionObserver(
-    (entries, obs) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
-        projectCards.forEach((card) => card.classList.add("project-card--inview"));
-        obs.unobserve(entry.target);
-      });
-    },
-    { root: null, rootMargin: "0px 0px -8% 0px", threshold: 0.06 }
+/* ─────────────────────────────────────────────────────────────────────────────
+ * #nosotros — visibilidad + count-up de cualquier [data-target] que se añada
+ * en el futuro. Hoy la sección no tiene contadores, pero el observer queda
+ * cableado para no requerir cambios cuando se incorporen.
+ * ─────────────────────────────────────────────────────────────────────────── */
+const whySection = document.getElementById("nosotros");
+if (whySection) {
+  const whyStats = whySection.querySelectorAll("[data-target]");
+  if (whyStats.length) {
+    let done = false;
+    const obs = new IntersectionObserver(
+      (entries, o) => {
+        entries.forEach((e) => {
+          if (!e.isIntersecting || done) return;
+          done = true;
+          if (prefersReducedMotionGlobal) {
+            setStaticValues(whyStats);
+          } else {
+            whyStats.forEach((el) => countUpRAF(el, 1200));
+          }
+          o.unobserve(e.target);
+        });
+      },
+      { root: null, rootMargin: "0px 0px -10% 0px", threshold: 0.15 }
+    );
+    obs.observe(whySection);
+  }
+  observeOnce(
+    whySection,
+    () => whySection.classList.add("why--visible"),
+    { rootMargin: "0px 0px -12% 0px", threshold: 0.12 }
   );
-  projectsReveal.observe(projectsSection);
 }
 
+/* ─────────────────────────────────────────────────────────────────────────────
+ * #testimonios — flip 3D sutil (rotateX 8deg → 0). El contenedor
+ * .testimonials__grid lleva perspective: 800px (definido en layout.css).
+ * Stagger 100ms por tarjeta para suavizar la entrada en cascada.
+ * ─────────────────────────────────────────────────────────────────────────── */
+{
+  const sec = document.getElementById("testimonios");
+  const cards = sec ? sec.querySelectorAll(".testimonial-card") : [];
+  if (sec && cards.length) {
+    cards.forEach((c, i) => {
+      const delay = prefersReducedMotionGlobal ? 0 : i * 100;
+      c.style.setProperty("--reveal-delay", `${delay}ms`);
+    });
+    observeOnce(
+      sec,
+      () => {
+        cards.forEach((c) => c.classList.add("testimonial-card--visible"));
+      },
+      { rootMargin: "0px 0px -10% 0px", threshold: 0.1 }
+    );
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+ * Lógica preexistente del proceso (línea decorativa global + dots iluminados).
+ * Se mantiene tal cual para no perder el comportamiento por scroll en
+ * navegadores sin soporte de view-timeline.
+ * ─────────────────────────────────────────────────────────────────────────── */
 const procesoSection = document.getElementById("proceso");
 const procesoSteps = procesoSection ? procesoSection.querySelectorAll(".proceso-step") : [];
-const prefersReducedMotionProceso = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 if (procesoSection) {
   const supportsViewTimeline =
@@ -99,7 +239,7 @@ if (procesoSection) {
     typeof CSS.supports === "function" &&
     CSS.supports("view-timeline-name", "--proceso-line");
 
-  if (!supportsViewTimeline && !prefersReducedMotionProceso) {
+  if (!supportsViewTimeline && !prefersReducedMotionGlobal) {
     procesoSection.classList.add("proceso--line-fallback");
     function updateProcesoLineProgress() {
       const r = procesoSection.getBoundingClientRect();
@@ -115,7 +255,7 @@ if (procesoSection) {
   }
 }
 
-if (procesoSection && procesoSteps.length && !prefersReducedMotionProceso) {
+if (procesoSection && procesoSteps.length && !prefersReducedMotionGlobal) {
   const ioThresholds = [0.12, 0.17, 0.22, 0.28, 0.34, 0.4];
 
   function recalcProcesoStepsLit() {
@@ -143,54 +283,18 @@ if (procesoSection && procesoSteps.length && !prefersReducedMotionProceso) {
   });
   window.addEventListener("scroll", recalcProcesoStepsLit, { passive: true });
   recalcProcesoStepsLit();
-} else if (procesoSection && procesoSteps.length && prefersReducedMotionProceso) {
+} else if (procesoSection && procesoSteps.length && prefersReducedMotionGlobal) {
   procesoSteps.forEach((s) => s.classList.add("proceso-step--lit"));
 }
 
-const whySection = document.getElementById("nosotros");
-if (whySection) {
-  const whyReveal = new IntersectionObserver(
-    (entries, obs) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
-        whySection.classList.add("why--visible");
-        obs.unobserve(entry.target);
-      });
-    },
-    { root: null, rootMargin: "0px 0px -12% 0px", threshold: 0.12 }
-  );
-  whyReveal.observe(whySection);
-}
-
-const testimonialsSection = document.getElementById("testimonios");
-const testimonialCards = testimonialsSection
-  ? testimonialsSection.querySelectorAll(".testimonial-card")
-  : [];
-if (testimonialsSection && testimonialCards.length) {
-  const testimonialsReveal = new IntersectionObserver(
-    (entries, obs) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
-        testimonialCards.forEach((card) => card.classList.add("testimonial-card--visible"));
-        obs.unobserve(entry.target);
-      });
-    },
-    { root: null, rootMargin: "0px 0px -10% 0px", threshold: 0.1 }
-  );
-  testimonialsReveal.observe(testimonialsSection);
-}
-
+/* ─────────────────────────────────────────────────────────────────────────────
+ * Footer reveal (sin cambios).
+ * ─────────────────────────────────────────────────────────────────────────── */
 const footer = document.getElementById("site-footer");
 if (footer) {
-  const footerObserver = new IntersectionObserver(
-    (entries, obs) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
-        footer.classList.add("footer--visible");
-        obs.unobserve(entry.target);
-      });
-    },
-    { root: null, rootMargin: "0px 0px -5% 0px", threshold: 0.1 }
+  observeOnce(
+    footer,
+    () => footer.classList.add("footer--visible"),
+    { rootMargin: "0px 0px -5% 0px", threshold: 0.1 }
   );
-  footerObserver.observe(footer);
 }

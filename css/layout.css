@@ -751,6 +751,8 @@
   scroll-padding: 0 1rem;
   padding-bottom: 0.5rem;
   -webkit-overflow-scrolling: touch;
+  perspective: 800px;
+  perspective-origin: center top;
 }
 
 .testimonials__grid::-webkit-scrollbar {

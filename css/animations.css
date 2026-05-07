@@ -49,7 +49,7 @@
 @keyframes servicesCardReveal {
   from {
     opacity: 0;
-    transform: translateY(30px) scale(1);
+    transform: translateY(40px) scale(1);
   }
   to {
     opacity: 1;
