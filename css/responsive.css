@@ -99,46 +99,85 @@
   }
 }
 
+/* Fan deck en prefers-reduced-motion: cards visibles, sin transitions ni
+ * abanico (todas en posición center, apiladas). Lo mínimo para no animar. */
 @media (prefers-reduced-motion: reduce) {
-  .project-card {
-    transform: translateY(16px);
+  .fan-card,
+  .fan-card--revealed {
+    opacity: 1 !important;
+    transition: none !important;
   }
-  .project-card--inview {
-    transform: translateY(0);
+  .fan-card.fan-card--revealed,
+  .fan-card.fan-card--revealed.fan-card--center,
+  .fan-card.fan-card--revealed.fan-card--near-left,
+  .fan-card.fan-card--revealed.fan-card--near-right,
+  .fan-card.fan-card--revealed.fan-card--far-left,
+  .fan-card.fan-card--revealed.fan-card--far-right,
+  .fan-card.fan-card--revealed.fan-card--far-left-2,
+  .fan-card.fan-card--revealed.fan-card--far-right-2 {
+    transform: translateX(-50%) translateY(0) rotate(0deg) scale(1) !important;
   }
   .project-card--filtered-out {
-    transform: translateY(8px) scale(0.98) !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+  }
+}
+
+/* MOBILE (max-width: 767px): el abanico se sustituye por una tira
+ * horizontal con scroll-snap. JS (projects-fan.js) sigue corriendo pero
+ * los transforms de las clases de posición se neutralizan; las cards
+ * fluyen en row scrollable con flex y snap-align center. */
+@media (max-width: 767px) {
+  .projects__fan-wrap {
+    min-height: auto;
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: visible;
+    scrollbar-width: none;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    padding: 0.5rem 0 1.5rem;
+  }
+  .projects__fan-wrap::-webkit-scrollbar {
+    display: none;
   }
 
-  .projects__fan-stage .project-card {
-    transform: translateX(-50%) translateY(1rem) scale(0.92);
+  .projects__fan-deck {
+    display: flex !important;
+    flex-direction: row !important;
+    gap: 1rem;
+    padding: 0.5rem 1.25rem;
+    width: max-content;
+    height: auto !important;
+    position: relative !important;
   }
 
-  .projects__fan-stage .project-card--inview {
-    transition-duration: 0.01ms !important;
-  }
-
-  .projects__fan-stage .project-card--inview[data-fan-active="true"] {
-    transform: translateX(-50%) rotate(0deg) scale(1) !important;
+  .fan-card,
+  .fan-card.fan-card--revealed,
+  .fan-card.fan-card--revealed.fan-card--center,
+  .fan-card.fan-card--revealed.fan-card--near-left,
+  .fan-card.fan-card--revealed.fan-card--near-right,
+  .fan-card.fan-card--revealed.fan-card--far-left,
+  .fan-card.fan-card--revealed.fan-card--far-right,
+  .fan-card.fan-card--revealed.fan-card--far-left-2,
+  .fan-card.fan-card--revealed.fan-card--far-right-2 {
+    position: relative !important;
+    left: auto !important;
+    top: auto !important;
+    transform: none !important;
+    width: 17rem !important;
+    height: 22.5rem !important;
+    flex-shrink: 0;
+    scroll-snap-align: center;
     opacity: 1 !important;
-    filter: none !important;
-    visibility: visible !important;
+    box-shadow: 0 14px 36px rgba(0, 0, 0, 0.42) !important;
   }
 
-  .projects__fan-stage .project-card--inview[data-fan-active="false"] {
-    opacity: 0.42 !important;
-    filter: none !important;
-  }
-
-  .projects__fan-stage .project-card--inview:hover,
-  .projects__fan-stage .project-card--inview:focus-within {
-    opacity: 1 !important;
-    filter: brightness(1.05) !important;
-    transform: translateX(-50%) translateY(-0.35rem) scale(1.03) !important;
-  }
-
-  .projects__fan-stage .project-card--filtered-out {
-    transform: translateX(-50%) translateY(0.85rem) scale(0.92) !important;
+  /* Hover: en mobile no hay hover real; deshacemos el dim de las hermanas
+   * (porque :hover puede dispararse al tap brevemente). */
+  .projects__fan-deck:hover .fan-card--revealed {
+    opacity: 1;
+    filter: none;
   }
 }
 

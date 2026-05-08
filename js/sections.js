@@ -199,30 +199,11 @@ initServicesCardsReveal();
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
- * #proyectos — fade in from sides with 120ms stagger.
- * Odd → translateX(-30px), Even → translateX(30px). Implementado vía CSS
- * variable --reveal-x que se compone con la transformación final del fan-stage
- * (translateX(-50%) ...) sin romper el layout.
+ * #proyectos — el reveal y la rotación del fan deck viven ahora en
+ * js/projects-fan.js (IO bidireccional + scroll-rotation + click-to-center).
+ * Aquí ya no hay nada que hacer. La clase --inview quedó deprecada; las
+ * cards usan .fan-card--revealed gestionada por projects-fan.js.
  * ─────────────────────────────────────────────────────────────────────────── */
-{
-  const sec = document.getElementById("proyectos");
-  const cards = sec ? sec.querySelectorAll(".project-card") : [];
-  if (sec && cards.length) {
-    cards.forEach((c, i) => {
-      const delay = prefersReducedMotionGlobal ? 0 : i * 120;
-      c.style.setProperty("--reveal-delay", `${delay}ms`);
-      const offset = prefersReducedMotionGlobal ? "0px" : i % 2 === 0 ? "-30px" : "30px";
-      c.style.setProperty("--reveal-x", offset);
-    });
-    observeOnce(
-      sec,
-      () => {
-        cards.forEach((c) => c.classList.add("project-card--inview"));
-      },
-      { rootMargin: "0px 0px -8% 0px", threshold: 0.06 }
-    );
-  }
-}
 
 /* ─────────────────────────────────────────────────────────────────────────────
  * #proceso — typewriter-style left border per step (scaleY 0 → 1, top origin).
