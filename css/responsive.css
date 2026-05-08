@@ -69,18 +69,6 @@
   }
 }
 
-@media (min-width: 640px) {
-  .services__grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (min-width: 1024px) {
-  .services__grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .tech-marquee__track {
     animation: none;
@@ -116,10 +104,6 @@
   .fan-card.fan-card--revealed.fan-card--far-left-2,
   .fan-card.fan-card--revealed.fan-card--far-right-2 {
     transform: translateX(-50%) translateY(0) rotate(0deg) scale(1) !important;
-  }
-  .project-card--filtered-out {
-    opacity: 0 !important;
-    visibility: hidden !important;
   }
 }
 
@@ -178,17 +162,6 @@
   .projects__fan-deck:hover .fan-card--revealed {
     opacity: 1;
     filter: none;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .project-card__overlay-text {
-    transform: none;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-  }
-  .project-card__inner:hover .project-card__overlay-text {
-    opacity: 1;
   }
 }
 
@@ -317,22 +290,7 @@
 }
 
 @media (max-width: 768px) {
-  .projects__filters {
-    justify-content: flex-start;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    padding-bottom: 0.2rem;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-  }
-  .projects__filters::-webkit-scrollbar {
-    display: none;
-  }
-  .project-filter {
-    flex: 0 0 auto;
-  }
-  .project-card__inner:hover,
-  .services__card--visible:hover {
+  .fan-card:hover {
     transform: none;
   }
   .footer__bottom {
@@ -345,7 +303,6 @@
   .hero {
     min-height: 92vh;
   }
-  .services,
   .projects,
   .proceso,
   .why,

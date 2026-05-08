@@ -51,7 +51,6 @@ if (typeof MutationObserver !== "undefined") {
  */
 const SECTION_IDS = [
   "inicio",
-  "servicios",
   "tecnologias",
   "proyectos",
   "proceso",

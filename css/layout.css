@@ -259,59 +259,6 @@
   animation: scrollBounce 2s ease-in-out infinite;
 }
 
-/* ——— Servicios ——— */
-.services {
-  position: relative;
-  scroll-margin-top: calc(var(--nav-height) + 1rem);
-  padding: clamp(4rem, 10vw, 6.5rem) clamp(1.25rem, 4vw, 3rem);
-}
-
-.services__inner {
-  max-width: 72rem;
-  margin: 0 auto;
-}
-
-.services__header {
-  text-align: center;
-  max-width: 40rem;
-  margin: 0 auto clamp(2.75rem, 5vw, 3.5rem);
-}
-
-.services__title {
-  font-family: var(--font-heading);
-  font-weight: 700;
-  font-size: clamp(1.85rem, 4vw, 2.5rem);
-  letter-spacing: -0.02em;
-  color: var(--text-primary);
-  margin-bottom: 0.85rem;
-}
-
-.services__title-line {
-  width: 4rem;
-  height: 3px;
-  margin: 0 auto 1.25rem;
-  border-radius: 2px;
-  background: linear-gradient(
-    90deg,
-    var(--accent-primary),
-    rgba(15, 255, 212, 0.35)
-  );
-  box-shadow: 0 0 16px rgba(15, 255, 212, 0.35);
-}
-
-.services__subtitle {
-  font-size: clamp(1rem, 2vw, 1.125rem);
-  color: var(--text-secondary);
-  font-weight: 400;
-  line-height: 1.65;
-}
-
-.services__grid {
-  display: grid;
-  gap: 1.5rem;
-  grid-template-columns: 1fr;
-}
-
 /* ——— Tecnologías ——— */
 .tech {
   scroll-margin-top: calc(var(--nav-height) + 1rem);
@@ -456,15 +403,11 @@
   padding: clamp(4rem, 10vw, 6.5rem) clamp(1.25rem, 4vw, 3rem);
 }
 
-.projects__inner {
+.projects__heading-wrap {
   max-width: 72rem;
-  margin: 0 auto;
-}
-
-.projects__header {
-  text-align: center;
-  max-width: 40rem;
   margin: 0 auto clamp(2.25rem, 4vw, 3rem);
+  text-align: center;
+  padding: 0 clamp(0.5rem, 2vw, 1rem);
 }
 
 .projects__title {
@@ -482,42 +425,10 @@
   background-clip: text;
   -webkit-text-fill-color: transparent;
   color: transparent;
+  margin: 0;
 }
 
-.projects__filters {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.65rem;
-  justify-content: center;
-  margin-bottom: clamp(3.75rem, 8vw, 5.5rem);
-  position: relative;
-  z-index: 2;
-}
-
-.projects__fan-shell {
-  position: relative;
-  width: 100%;
-  margin-top: clamp(2rem, 5vw, 3.75rem);
-  padding-top: calc(1cm + clamp(3.5rem, 9vw, 6.25rem));
-  padding-left: clamp(0.25rem, 2vw, 1rem);
-  padding-right: clamp(0.25rem, 2vw, 1rem);
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 1;
-}
-
-.projects__grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.5rem;
-  perspective: 1200px;
-}
-
-.projects__fan-deck.projects__grid,
-#projects-grid.projects__fan-deck {
+#projects-fan-deck.projects__fan-deck {
   display: block;
   grid-template-columns: unset;
   gap: 0;

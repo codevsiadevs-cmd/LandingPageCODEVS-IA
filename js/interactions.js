@@ -118,7 +118,7 @@ if (customCursor && window.matchMedia("(pointer: fine)").matches && !prefersRedu
   });
 
   const hoverTargets = document.querySelectorAll(
-    "a, button, input, select, textarea, label, .services__card, .project-card__inner"
+    "a, button, input, select, textarea, label, .fan-card"
   );
   hoverTargets.forEach((node) => {
     node.addEventListener("pointerenter", () => {
@@ -134,32 +134,15 @@ if (customCursor && window.matchMedia("(pointer: fine)").matches && !prefersRedu
   animateCursor();
 }
 
-if (!prefersReducedMotionGlobal) {
-  const interactiveCardSelector = ".services__card, .project-card__inner";
-  const interactiveCards = document.querySelectorAll(interactiveCardSelector);
-
-  interactiveCards.forEach((card) => {
-    card.addEventListener("pointermove", (event) => {
-      const rect = card.getBoundingClientRect();
-      if (!rect.width || !rect.height) return;
-      const px = ((event.clientX - rect.left) / rect.width) * 100;
-      const py = ((event.clientY - rect.top) / rect.height) * 100;
-      const tiltY = ((px - 50) / 50) * 5.5;
-      const tiltX = ((50 - py) / 50) * 4.8;
-      card.style.setProperty("--mx", `${px}%`);
-      card.style.setProperty("--my", `${py}%`);
-      card.style.setProperty("--tilt-x", `${tiltX.toFixed(2)}deg`);
-      card.style.setProperty("--tilt-y", `${tiltY.toFixed(2)}deg`);
-    });
-
-    card.addEventListener("pointerleave", () => {
-      card.style.setProperty("--mx", "50%");
-      card.style.setProperty("--my", "50%");
-      card.style.setProperty("--tilt-x", "0deg");
-      card.style.setProperty("--tilt-y", "0deg");
-    });
-  });
-}
+/*
+ * Tilt 3D + mouse-follow glow eliminado: el bloque histórico aplicaba
+ * --tilt-x / --tilt-y sobre .services__card y .project-card__inner.
+ * Tras la migración a la estructura plana del fan, ya no existen esos
+ * elementos; el fan-card ya tiene transforms propios de posición/rotación
+ * con !important, por lo que un tilt extra entraría en conflicto. Si en
+ * el futuro se quiere un micro-tilt sobre fan-card, debe diseñarse para
+ * NO chocar con el transform de slot (composing en una capa separada).
+ */
 
 /* ─────────────────────────────────────────────────────────────────────────────
  * Submit button ripple

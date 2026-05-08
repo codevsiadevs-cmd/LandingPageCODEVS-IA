@@ -5,7 +5,7 @@
   --accent-secondary: #7B61FF;
   /*
    * Componentes RGB de los accents. Usados con rgba(var(--accent-rgb), α)
-   * cuando se necesita modular alpha en gradientes / glows (services cards).
+   * cuando se necesita modular alpha en gradientes / glows (fan cards).
    */
   --accent-rgb: 15, 255, 212;
   --accent-secondary-rgb: 123, 97, 255;

@@ -136,278 +136,6 @@
   transform: translateY(-1px);
 }
 
-.services__card {
-  --reveal-delay: 0ms;
-  --mx: 50%;
-  --my: 50%;
-  --tilt-x: 0deg;
-  --tilt-y: 0deg;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 1rem;
-  padding: 1.5rem 1.5rem 1.35rem;
-  border-radius: 1rem;
-  border: 1px solid var(--glass-border);
-  border-bottom: 2px solid transparent;
-  background: rgba(26, 34, 53, 0.72);
-  backdrop-filter: blur(14px) saturate(1.2);
-  -webkit-backdrop-filter: blur(14px) saturate(1.2);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-  /*
-   * Reveal: opacidad 0 inicial. El transform inicial lo aplican las clases
-   * --from-right / --from-left (asignadas por js/sections.js): translateX
-   * ±120px + rotate ±2deg para sensación 3D. Cuando el IO añade --visible,
-   * opacity → 1 y transform → translateX(0) rotate(0deg) con spring bezier
-   * (overshoot sutil). Tras ~900ms js/sections.js limpia las clases
-   * direccionales para que la transition de transform vuelva a la rápida
-   * (0.38s) usada por el hover, evitando que el lift se sienta lento.
-   */
-  opacity: 0;
-  will-change: transform, opacity;
-  transition:
-    border-color 0.4s var(--ease-out),
-    border-bottom-color 0.4s var(--ease-out),
-    box-shadow 0.4s var(--ease-out),
-    transform 0.38s var(--ease-out);
-  transform-style: preserve-3d;
-  position: relative;
-  overflow: hidden;
-  isolation: isolate;
-}
-
-/*
- * ::before = mouse-follow glow. Las CSS vars --mx / --my las setea
- * js/interactions.js (handler unificado para .services__card y
- * .project-card__inner) en porcentaje. Radio amplio (~50% del card) para
- * un halo difuso que sigue al cursor.
- */
-.services__card::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  z-index: 0;
-  opacity: 0;
-  background: radial-gradient(
-    circle at var(--mx) var(--my),
-    rgba(var(--accent-rgb), 0.18),
-    transparent 55%
-  );
-  transition: opacity 0.3s ease;
-}
-
-/*
- * ::after = border-glow + halo exterior (visible solo en hover).
- * Reemplaza el antiguo anillo conic ascendente. El borde brillante
- * acentúa la card hovered sin depender de la posición del mouse.
- */
-.services__card::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  z-index: 0;
-  opacity: 0;
-  border: 1px solid rgba(var(--accent-rgb), 0.5);
-  box-shadow:
-    inset 0 0 20px rgba(var(--accent-rgb), 0.06),
-    0 0 30px rgba(var(--accent-rgb), 0.12);
-  transition: opacity 0.4s ease;
-}
-
-/*
- * Estado inicial direccional (asignado por sections.js antes del IO).
- * La transition se sobrescribe a 0.7s SOLO mientras la clase direccional
- * está presente — al limpiarla post-slide, vuelve a la 0.38s base del
- * hover. Especificidad (0,2,0) gana sobre (0,1,0) de la regla base.
- */
-/*
- * Estado off-screen direccional. Las clases --from-right/--from-left
- * SIEMPRE están presentes (sections.js las re-añade en cada leave) para
- * que el snap-back tras quitar --visible vaya a la posición correcta.
- */
-.services__card.services__card--from-right {
-  transform: translateX(120px) rotate(2deg);
-}
-
-.services__card.services__card--from-left {
-  transform: translateX(-120px) rotate(-2deg);
-}
-
-/*
- * Visible: lleva la transition del slide-in (0.9s spring) que se aplica
- * SOLO cuando --visible se acaba de añadir. Declarado después de las
- * clases direccionales para ganar por source order (misma especificidad).
- * !important en transform para vencer al transform de la dirección.
- */
-.services__card.services__card--visible {
-  opacity: 1 !important;
-  transform: translateX(0) rotate(0deg) !important;
-  transition:
-    opacity 0.8s cubic-bezier(0.25, 0.1, 0.25, 1),
-    transform 0.9s cubic-bezier(0.34, 1.56, 0.64, 1),
-    border-color 0.4s var(--ease-out),
-    border-bottom-color 0.4s var(--ease-out),
-    box-shadow 0.4s var(--ease-out);
-}
-
-/*
- * Settled (añadida 950ms post-visible por sections.js): switch a transition
- * rápida (0.38s) para que el hover se sienta snappy en lugar de bouncy.
- * Removida junto con --visible al salir del viewport.
- */
-.services__card.services__card--settled {
-  transition:
-    opacity 0.4s var(--ease-out),
-    transform 0.38s var(--ease-out),
-    border-color 0.4s var(--ease-out),
-    border-bottom-color 0.4s var(--ease-out),
-    box-shadow 0.4s var(--ease-out);
-}
-
-/*
- * Reset instantáneo cuando la card NO es visible: al quitar --visible al
- * salir del viewport, transition: none hace que el transform vuelva a la
- * posición off-screen (--from-right/--from-left) sin slide-out visible.
- * El rootMargin -80px del IO asegura que esto pase fuera de cámara.
- */
-.services__card:not(.services__card--visible) {
-  transition: none !important;
-}
-
-@media (max-width: 767px) {
-  .services__card.services__card--from-right {
-    transform: translateX(50px) rotate(1deg);
-  }
-  .services__card.services__card--from-left {
-    transform: translateX(-50px) rotate(-1deg);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .services__card,
-  .services__card.services__card--from-right,
-  .services__card.services__card--from-left {
-    opacity: 1 !important;
-    transform: none !important;
-    transition: none !important;
-  }
-}
-
-/*
- * Hover: tilt 3D usando --tilt-x/--tilt-y que setea js/interactions.js
- * (handler unificado, ya rAF-friendly). Sin translateY(-2px) — el "lift"
- * lo provee ahora el icon-float independiente, evitando que el card y el
- * icono se muevan a la vez.
- */
-.services__card--visible:hover {
-  border-color: rgba(var(--accent-rgb), 0.28);
-  border-bottom-color: var(--accent-primary);
-  box-shadow:
-    0 12px 40px rgba(0, 0, 0, 0.28),
-    0 8px 32px rgba(0, 200, 255, 0.15),
-    0 0 0 1px rgba(var(--accent-rgb), 0.1);
-  /* !important para vencer al transform !important de --visible */
-  transform: perspective(1000px)
-    rotateX(var(--tilt-x))
-    rotateY(var(--tilt-y))
-    scale(1.02) !important;
-}
-
-.services__card--visible:hover::before,
-.services__card--visible:hover::after {
-  opacity: 1;
-}
-
-.services__card > * {
-  position: relative;
-  z-index: 1;
-}
-
-.services__icon {
-  width: 3rem;
-  height: 3rem;
-  flex-shrink: 0;
-  color: var(--accent-primary);
-  transition:
-    transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
-    filter 0.3s ease-out;
-  transform-origin: center;
-}
-
-.services__icon svg {
-  width: 100%;
-  height: 100%;
-}
-
-.services__card--visible:hover .services__icon {
-  transform: translateY(-6px);
-  filter:
-    brightness(1.2)
-    drop-shadow(0 6px 14px rgba(var(--accent-rgb), 0.4));
-}
-
-.services__card-name {
-  font-family: var(--font-heading);
-  font-weight: 700;
-  font-size: 1.125rem;
-  letter-spacing: -0.01em;
-  color: var(--text-primary);
-  transition: transform 250ms cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.services__card-desc {
-  font-size: 0.9375rem;
-  color: var(--text-secondary);
-  line-height: 1.6;
-  flex-grow: 1;
-  transition: transform 250ms cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-.services__card--visible:hover .services__card-name,
-.services__card--visible:hover .services__card-desc {
-  transform: translateY(-4px);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .services__card * {
-    transition: none !important;
-  }
-  .services__card::before,
-  .services__card::after {
-    transition: none !important;
-  }
-  .services__card--visible:hover .services__icon,
-  .services__card--visible:hover .services__card-name,
-  .services__card--visible:hover .services__card-desc {
-    transform: none;
-    filter: none;
-  }
-}
-
-.services__tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-top: auto;
-  padding-top: 0.25rem;
-}
-
-.services__tag {
-  font-size: 0.6875rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  padding: 0.35rem 0.65rem;
-  border-radius: 999px;
-  color: var(--accent-primary);
-  background: rgba(15, 255, 212, 0.08);
-  border: 1px solid rgba(15, 255, 212, 0.18);
-}
-
 .tech-badge {
   display: inline-flex;
   align-items: center;
@@ -485,36 +213,6 @@
 
 .tech-badge--ai .tech-badge__icon {
   color: var(--accent-secondary);
-}
-
-.project-filter {
-  font-family: var(--font-body);
-  font-size: 0.875rem;
-  font-weight: 600;
-  padding: 0.55rem 1.15rem;
-  border-radius: 999px;
-  border: 1px solid var(--glass-border);
-  color: var(--text-secondary);
-  background: rgba(26, 34, 53, 0.45);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  transition: color 0.25s ease, background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
-}
-
-.project-filter:hover {
-  color: var(--text-primary);
-  border-color: rgba(15, 255, 212, 0.25);
-}
-
-.project-filter--active {
-  color: var(--bg-primary);
-  background: var(--accent-primary);
-  border-color: var(--accent-primary);
-  box-shadow: 0 0 20px rgba(15, 255, 212, 0.28);
-}
-
-.project-filter--active:hover {
-  color: var(--bg-primary);
 }
 
 /*
@@ -669,8 +367,7 @@
   z-index: 20 !important;
 }
 
-/* Borde glow accent on hover (capa adicional sin entrar en conflicto con
- * el border del .project-card__inner que también vive dentro). */
+/* Borde glow accent on hover (capa adicional sobre el image-wrap). */
 .fan-card::after {
   content: "";
   position: absolute;
@@ -694,222 +391,90 @@
   transition: none !important;
 }
 
-/* La card .project-card__inner vive DENTRO de cada .fan-card y debe llenar
- * el contenedor sin imponer su propio border-radius/sombras (los marca el
- * fan-card y la posición). */
-.fan-card .project-card__inner {
-  width: 100%;
-  height: 100%;
-  border-radius: inherit;
-  background: rgba(17, 24, 38, 0.72);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: none;
-  backdrop-filter: blur(12px) saturate(1.1);
-  -webkit-backdrop-filter: blur(12px) saturate(1.1);
-}
-
-.fan-card .project-card__visual {
-  height: 60%;
-  flex-shrink: 0;
-}
-
-/* Center card destaca: borde accent sutil */
-.fan-card--revealed.fan-card--center .project-card__inner {
-  border-color: rgba(var(--accent-rgb), 0.3);
-}
-
-.project-card--filtered-out {
-  opacity: 0 !important;
-  pointer-events: none;
-  visibility: hidden;
-  transition: opacity 0.32s ease !important;
-}
-
-.project-card__inner {
-  --mx: 50%;
-  --my: 50%;
-  --tilt-x: 0deg;
-  --tilt-y: 0deg;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  border-radius: 1rem;
-  overflow: hidden;
-  border: 1px solid var(--glass-border);
-  background: rgba(26, 34, 53, 0.5);
-  backdrop-filter: blur(12px) saturate(1.15);
-  -webkit-backdrop-filter: blur(12px) saturate(1.15);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.22);
-  transition: border-color 0.35s var(--ease-out), box-shadow 0.35s var(--ease-out), transform 0.32s var(--ease-out);
-  transform-style: preserve-3d;
-  isolation: isolate;
-}
-
-.project-card__inner::before {
-  content: "";
+/* ─────────────────────────────────────────────────────────────────────────
+ * Estructura plana del fan card: la card es el contenedor visual completo,
+ * .fan-card__image-wrap llena el fondo (gradient inline o imagen), y
+ * .fan-card__overlay es una banda inferior con category + title legibles.
+ * No hay capas internas tipo .project-card__inner.
+ * ───────────────────────────────────────────────────────────────────────── */
+.fan-card__image-wrap {
   position: absolute;
   inset: 0;
-  border-radius: inherit;
-  pointer-events: none;
   z-index: 0;
-  opacity: 0;
-  background: radial-gradient(circle at var(--mx) var(--my), rgba(15, 255, 212, 0.2), transparent 46%);
-  transition: opacity 0.28s ease;
+  border-radius: inherit;
+  background-color: rgba(17, 24, 38, 0.72);
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
 }
 
-.project-card__inner:hover {
-  border-color: rgba(15, 255, 212, 0.2);
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.3);
-  transform: perspective(1050px) rotateX(var(--tilt-x)) rotateY(var(--tilt-y)) translateY(-2px);
-}
-
-.project-card__inner:hover::before {
-  opacity: 1;
-}
-
-.project-card__visual {
-  height: 11rem;
-  width: 100%;
-  flex-shrink: 0;
-  background: var(--project-gradient, linear-gradient(135deg, var(--accent-primary), var(--accent-secondary)));
-  position: relative;
-}
-
-.project-card__visual::after {
+/* Sutil viñeta en la parte superior para que el badge de categoría destaque
+ * incluso cuando el gradient es claro arriba. Pseudo evita capa extra DOM. */
+.fan-card__image-wrap::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, transparent 40%, rgba(3, 5, 8, 0.58) 100%);
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.18) 0%,
+    transparent 30%,
+    transparent 55%,
+    rgba(0, 0, 0, 0.55) 100%
+  );
+  pointer-events: none;
 }
 
-.project-card__body {
-  padding: 1.25rem 1.35rem 1.35rem;
+.fan-card__image-wrap--gradient {
+  /* Marker class — el background concreto lo aporta el style inline. */
+}
+
+/* Banda inferior con category + title. Ocupa todo el ancho con un gradient
+ * propio para reforzar legibilidad por si el image-wrap tiene tonos claros. */
+.fan-card__overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  padding: 1.6rem 1.35rem 1.35rem;
   display: flex;
   flex-direction: column;
-  gap: 0.65rem;
-  flex-grow: 1;
-}
-
-.project-card__name {
-  font-family: var(--font-heading);
-  font-weight: 700;
-  font-size: 1.15rem;
-  letter-spacing: -0.02em;
-  color: var(--text-primary);
-}
-
-.project-card__excerpt {
-  font-size: 0.9rem;
-  color: var(--text-secondary);
-  line-height: 1.55;
-}
-
-.project-card__stack {
-  display: flex;
-  flex-wrap: wrap;
   gap: 0.45rem;
-  margin-top: 0.15rem;
-}
-
-.project-card__stack span {
-  font-size: 0.65rem;
-  font-weight: 600;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  padding: 0.3rem 0.55rem;
-  border-radius: 6px;
-  color: var(--text-secondary);
-  background: rgba(15, 255, 212, 0.06);
-  border: 1px solid rgba(123, 97, 255, 0.2);
-}
-
-.project-card__btn {
-  margin-top: auto;
-  align-self: flex-start;
-  padding: 0.65rem 1.2rem;
-  font-size: 0.875rem;
-  font-weight: 600;
-  border-radius: 999px;
-  border: 1px solid rgba(15, 255, 212, 0.35);
-  color: var(--accent-primary);
-  background: rgba(15, 255, 212, 0.06);
-  transition: background 0.2s ease, border-color 0.2s ease;
-}
-
-.project-card__btn:disabled {
-  opacity: 0.55;
-  cursor: not-allowed;
-}
-
-.project-card__btn:disabled:hover {
-  background: rgba(15, 255, 212, 0.06);
-}
-
-.project-card__overlay {
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  display: flex;
-  align-items: flex-end;
-  padding: 1.35rem;
-  background: rgba(3, 5, 8, 0.86);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  opacity: 0;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(3, 5, 8, 0.55) 45%,
+    rgba(3, 5, 8, 0.92) 100%
+  );
+  border-bottom-left-radius: inherit;
+  border-bottom-right-radius: inherit;
   pointer-events: none;
-  transition: opacity 0.38s var(--ease-out);
 }
 
-.project-card__inner > * {
-  position: relative;
-  z-index: 1;
+.fan-card__category {
+  font-family: var(--font-mono, "JetBrains Mono", monospace);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent-primary);
+  text-shadow: 0 0 10px rgba(var(--accent-rgb), 0.35);
 }
 
-.project-card__inner:hover .project-card__overlay {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-/* Hover sobre la tarjeta completa (mejor en el abanico con tarjetas rotadas) */
-.project-card:hover .project-card__overlay,
-.project-card:focus-within .project-card__overlay {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.project-card__overlay-text {
-  width: 100%;
-  font-size: 0.92rem;
-  line-height: 1.6;
-  color: var(--text-primary);
-  transform: translateY(110%);
-  transition: transform 0.45s var(--ease-out);
-}
-
-.project-card__inner:hover .project-card__overlay-text,
-.project-card:hover .project-card__overlay-text,
-.project-card:focus-within .project-card__overlay-text {
-  transform: translateY(0);
-}
-
-/* Fan deck: descripción siempre legible al pasar el cursor */
-.fan-card:hover .project-card__overlay,
-.fan-card:focus-within .project-card__overlay {
-  opacity: 1 !important;
-  background: rgba(4, 8, 14, 0.94);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-}
-
-.fan-card:hover .project-card__overlay-text,
-.fan-card:focus-within .project-card__overlay-text {
+.fan-card__title {
+  font-family: var(--font-heading);
+  font-size: clamp(1rem, 1.4vw, 1.2rem);
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.015em;
   color: rgba(245, 248, 255, 0.98);
-  transform: translateY(0);
-  max-height: min(42vh, 13rem);
-  overflow-y: auto;
-  padding-right: 0.25rem;
-  scrollbar-width: thin;
+  margin: 0;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+}
+
+/* Center card destaca: borde accent sutil sobre el image-wrap */
+.fan-card--revealed.fan-card--center .fan-card__image-wrap {
+  box-shadow: inset 0 0 0 1.5px rgba(var(--accent-rgb), 0.32);
 }
 
 .proceso-step {
@@ -1142,7 +707,6 @@
    el cursor principal, los puntos de trail y las partículas del burst. */
 body { --cursor-color: #00d4ff; }
 body[data-section="inicio"]      { --cursor-color: #00d4ff; }
-body[data-section="servicios"]   { --cursor-color: #7c3aed; }
 body[data-section="tecnologias"] { --cursor-color: #06b6d4; }
 body[data-section="proyectos"]   { --cursor-color: #f59e0b; }
 body[data-section="proceso"]     { --cursor-color: #10b981; }
