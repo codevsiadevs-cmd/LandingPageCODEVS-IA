@@ -675,6 +675,13 @@
   transform: translateX(0);
 }
 
+/* Reset instantáneo cuando #nosotros deja el viewport (sections.js): evita
+ * un slide-out lateral visible. El rootMargin -12% garantiza fuera de cámara. */
+.why:not(.why--visible) .why__col--left,
+.why:not(.why--visible) .why__col--right {
+  transition: none !important;
+}
+
 .why__title {
   font-family: var(--font-heading);
   font-weight: 700;
@@ -799,6 +806,13 @@
 .footer--visible {
   opacity: 1;
   transform: translateY(0);
+}
+
+/* Reset instantáneo cuando el footer deja el viewport (sections.js): el
+ * usuario puede scrollear hacia arriba y bajar otra vez para ver el
+ * reveal de nuevo sin un fade-out previo. */
+.footer:not(.footer--visible) {
+  transition: none !important;
 }
 
 .footer__inner {

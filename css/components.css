@@ -154,12 +154,21 @@
   backdrop-filter: blur(14px) saturate(1.2);
   -webkit-backdrop-filter: blur(14px) saturate(1.2);
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  /*
+   * Reveal: opacidad 0 inicial. El transform inicial lo aplican las clases
+   * --from-right / --from-left (asignadas por js/sections.js): translateX
+   * ±120px + rotate ±2deg para sensación 3D. Cuando el IO añade --visible,
+   * opacity → 1 y transform → translateX(0) rotate(0deg) con spring bezier
+   * (overshoot sutil). Tras ~900ms js/sections.js limpia las clases
+   * direccionales para que la transition de transform vuelva a la rápida
+   * (0.38s) usada por el hover, evitando que el lift se sienta lento.
+   */
   opacity: 0;
-  transform: translateY(30px) scale(1);
+  will-change: transform, opacity;
   transition:
-    border-color 0.35s var(--ease-out),
-    border-bottom-color 0.35s var(--ease-out),
-    box-shadow 0.35s var(--ease-out),
+    border-color 0.4s var(--ease-out),
+    border-bottom-color 0.4s var(--ease-out),
+    box-shadow 0.4s var(--ease-out),
     transform 0.38s var(--ease-out);
   transform-style: preserve-3d;
   position: relative;
@@ -167,6 +176,12 @@
   isolation: isolate;
 }
 
+/*
+ * ::before = mouse-follow glow. Las CSS vars --mx / --my las setea
+ * js/interactions.js (handler unificado para .services__card y
+ * .project-card__inner) en porcentaje. Radio amplio (~50% del card) para
+ * un halo difuso que sigue al cursor.
+ */
 .services__card::before {
   content: "";
   position: absolute;
@@ -175,69 +190,136 @@
   pointer-events: none;
   z-index: 0;
   opacity: 0;
-  background:
-    radial-gradient(circle at var(--mx) var(--my), rgba(15, 255, 212, 0.24), transparent 42%),
-    radial-gradient(circle at calc(var(--mx) + 12%) calc(var(--my) - 10%), rgba(123, 97, 255, 0.16), transparent 44%);
-  transition: opacity 0.28s ease;
+  background: radial-gradient(
+    circle at var(--mx) var(--my),
+    rgba(var(--accent-rgb), 0.18),
+    transparent 55%
+  );
+  transition: opacity 0.3s ease;
 }
 
 /*
- * ::after = anillo de luz cyan que “sube” desde el borde inferior al superior.
- * Truco: gradiente vertical recortado a un anillo de 1px usando dos máscaras
- * con composite exclude (estándar) y xor (Safari).
+ * ::after = border-glow + halo exterior (visible solo en hover).
+ * Reemplaza el antiguo anillo conic ascendente. El borde brillante
+ * acentúa la card hovered sin depender de la posición del mouse.
  */
 .services__card::after {
   content: "";
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  padding: 1px;
   pointer-events: none;
   z-index: 0;
-  background: linear-gradient(
-    0deg,
-    rgba(15, 255, 212, 0.85) 0%,
-    rgba(15, 255, 212, 0.5) 25%,
-    rgba(123, 97, 255, 0.45) 60%,
-    rgba(123, 97, 255, 0) 100%
-  );
-  -webkit-mask:
-    linear-gradient(#000 0 0) content-box,
-    linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask:
-    linear-gradient(#000 0 0) content-box,
-    linear-gradient(#000 0 0);
-  mask-composite: exclude;
   opacity: 0;
-  transform: translateY(18%) scaleY(0.6);
-  transform-origin: bottom center;
+  border: 1px solid rgba(var(--accent-rgb), 0.5);
+  box-shadow:
+    inset 0 0 20px rgba(var(--accent-rgb), 0.06),
+    0 0 30px rgba(var(--accent-rgb), 0.12);
+  transition: opacity 0.4s ease;
+}
+
+/*
+ * Estado inicial direccional (asignado por sections.js antes del IO).
+ * La transition se sobrescribe a 0.7s SOLO mientras la clase direccional
+ * está presente — al limpiarla post-slide, vuelve a la 0.38s base del
+ * hover. Especificidad (0,2,0) gana sobre (0,1,0) de la regla base.
+ */
+/*
+ * Estado off-screen direccional. Las clases --from-right/--from-left
+ * SIEMPRE están presentes (sections.js las re-añade en cada leave) para
+ * que el snap-back tras quitar --visible vaya a la posición correcta.
+ */
+.services__card.services__card--from-right {
+  transform: translateX(120px) rotate(2deg);
+}
+
+.services__card.services__card--from-left {
+  transform: translateX(-120px) rotate(-2deg);
+}
+
+/*
+ * Visible: lleva la transition del slide-in (0.9s spring) que se aplica
+ * SOLO cuando --visible se acaba de añadir. Declarado después de las
+ * clases direccionales para ganar por source order (misma especificidad).
+ * !important en transform para vencer al transform de la dirección.
+ */
+.services__card.services__card--visible {
+  opacity: 1 !important;
+  transform: translateX(0) rotate(0deg) !important;
   transition:
-    opacity 0.35s ease,
-    transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    opacity 0.8s cubic-bezier(0.25, 0.1, 0.25, 1),
+    transform 0.9s cubic-bezier(0.34, 1.56, 0.64, 1),
+    border-color 0.4s var(--ease-out),
+    border-bottom-color 0.4s var(--ease-out),
+    box-shadow 0.4s var(--ease-out);
 }
 
-.services__card--visible {
-  animation: servicesCardReveal 0.72s var(--ease-out) var(--reveal-delay) forwards;
+/*
+ * Settled (añadida 950ms post-visible por sections.js): switch a transition
+ * rápida (0.38s) para que el hover se sienta snappy en lugar de bouncy.
+ * Removida junto con --visible al salir del viewport.
+ */
+.services__card.services__card--settled {
+  transition:
+    opacity 0.4s var(--ease-out),
+    transform 0.38s var(--ease-out),
+    border-color 0.4s var(--ease-out),
+    border-bottom-color 0.4s var(--ease-out),
+    box-shadow 0.4s var(--ease-out);
 }
 
+/*
+ * Reset instantáneo cuando la card NO es visible: al quitar --visible al
+ * salir del viewport, transition: none hace que el transform vuelva a la
+ * posición off-screen (--from-right/--from-left) sin slide-out visible.
+ * El rootMargin -80px del IO asegura que esto pase fuera de cámara.
+ */
+.services__card:not(.services__card--visible) {
+  transition: none !important;
+}
+
+@media (max-width: 767px) {
+  .services__card.services__card--from-right {
+    transform: translateX(50px) rotate(1deg);
+  }
+  .services__card.services__card--from-left {
+    transform: translateX(-50px) rotate(-1deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .services__card,
+  .services__card.services__card--from-right,
+  .services__card.services__card--from-left {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+}
+
+/*
+ * Hover: tilt 3D usando --tilt-x/--tilt-y que setea js/interactions.js
+ * (handler unificado, ya rAF-friendly). Sin translateY(-2px) — el "lift"
+ * lo provee ahora el icon-float independiente, evitando que el card y el
+ * icono se muevan a la vez.
+ */
 .services__card--visible:hover {
-  border-color: rgba(15, 255, 212, 0.22);
+  border-color: rgba(var(--accent-rgb), 0.28);
   border-bottom-color: var(--accent-primary);
   box-shadow:
     0 12px 40px rgba(0, 0, 0, 0.28),
     0 8px 32px rgba(0, 200, 255, 0.15),
-    0 0 0 1px rgba(15, 255, 212, 0.08);
-  transform: perspective(1000px) rotateX(var(--tilt-x)) rotateY(var(--tilt-y)) translateY(-2px) scale(1.03);
+    0 0 0 1px rgba(var(--accent-rgb), 0.1);
+  /* !important para vencer al transform !important de --visible */
+  transform: perspective(1000px)
+    rotateX(var(--tilt-x))
+    rotateY(var(--tilt-y))
+    scale(1.02) !important;
 }
 
-.services__card--visible:hover::before {
-  opacity: 1;
-}
-
+.services__card--visible:hover::before,
 .services__card--visible:hover::after {
   opacity: 1;
-  transform: translateY(0) scaleY(1);
 }
 
 .services__card > * {
@@ -251,8 +333,8 @@
   flex-shrink: 0;
   color: var(--accent-primary);
   transition:
-    transform 0.2s ease-out,
-    filter 0.2s ease-out;
+    transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+    filter 0.3s ease-out;
   transform-origin: center;
 }
 
@@ -262,8 +344,10 @@
 }
 
 .services__card--visible:hover .services__icon {
-  transform: scale(1.15);
-  filter: brightness(1.3);
+  transform: translateY(-6px);
+  filter:
+    brightness(1.2)
+    drop-shadow(0 6px 14px rgba(var(--accent-rgb), 0.4));
 }
 
 .services__card-name {
@@ -932,6 +1016,12 @@
 .testimonial-card--visible {
   opacity: 1;
   transform: rotateX(0deg) translateY(0);
+}
+
+/* Reset instantáneo cuando la card deja el viewport (sections.js): evita
+ * un flip-back visible. El rootMargin -80px asegura fuera de cámara. */
+.testimonial-card:not(.testimonial-card--visible) {
+  transition: none !important;
 }
 
 .testimonial-card__header {
@@ -1821,6 +1911,13 @@ textarea.contact__control:not(:placeholder-shown) ~ .contact__label {
   transform: translateX(0);
 }
 
+/* Reset instantáneo cuando #tecnologias deja el viewport (ver sections.js).
+ * Evita un fade-out visible de los badges al salir; el rootMargin -10%
+ * asegura que ocurra fuera de cámara. */
+.tech:not(.tech--cascading) .tech-badge {
+  transition: none !important;
+}
+
 /* #proceso — línea “typewriter” por paso, dibujada de arriba hacia abajo. */
 .proceso-step {
   position: relative;
@@ -1851,6 +1948,12 @@ textarea.contact__control:not(:placeholder-shown) ~ .contact__label {
 
 .proceso-step--inview::before {
   transform: scaleY(1);
+}
+
+/* Reset instantáneo cuando el step deja el viewport (sections.js): evita
+ * un scaleY-out visible de la línea typewriter al salir. */
+.proceso-step:not(.proceso-step--inview)::before {
+  transition: none !important;
 }
 
 @media (min-width: 900px) {

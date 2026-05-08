@@ -3,6 +3,12 @@
   --bg-elevated: #050608;
   --accent-primary: #0FFFD4;
   --accent-secondary: #7B61FF;
+  /*
+   * Componentes RGB de los accents. Usados con rgba(var(--accent-rgb), α)
+   * cuando se necesita modular alpha en gradientes / glows (services cards).
+   */
+  --accent-rgb: 15, 255, 212;
+  --accent-secondary-rgb: 123, 97, 255;
   --surface-card: #0c0e12;
   --text-primary: #eef1f7;
   --text-secondary: #8b95a8;

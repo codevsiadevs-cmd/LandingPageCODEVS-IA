@@ -46,14 +46,40 @@
   }
 }
 
-@keyframes servicesCardReveal {
-  from {
-    opacity: 0;
-    transform: translateY(40px) scale(1);
-  }
+/*
+ * Nota: @keyframes servicesCardReveal fue eliminado. El reveal de las
+ * services__card ahora usa transitions con clases --from-right/--from-left/
+ * --visible gestionadas en js/sections.js (ver components.css).
+ *
+ * Click ripple: span inyectado por sections.js en el punto del click;
+ * crece de 0 → 400px y fade out en 600ms, luego se autodestruye al
+ * disparar 'animationend'. Position: absolute confiando en que la card
+ * tiene position:relative + overflow:hidden (componentes.css).
+ */
+.services__ripple {
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(var(--accent-rgb), 0.22);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 2;
+  animation: service-ripple 600ms ease-out forwards;
+}
+
+@keyframes service-ripple {
   to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
+    width: 400px;
+    height: 400px;
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .services__ripple {
+    animation: none;
+    display: none;
   }
 }
 
