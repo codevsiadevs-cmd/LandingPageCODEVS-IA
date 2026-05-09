@@ -241,10 +241,10 @@
   width: 100%;
   min-height: 480px;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   overflow: visible;
-  padding: 1rem 0 2rem;
+  padding: clamp(4rem, 7vw, 6rem) 0 2rem;
 }
 
 .projects__fan-deck {

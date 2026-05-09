@@ -405,7 +405,7 @@
 
 .projects__heading-wrap {
   max-width: 72rem;
-  margin: 0 auto clamp(2.25rem, 4vw, 3rem);
+  margin: 0 auto clamp(1.5rem, 2.5vw, 2rem);
   text-align: center;
   padding: 0 clamp(0.5rem, 2vw, 1rem);
 }
