@@ -300,6 +300,10 @@
   .hero {
     min-height: 92vh;
   }
+  .hero__brand {
+    font-size: clamp(2rem, 9.5vw, 2.75rem);
+    letter-spacing: 0.04em;
+  }
   .projects,
   .proceso,
   .why,
