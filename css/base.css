@@ -41,6 +41,7 @@
 html {
   scroll-behavior: smooth;
   background: var(--page-bg);
+  transition: background 0.35s ease;
 }
 
 body {

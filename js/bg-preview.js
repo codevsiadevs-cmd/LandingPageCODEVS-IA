@@ -1,25 +1,23 @@
 /**
- * Herramienta de previsualización de fondo (solo localhost o ?bgpreview=1).
- * Permite probar colores de fondo y ver el hex para copiar al CSS.
+ * Selector de color de fondo — paleta + color personalizado.
+ * Persiste la elección en localStorage.
  */
-const isPreviewHost =
-  location.hostname === "localhost" ||
-  location.hostname === "127.0.0.1" ||
-  location.search.includes("bgpreview=1");
-
+const STORAGE_KEY = "codevs-bg-theme";
 const DEFAULT_BG = "#0A0F1E";
 
 const PRESETS = [
-  { label: "Actual", hex: "#0A0F1E" },
+  { label: "CODEVS", hex: "#0A0F1E" },
   { label: "Negro", hex: "#000000" },
   { label: "Azul noche", hex: "#0B0E14" },
   { label: "Tech", hex: "#0D1528" },
-  { label: "GitHub", hex: "#0D1117" },
-  { label: "Slate", hex: "#0F172A" },
-  { label: "Gray 900", hex: "#111827" },
-  { label: "Índigo", hex: "#1A1A2E" },
   { label: "Marino", hex: "#0C1445" },
+  { label: "Índigo", hex: "#1A1A2E" },
+  { label: "Púrpura", hex: "#1E1035" },
+  { label: "Verde oscuro", hex: "#0A1F1A" },
+  { label: "Slate", hex: "#0F172A" },
   { label: "Carbón", hex: "#121212" },
+  { label: "Medianoche", hex: "#050810" },
+  { label: "Cian profundo", hex: "#061A1F" },
 ];
 
 function hexToRgb(hex) {
@@ -47,7 +45,7 @@ function normalizeHex(value) {
   return rgb ? rgbToHex(...rgb).toUpperCase() : null;
 }
 
-function applyPageBackground(hex) {
+export function applyPageBackground(hex) {
   const normalized = normalizeHex(hex);
   if (!normalized) return null;
 
@@ -73,92 +71,138 @@ function applyPageBackground(hex) {
   return normalized;
 }
 
-function buildPanel() {
+function saveTheme(hex) {
+  try {
+    localStorage.setItem(STORAGE_KEY, hex);
+  } catch {
+    /* quota / private mode */
+  }
+}
+
+function loadSavedTheme() {
+  try {
+    return localStorage.getItem(STORAGE_KEY);
+  } catch {
+    return null;
+  }
+}
+
+function buildThemePicker() {
+  const floatWrap = document.createElement("div");
+  floatWrap.className = "bg-preview-float";
+
   const toggle = document.createElement("button");
   toggle.type = "button";
   toggle.className = "bg-preview-toggle";
   toggle.setAttribute("aria-expanded", "false");
   toggle.setAttribute("aria-controls", "bg-preview-panel");
-  toggle.title = "Probar color de fondo";
-  toggle.innerHTML = `<span class="bg-preview-toggle__icon" aria-hidden="true"></span><span class="bg-preview-toggle__label">Fondo</span>`;
+  toggle.setAttribute("aria-label", "Abrir paleta de colores de fondo");
+  toggle.title = "Cambiar color de fondo";
+  toggle.innerHTML = `<span class="bg-preview-toggle__icon" aria-hidden="true"></span>`;
 
   const panel = document.createElement("div");
   panel.id = "bg-preview-panel";
   panel.className = "bg-preview-panel";
   panel.hidden = true;
   panel.innerHTML = `
-    <p class="bg-preview-panel__title">Color de fondo</p>
-    <p class="bg-preview-panel__hint">Prueba tonos y copia el hex que prefieras.</p>
-    <div class="bg-preview-panel__current">
-      <span class="bg-preview-panel__swatch" id="bg-preview-current-swatch" aria-hidden="true"></span>
-      <code id="bg-preview-current-hex">${DEFAULT_BG}</code>
+    <div class="bg-preview-panel__head">
+      <p class="bg-preview-panel__title">Paleta de fondo</p>
+      <button type="button" class="bg-preview-panel__close" aria-label="Cerrar paleta">×</button>
     </div>
-    <div class="bg-preview-panel__presets" role="list" aria-label="Colores predefinidos"></div>
+    <p class="bg-preview-panel__hint">Elige un tono para personalizar el fondo de la página.</p>
+    <div class="bg-preview-panel__palette" role="list" aria-label="Colores de fondo"></div>
     <label class="bg-preview-panel__picker">
-      <span>Personalizado</span>
+      <span>Color personalizado</span>
       <input type="color" id="bg-preview-color" value="${DEFAULT_BG}" />
-    </label>
-    <label class="bg-preview-panel__hex">
-      <span>Hex</span>
-      <input type="text" id="bg-preview-hex" value="${DEFAULT_BG}" spellcheck="false" autocomplete="off" />
     </label>
     <button type="button" class="bg-preview-panel__reset" id="bg-preview-reset">Restaurar original</button>
   `;
 
-  document.body.append(toggle, panel);
+  floatWrap.append(toggle, panel);
+  document.body.append(floatWrap);
 
-  const presetsEl = panel.querySelector(".bg-preview-panel__presets");
+  const paletteEl = panel.querySelector(".bg-preview-panel__palette");
   const colorInput = panel.querySelector("#bg-preview-color");
-  const hexInput = panel.querySelector("#bg-preview-hex");
-  const currentHex = panel.querySelector("#bg-preview-current-hex");
-  const currentSwatch = panel.querySelector("#bg-preview-current-swatch");
   const resetBtn = panel.querySelector("#bg-preview-reset");
+  const closeBtn = panel.querySelector(".bg-preview-panel__close");
+  const toggleIcon = toggle.querySelector(".bg-preview-toggle__icon");
+
+  let activeHex = DEFAULT_BG;
 
   function syncUI(hex) {
-    currentHex.textContent = hex;
-    currentSwatch.style.background = hex;
+    activeHex = hex;
+    toggleIcon.style.setProperty("--bg-preview-active", hex);
     colorInput.value = hex;
-    hexInput.value = hex;
-    presetsEl.querySelectorAll(".bg-preview-preset").forEach((btn) => {
-      btn.classList.toggle("bg-preview-preset--active", btn.dataset.hex?.toUpperCase() === hex.toUpperCase());
+    paletteEl.querySelectorAll(".bg-preview-swatch").forEach((btn) => {
+      const match = btn.dataset.hex?.toUpperCase() === hex.toUpperCase();
+      btn.classList.toggle("bg-preview-swatch--active", match);
+      btn.setAttribute("aria-pressed", match ? "true" : "false");
     });
   }
 
-  function setBackground(hex) {
+  function setBackground(hex, persist = true) {
     const applied = applyPageBackground(hex);
-    if (applied) syncUI(applied);
+    if (!applied) return;
+    syncUI(applied);
+    if (persist) saveTheme(applied);
+  }
+
+  function openPanel() {
+    panel.hidden = false;
+    toggle.setAttribute("aria-expanded", "true");
+    toggle.classList.add("bg-preview-toggle--open");
+  }
+
+  function closePanel() {
+    panel.hidden = true;
+    toggle.setAttribute("aria-expanded", "false");
+    toggle.classList.remove("bg-preview-toggle--open");
   }
 
   PRESETS.forEach(({ label, hex }) => {
     const btn = document.createElement("button");
     btn.type = "button";
-    btn.className = "bg-preview-preset";
+    btn.className = "bg-preview-swatch";
     btn.dataset.hex = hex;
     btn.setAttribute("role", "listitem");
-    btn.title = hex;
-    btn.innerHTML = `<span class="bg-preview-preset__chip" style="background:${hex}"></span><span>${label}</span>`;
+    btn.setAttribute("aria-label", label);
+    btn.setAttribute("aria-pressed", "false");
+    btn.title = label;
+    btn.style.setProperty("--swatch-color", hex);
     btn.addEventListener("click", () => setBackground(hex));
-    presetsEl.appendChild(btn);
+    paletteEl.appendChild(btn);
   });
 
   colorInput.addEventListener("input", () => setBackground(colorInput.value));
-  hexInput.addEventListener("change", () => {
-    const applied = applyPageBackground(hexInput.value);
-    if (applied) syncUI(applied);
-    else hexInput.value = currentHex.textContent;
-  });
-  resetBtn.addEventListener("click", () => setBackground(DEFAULT_BG));
-
-  toggle.addEventListener("click", () => {
-    const open = panel.hidden;
-    panel.hidden = !open;
-    toggle.setAttribute("aria-expanded", open ? "true" : "false");
-    toggle.classList.toggle("bg-preview-toggle--open", open);
+  resetBtn.addEventListener("click", () => {
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch {
+      /* ignore */
+    }
+    setBackground(DEFAULT_BG, false);
   });
 
-  syncUI(DEFAULT_BG);
+  toggle.addEventListener("click", (event) => {
+    event.stopPropagation();
+    if (panel.hidden) openPanel();
+    else closePanel();
+  });
+
+  closeBtn.addEventListener("click", () => closePanel());
+
+  document.addEventListener("click", (event) => {
+    if (panel.hidden) return;
+    if (floatWrap.contains(event.target)) return;
+    closePanel();
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !panel.hidden) closePanel();
+  });
+
+  const saved = loadSavedTheme();
+  setBackground(saved || DEFAULT_BG, false);
 }
 
-if (isPreviewHost) {
-  buildPanel();
-}
+buildThemePicker();
