@@ -1743,3 +1743,182 @@ textarea.contact__control:not(:placeholder-shown) ~ .contact__label {
     transition: none !important;
   }
 }
+
+/* ——— Previsualización de fondo (dev local) ——— */
+.bg-preview-toggle {
+  position: fixed;
+  top: max(1rem, env(safe-area-inset-top, 0px));
+  left: clamp(1rem, 3.5vw, 1.85rem);
+  z-index: 170;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.55rem 0.85rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(2, 3, 4, 0.94);
+  color: var(--text-primary);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.45);
+  transition: border-color 0.2s ease, box-shadow 0.25s ease;
+}
+
+.bg-preview-toggle:hover,
+.bg-preview-toggle--open {
+  border-color: rgba(15, 255, 212, 0.35);
+  box-shadow: 0 6px 28px rgba(0, 0, 0, 0.5);
+}
+
+.bg-preview-toggle:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: 3px;
+}
+
+.bg-preview-toggle__icon {
+  width: 0.85rem;
+  height: 0.85rem;
+  border-radius: 50%;
+  background: conic-gradient(from 180deg, #0a0f1e, #0fffd4, #7b61ff, #0a0f1e);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.bg-preview-panel {
+  position: fixed;
+  top: calc(max(1rem, env(safe-area-inset-top, 0px)) + 2.85rem);
+  left: clamp(1rem, 3.5vw, 1.85rem);
+  z-index: 170;
+  width: min(18rem, calc(100vw - 2rem));
+  padding: 1rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(2, 3, 4, 0.96);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.55);
+}
+
+.bg-preview-panel__title {
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 0.2rem;
+}
+
+.bg-preview-panel__hint {
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  margin-bottom: 0.85rem;
+}
+
+.bg-preview-panel__current {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-bottom: 0.85rem;
+  padding: 0.55rem 0.65rem;
+  border-radius: 0.65rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.bg-preview-panel__swatch {
+  width: 1.35rem;
+  height: 1.35rem;
+  border-radius: 0.35rem;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  flex-shrink: 0;
+}
+
+.bg-preview-panel__current code {
+  font-family: ui-monospace, "Cascadia Code", monospace;
+  font-size: 0.82rem;
+  color: var(--accent-primary);
+}
+
+.bg-preview-panel__presets {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.45rem;
+  margin-bottom: 0.85rem;
+}
+
+.bg-preview-preset {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.4rem 0.5rem;
+  border-radius: 0.55rem;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-secondary);
+  font-size: 0.74rem;
+  text-align: left;
+  transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+}
+
+.bg-preview-preset:hover {
+  color: var(--text-primary);
+  border-color: rgba(15, 255, 212, 0.25);
+}
+
+.bg-preview-preset--active {
+  color: var(--text-primary);
+  border-color: rgba(15, 255, 212, 0.45);
+  background: rgba(15, 255, 212, 0.08);
+}
+
+.bg-preview-preset__chip {
+  width: 0.9rem;
+  height: 0.9rem;
+  border-radius: 0.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  flex-shrink: 0;
+}
+
+.bg-preview-panel__picker,
+.bg-preview-panel__hex {
+  display: grid;
+  gap: 0.35rem;
+  margin-bottom: 0.65rem;
+  font-size: 0.76rem;
+  color: var(--text-secondary);
+}
+
+.bg-preview-panel__picker input[type="color"] {
+  width: 100%;
+  height: 2.25rem;
+  padding: 0.15rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.5rem;
+  background: rgba(255, 255, 255, 0.04);
+  cursor: pointer;
+}
+
+.bg-preview-panel__hex input {
+  width: 100%;
+  padding: 0.45rem 0.55rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-primary);
+  font-family: ui-monospace, "Cascadia Code", monospace;
+  font-size: 0.8rem;
+}
+
+.bg-preview-panel__reset {
+  width: 100%;
+  padding: 0.5rem 0.65rem;
+  border-radius: 0.55rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.bg-preview-panel__reset:hover {
+  color: var(--text-primary);
+  border-color: rgba(123, 97, 255, 0.35);
+}

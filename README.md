@@ -42,14 +42,17 @@ Sitio estático con animación 3D (Three.js), fondo con canvas, secciones con sc
 
 Al usar módulos ES y rutas relativas, hay que servir el proyecto por HTTP (no abrir `index.html` como `file://`).
 
-Ejemplo con Python:
+**En Windows**, `python -m http.server` sirve `.js` como `text/plain` y el navegador bloquea los módulos (la página queda en blanco). En Vercel/Netlify esto no pasa.
+
+Usa el servidor del proyecto:
 
 ```bash
-cd codevs-ia
-python -m http.server 8080
+python scripts/dev-server.py
 ```
 
-Abre `http://localhost:8080`. El modelo GLB y los CSS/JS deben cargar sin CORS.
+O en Windows, doble clic en `start-dev.bat`.
+
+Abre `http://localhost:8080` y recarga con Ctrl+Shift+R.
 
 ## Cómo hacer deploy
 
