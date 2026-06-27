@@ -4,16 +4,38 @@ function isMobileNav() {
   return MOBILE_NAV_MQ.matches;
 }
 
-function setMenuOpen(nav, toggle, open) {
+function getNavActions(nav) {
+  return nav.querySelector(".nav__actions");
+}
+
+function placeMobilePanel(nav, panel) {
+  const actions = getNavActions(nav);
+  if (isMobileNav()) {
+    if (panel.parentElement !== document.body) {
+      document.body.appendChild(panel);
+    }
+    panel.setAttribute("aria-hidden", nav.classList.contains("nav--open") ? "false" : "true");
+    return;
+  }
+
+  panel.removeAttribute("aria-hidden");
+  if (panel.parentElement !== nav && actions) {
+    nav.insertBefore(panel, actions);
+  }
+}
+
+function setMenuOpen(nav, toggle, panel, open) {
   nav.classList.toggle("nav--open", open);
+  panel.classList.toggle("nav__links--open", open);
   toggle.setAttribute("aria-expanded", String(open));
   toggle.setAttribute("aria-label", open ? "Cerrar menú" : "Abrir menú");
+  panel.setAttribute("aria-hidden", String(!open));
   document.body.classList.toggle("nav-menu-open", open);
 }
 
-function closeMenu(nav, toggle) {
+function closeMenu(nav, toggle, panel) {
   if (!nav.classList.contains("nav--open")) return;
-  setMenuOpen(nav, toggle, false);
+  setMenuOpen(nav, toggle, panel, false);
 }
 
 function initNavMobile() {
@@ -23,25 +45,33 @@ function initNavMobile() {
 
   if (!nav || !toggle || !panel) return;
 
+  placeMobilePanel(nav, panel);
+
   toggle.addEventListener("click", () => {
     const open = !nav.classList.contains("nav--open");
-    setMenuOpen(nav, toggle, open);
+    setMenuOpen(nav, toggle, panel, open);
   });
 
   panel.querySelectorAll("a").forEach((link) => {
-    link.addEventListener("click", () => closeMenu(nav, toggle));
+    link.addEventListener("click", () => closeMenu(nav, toggle, panel));
+  });
+
+  panel.addEventListener("click", (event) => {
+    if (event.target === panel) closeMenu(nav, toggle, panel);
   });
 
   document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape") closeMenu(nav, toggle);
+    if (event.key === "Escape") closeMenu(nav, toggle, panel);
   });
 
-  MOBILE_NAV_MQ.addEventListener("change", (event) => {
-    if (!event.matches) closeMenu(nav, toggle);
+  MOBILE_NAV_MQ.addEventListener("change", () => {
+    placeMobilePanel(nav, panel);
+    closeMenu(nav, toggle, panel);
   });
 
   window.addEventListener("resize", () => {
-    if (!isMobileNav()) closeMenu(nav, toggle);
+    placeMobilePanel(nav, panel);
+    if (!isMobileNav()) closeMenu(nav, toggle, panel);
   });
 }
 
