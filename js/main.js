@@ -7,6 +7,5 @@ import "./tech-stack.js";
 import "./sections.js";
 import "./projects-fan.js";
 import "./music-toggle.js";
-import "./bg-preview.js";
 
 updateGlobalScrollEffects();

@@ -1,8 +1,8 @@
 :root {
-  --page-bg: #0A0F1E;
-  --page-bg-tech: #0D1528;
+  --page-bg: #000000;
+  --page-bg-tech: #000000;
   --bg-primary: #000000;
-  --bg-elevated: #050608;
+  --bg-elevated: #050505;
   --accent-primary: #0FFFD4;
   --accent-secondary: #7B61FF;
   /*
@@ -20,13 +20,13 @@
   --glass-bg: rgba(10, 12, 16, 0.78);
   --nav-height: 4.25rem;
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-  --bg-tech: #020304;
+  --bg-tech: #000000;
   /* Velo sobre la red neuronal (#bg-neural-canvas) en secciones donde debe verse */
   --bg-tech-over-neural: linear-gradient(
     180deg,
-    rgba(2, 3, 4, 0.82) 0%,
-    rgba(2, 3, 4, 0.58) 48%,
-    rgba(2, 3, 4, 0.82) 100%
+    rgba(0, 0, 0, 0.82) 0%,
+    rgba(0, 0, 0, 0.58) 48%,
+    rgba(0, 0, 0, 0.82) 100%
   );
 }
 
