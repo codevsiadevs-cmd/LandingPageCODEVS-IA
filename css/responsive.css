@@ -131,8 +131,13 @@
 @media (max-width: 768px) {
   .hero {
     --hero-brand-left: clamp(0.15rem, 0.6vw, 0.45rem);
-    --hero-brand-top: calc(50% - clamp(0.25rem, 0.85vh, 0.55rem) + 1cm);
+    --hero-brand-bottom: clamp(0.15rem, 0.6vh, 0.3rem);
     --hero-title-size: clamp(3.5rem, 16.5vw, 6.35rem);
+  }
+
+  .hero__brand {
+    top: auto;
+    bottom: calc(var(--hero-brand-bottom) + env(safe-area-inset-bottom, 0px));
   }
   .hero__canvas-wrap {
     width: min(560px, 95vw);
@@ -140,7 +145,8 @@
     right: clamp(-3rem, -8vw, -1rem);
   }
   .hero__keyword {
-    font-size: clamp(0.65rem, 2.9vw, 0.85rem);
+    font-size: clamp(0.95rem, 4.2vw, 1.25rem);
+    color: #ffffff;
   }
 
   .hero__keywords {
@@ -403,7 +409,7 @@
   .hero {
     min-height: 92vh;
     --hero-title-size: clamp(2.9rem, 17.5vw, 4.85rem);
-    --hero-brand-top: calc(50% - clamp(0.2rem, 0.7vh, 0.45rem) + 1cm);
+    --hero-brand-bottom: clamp(0.05rem, 0.35vh, 0.2rem);
   }
 
   .hero__keywords {
@@ -413,8 +419,9 @@
   }
 
   .hero__keyword {
-    font-size: clamp(0.58rem, 2.6vw, 0.72rem);
+    font-size: clamp(0.82rem, 3.75vw, 1.05rem);
     letter-spacing: 0.02em;
+    color: #ffffff;
   }
 
   .hero__keyword--digital {
