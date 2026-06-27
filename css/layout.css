@@ -116,6 +116,59 @@
   opacity: 0.85;
 }
 
+.nav__contact--menu {
+  display: none;
+}
+
+.nav__toggle {
+  display: none;
+  position: relative;
+  z-index: 102;
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.45rem;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-primary);
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  flex-direction: column;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.nav__toggle:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(15, 255, 212, 0.22);
+}
+
+.nav__toggle-line {
+  display: block;
+  width: 1.15rem;
+  height: 1.5px;
+  border-radius: 1px;
+  background: currentColor;
+  transition:
+    transform 0.28s var(--ease-out),
+    opacity 0.2s ease;
+}
+
+.nav--open .nav__toggle-line:nth-child(1) {
+  transform: translateY(5px) rotate(45deg);
+}
+
+.nav--open .nav__toggle-line:nth-child(2) {
+  opacity: 0;
+}
+
+.nav--open .nav__toggle-line:nth-child(3) {
+  transform: translateY(-5px) rotate(-45deg);
+}
+
 .nav--scrolled {
   background: rgba(0, 0, 0, 0.6);
   backdrop-filter: blur(20px) saturate(180%);

@@ -74,7 +74,20 @@
         <span class="nav__brand-line nav__brand-line--accent">IA</span>
       </span>
     </a>
-    <nav class="nav__links" aria-label="Principal">
+    <button
+      type="button"
+      class="nav__toggle"
+      id="nav-toggle"
+      aria-expanded="false"
+      aria-controls="nav-mobile-panel"
+      aria-label="Abrir menú"
+    >
+      <span class="nav__toggle-line" aria-hidden="true"></span>
+      <span class="nav__toggle-line" aria-hidden="true"></span>
+      <span class="nav__toggle-line" aria-hidden="true"></span>
+    </button>
+
+    <nav class="nav__links" id="nav-mobile-panel" aria-label="Principal">
       <a href="#tecnologias">Tecnologías</a>
       <a href="#proyectos">Proyectos</a>
       <a href="#proceso">Proceso</a>
@@ -82,6 +95,7 @@
       <a href="#testimonios">Testimonios</a>
       <a href="#contacto">Contacto</a>
       <span class="nav-indicator" aria-hidden="true"></span>
+      <a href="#contacto" class="nav__contact nav__contact--menu">Contacto</a>
     </nav>
     <div class="nav__actions">
       <a href="#contacto" class="nav__contact">
