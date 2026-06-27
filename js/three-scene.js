@@ -277,16 +277,19 @@ function animate() {
   }
 
   if (wrap && renderer) {
+    const scrollRot = docProgress * Math.PI * 2.75;
+    const scrollBlend = Math.min(Math.max(latestScrollY / 320, 0), 1);
+
     if (prefersReducedMotionGlobal) {
-      spinGroup.rotation.y += dt * 0.16;
+      spinGroup.rotation.y = scrollRot * 0.35;
       tiltGroup.rotation.x = 0;
       tiltGroup.rotation.y = 0;
     } else {
       currentMouseX += (targetMouseX - currentMouseX) * 0.05;
       currentMouseY += (targetMouseY - currentMouseY) * 0.05;
-      spinGroup.rotation.y += dt * 0.28;
-      tiltGroup.rotation.y = currentMouseX * 0.18;
-      tiltGroup.rotation.x = -currentMouseY * 0.12;
+      spinGroup.rotation.y = scrollRot;
+      tiltGroup.rotation.y = currentMouseX * 0.18 * scrollBlend;
+      tiltGroup.rotation.x = -currentMouseY * 0.12 * scrollBlend;
     }
   } else if (prefersReducedMotionGlobal) {
     sceneMotion.sharedPulse = 0;

@@ -1439,9 +1439,10 @@ textarea.contact__control:not(:placeholder-shown) ~ .contact__label {
   --music-toggle-pad-y: 14px;
   --music-toggle-pad-x: 14px;
   position: fixed;
-  left: clamp(1rem, 3.5vw, 1.85rem);
-  bottom: max(1.15rem, env(safe-area-inset-bottom, 0px));
-  z-index: 159;
+  right: clamp(1rem, 3.5vw, 1.85rem);
+  left: auto;
+  bottom: calc(max(1.15rem, env(safe-area-inset-bottom, 0px)) + 3.4rem + 0.8rem);
+  z-index: 161;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1652,36 +1653,10 @@ textarea.contact__control:not(:placeholder-shown) ~ .contact__label {
 }
 
 /* ---------------------------------------------------------------------------
- * Navbar enhancements (scroll-triggered glass + border draw + active indicator
- *   + hover underline). Las reglas base de .nav / .nav--scrolled / .nav__links
- *   viven en layout.css; aquí sólo añadimos los efectos y pseudo-elementos.
+ * Navbar enhancements (scroll-triggered glass + active indicator + hover
+ * underline). Las reglas base de .nav / .nav--scrolled / .nav__links viven
+ * en layout.css; aquí sólo añadimos los efectos y pseudo-elementos.
  * --------------------------------------------------------------------------- */
-
-/* Línea decorativa que se "dibuja" left → right cuando aparece la barra glass. */
-.nav::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: -1px;
-  height: 1px;
-  width: 0;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    var(--accent-primary) 28%,
-    var(--accent-secondary) 72%,
-    transparent 100%
-  );
-  pointer-events: none;
-  transition: width 600ms ease-out;
-  box-shadow: 0 0 12px rgba(15, 255, 212, 0.45);
-  opacity: 0;
-}
-
-.nav--scrolled::after {
-  width: 100%;
-  opacity: 1;
-}
 
 /* Indicador deslizante que sigue al link activo. JS (scroll.js) actualiza sus
    estilos inline `left` y `width` al cambiar la sección activa. */
@@ -1737,7 +1712,6 @@ textarea.contact__control:not(:placeholder-shown) ~ .contact__label {
 
 @media (prefers-reduced-motion: reduce) {
   .nav,
-  .nav::after,
   .nav-indicator,
   .nav__links a::after {
     transition: none !important;

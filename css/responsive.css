@@ -130,9 +130,9 @@
 
 @media (max-width: 768px) {
   .hero {
-    --hero-brand-left: clamp(1rem, 4vw, 1.5rem);
-    --hero-brand-bottom: clamp(1.75rem, 6vh, 3rem);
-    --hero-title-size: clamp(2.75rem, 14vw, 4.25rem);
+    --hero-brand-left: clamp(0.15rem, 0.6vw, 0.45rem);
+    --hero-brand-top: calc(50% - clamp(0.25rem, 0.85vh, 0.55rem) + 1cm);
+    --hero-title-size: clamp(3.5rem, 16.5vw, 6.35rem);
   }
   .hero__canvas-wrap {
     width: min(560px, 95vw);
@@ -140,7 +140,7 @@
     right: clamp(-3rem, -8vw, -1rem);
   }
   .hero__keyword {
-    font-size: clamp(0.58rem, 2.6vw, 0.72rem);
+    font-size: clamp(0.65rem, 2.9vw, 0.85rem);
   }
 
   .hero__keywords {
@@ -402,17 +402,18 @@
 @media (max-width: 520px) {
   .hero {
     min-height: 92vh;
-    --hero-title-size: clamp(2.35rem, 15vw, 3.25rem);
+    --hero-title-size: clamp(2.9rem, 17.5vw, 4.85rem);
+    --hero-brand-top: calc(50% - clamp(0.2rem, 0.7vh, 0.45rem) + 1cm);
   }
 
   .hero__keywords {
     gap: 0.15rem;
-    padding-left: 0.65rem;
-    padding-right: 0.65rem;
+    padding-left: 0.35rem;
+    padding-right: 0.35rem;
   }
 
   .hero__keyword {
-    font-size: clamp(0.52rem, 2.35vw, 0.62rem);
+    font-size: clamp(0.58rem, 2.6vw, 0.72rem);
     letter-spacing: 0.02em;
   }
 

@@ -228,9 +228,9 @@
   justify-content: center;
   overflow: hidden;
   text-align: center;
-  --hero-brand-left: clamp(1.5rem, 5vw, 4rem);
-  --hero-brand-bottom: clamp(2.5rem, 9vh, 5.5rem);
-  --hero-title-size: clamp(3.75rem, 13.5vw, 9.5rem);
+  --hero-brand-left: clamp(0.2rem, 0.85vw, 0.65rem);
+  --hero-title-size: clamp(5rem, 17vw, 11.5rem);
+  --hero-brand-top: calc(50% - clamp(0.35rem, 1.1vh, 0.75rem) + 1cm);
 }
 
 .hero__bg-dots {
@@ -340,15 +340,16 @@
   grid-template-rows: 1fr;
   align-items: center;
   padding: 0 var(--hero-brand-left) clamp(1.5rem, 4vw, 3rem);
+  transform: translateY(calc(clamp(-2rem, -4.5vh, -0.75rem) + 2cm));
 }
 
 .hero__keyword {
   position: relative;
   font-family: var(--font-body);
-  font-size: clamp(0.78rem, 1.35vw, 0.95rem);
+  font-size: clamp(0.85rem, 1.55vw, 1.05rem);
   font-weight: 400;
   letter-spacing: 0.04em;
-  color: rgba(238, 241, 247, 0.72);
+  color: #ffffff;
   white-space: nowrap;
 }
 
@@ -371,14 +372,15 @@
 .hero__brand {
   position: absolute;
   z-index: 3;
+  top: var(--hero-brand-top);
+  bottom: auto;
   left: var(--hero-brand-left);
-  bottom: var(--hero-brand-bottom);
   margin: 0;
   font-family: var(--font-heading);
-  font-weight: 700;
+  font-weight: 400;
   font-size: var(--hero-title-size);
-  line-height: 0.86;
-  letter-spacing: -0.035em;
+  line-height: 0.88;
+  letter-spacing: -0.025em;
   color: var(--text-primary);
   text-align: left;
 }
