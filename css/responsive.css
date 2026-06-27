@@ -109,10 +109,6 @@
     display: none;
   }
 
-  .nav__links a[href="#contacto"]:not(.nav__contact--menu) {
-    display: none;
-  }
-
   .nav__contact--menu {
     display: inline-flex;
     margin-top: 1.25rem;
