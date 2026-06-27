@@ -67,6 +67,13 @@
   <div class="custom-cursor" id="custom-cursor" aria-hidden="true"></div>
 
   <header class="nav" id="site-nav" role="banner">
+    <a href="#inicio" class="nav__brand" aria-label="CODEVS IA — Inicio">
+      <span class="nav__brain-wrap" id="nav-brain-wrap" aria-hidden="true"></span>
+      <span class="nav__brand-text">
+        <span class="nav__brand-line">CODEVS</span>
+        <span class="nav__brand-line nav__brand-line--accent">IA</span>
+      </span>
+    </a>
     <nav class="nav__links" aria-label="Principal">
       <a href="#tecnologias">Tecnologías</a>
       <a href="#proyectos">Proyectos</a>
@@ -76,6 +83,12 @@
       <a href="#contacto">Contacto</a>
       <span class="nav-indicator" aria-hidden="true"></span>
     </nav>
+    <div class="nav__actions">
+      <a href="#contacto" class="nav__contact">
+        Contacto
+        <span class="nav__contact-arrow" aria-hidden="true">↗</span>
+      </a>
+    </div>
   </header>
 
   <main>
@@ -83,44 +96,17 @@
       <div class="hero__bg-dots" aria-hidden="true"></div>
       <div class="hero__gradient" aria-hidden="true"></div>
 
-      <div class="hero__canvas-wrap" id="hero-canvas-wrap">
-        <!-- Three.js WebGL canvas se inserta aquí -->
-        <span class="hero__canvas-tooltip" aria-hidden="true">CODEVS IA</span>
-        <div
-          class="glb-progress"
-          id="glb-progress"
-          role="progressbar"
-          aria-label="Cargando modelo 3D"
-          aria-valuemin="0"
-          aria-valuemax="100"
-          aria-valuenow="0"
-          aria-hidden="true"
-        >
-          <div class="glb-progress__track">
-            <div class="glb-progress__bar"></div>
-          </div>
-          <span class="glb-progress__label" id="glb-progress-label">Cargando 0%</span>
-        </div>
+      <div class="hero__keywords" aria-hidden="true">
+        <span class="hero__keyword hero__keyword--tech">Technology</span>
+        <span class="hero__keyword hero__keyword--innov">Innovation</span>
+        <span class="hero__keyword hero__keyword--digital">Digital</span>
       </div>
 
-      <div class="hero__content">
-        <p class="hero__brand">CODEVS&nbsp;+&nbsp;<span>IA</span></p>
-        <h1 id="hero-heading" class="hero__tagline">
-          Construimos el futuro con código e <span class="gradient-word">inteligencia</span>
-        </h1>
-        <p class="hero__subtitle">
-          Desarrollo de software a medida, potenciado con IA para empresas que quieren crecer.
-        </p>
-        <div class="hero__ctas">
-          <a href="#proyectos" class="btn btn--primary">Ver proyectos</a>
-          <a href="#contacto" class="btn btn--secondary">Hablar con nosotros</a>
-        </div>
-      </div>
+      <h1 class="hero__brand" id="hero-heading">
+        <span class="hero__brand-line">CODEVS</span>
+        <span class="hero__brand-line hero__brand-line--ia">IA</span>
+      </h1>
 
-      <div class="hero__scroll" aria-hidden="true">
-        <span class="hero__scroll-line"></span>
-        <span class="hero__scroll-icon"></span>
-      </div>
     </section>
 
     <section class="tech" id="tecnologias" aria-labelledby="tech-heading">

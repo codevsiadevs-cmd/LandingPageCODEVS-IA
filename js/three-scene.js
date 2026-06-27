@@ -13,12 +13,11 @@ import {
 } from "./background.js";
 import { drawNeuralNetwork, initNeuralBackground } from "./neural-background.js";
 
-const wrap = document.getElementById("hero-canvas-wrap");
+const wrap = document.getElementById("nav-brain-wrap");
 
 /**
- * Cache del rect del wrap del cerebro: el wrap es position:fixed centrado, así
- * que sólo cambia cuando el viewport cambia de tamaño. Lo refrescamos vía
- * ResizeObserver (y resize) en lugar de leerlo cada frame.
+ * El cerebro 3D vive en el logo del navbar (#nav-brain-wrap). Cacheamos su rect
+ * para el attract de partículas de fondo y el resize del renderer.
  */
 let wrapRect = wrap ? wrap.getBoundingClientRect() : null;
 
@@ -36,24 +35,29 @@ window.addEventListener("resize", refreshWrapRect, { passive: true });
 let reducedOffscreen = null;
 
 export const scene = new THREE.Scene();
-export const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
-camera.position.set(0, 0.2, 2.95);
-const baseCameraZ = 2.95;
-let targetCameraZ = baseCameraZ;
+export const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
+camera.position.set(0, 0.05, 2.15);
 
-export let renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-renderer.outputColorSpace = THREE.SRGBColorSpace;
-renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1;
-wrap.appendChild(renderer.domElement);
+export let renderer = null;
+export const spinGroup = new THREE.Group();
+export const tiltGroup = new THREE.Group();
+scene.add(spinGroup);
+spinGroup.add(tiltGroup);
 
-// WebGL context loss/restore: evita que el navegador “mate” la página al recuperar GPU.
-renderer.domElement.addEventListener("webglcontextlost", (event) => {
-  event.preventDefault();
-});
-renderer.domElement.addEventListener("webglcontextrestored", () => {
-  updateRendererSize();
-});
+if (wrap) {
+  renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 0.96;
+  wrap.appendChild(renderer.domElement);
+
+  renderer.domElement.addEventListener("webglcontextlost", (event) => {
+    event.preventDefault();
+  });
+  renderer.domElement.addEventListener("webglcontextrestored", () => {
+    updateRendererSize();
+  });
+}
 
 updateBackgroundCanvasSize();
 initParticles();
@@ -65,7 +69,9 @@ window.addEventListener("resize", () => {
   updateBackgroundCanvasSize();
   initParticles();
 });
-updateRendererSize();
+if (wrap) {
+  updateRendererSize();
+}
 
 initNeuralBackground();
 
@@ -80,22 +86,20 @@ if (!prefersReducedMotionGlobal) {
   });
 }
 
-const hemi = new THREE.HemisphereLight(0xf0f4ff, 0x1a2235, 0.85);
+const hemi = new THREE.HemisphereLight(0xf0f4ff, 0x1a2235, 0.82);
 scene.add(hemi);
-const dir = new THREE.DirectionalLight(0x0fffd4, 1.1);
-dir.position.set(2, 4, 3);
+const dir = new THREE.DirectionalLight(0x0fffd4, 0.92);
+dir.position.set(1.5, 2.5, 2);
 scene.add(dir);
-const fill = new THREE.DirectionalLight(0x7b61ff, 0.55);
-fill.position.set(-3, 1, -2);
+const fill = new THREE.DirectionalLight(0x7b61ff, 0.42);
+fill.position.set(-2, 0.5, -1);
 scene.add(fill);
+const rim = new THREE.DirectionalLight(0xffffff, 0.18);
+rim.position.set(0, 0, -2);
+scene.add(rim);
 
-export const spinGroup = new THREE.Group();
-export const tiltGroup = new THREE.Group();
-scene.add(spinGroup);
-spinGroup.add(tiltGroup);
-
-export const innerPulseLight = new THREE.PointLight(0x0fffd4, 1.2, 6, 2);
-innerPulseLight.position.set(0, 0.15, 0.4);
+export const innerPulseLight = new THREE.PointLight(0x0fffd4, 0.42, 6, 2);
+innerPulseLight.position.set(0, 0.1, 0.35);
 tiltGroup.add(innerPulseLight);
 
 const cyanColor = new THREE.Color(0x0fffd4);
@@ -105,8 +109,8 @@ const pulseColor = new THREE.Color();
 let fallbackMesh = null;
 
 function addFallbackMesh() {
-  if (fallbackMesh) return;
-  const geo = new THREE.IcosahedronGeometry(0.95, 1);
+  if (!wrap || fallbackMesh) return;
+  const geo = new THREE.IcosahedronGeometry(0.62, 1);
   const mat = new THREE.MeshStandardMaterial({
     color: 0x1a2235,
     metalness: 0.4,
@@ -138,37 +142,71 @@ function removeFallbackMesh() {
   fallbackMesh = null;
 }
 
+function modelToParticleCloud(source, { pointSize = 0.016, step = 1 } = {}) {
+  const positions = [];
+  const colors = [];
+  const colorCyan = new THREE.Color(0x0fffd4);
+  const colorPurple = new THREE.Color(0x7b61ff);
+  const colorGold = new THREE.Color(0xffc857);
+  const sample = new THREE.Vector3();
+  const tint = new THREE.Color();
+
+  source.updateMatrixWorld(true);
+  source.traverse((child) => {
+    if (!child.isMesh || !child.geometry?.attributes?.position) return;
+    const attr = child.geometry.attributes.position;
+    for (let i = 0; i < attr.count; i += step) {
+      sample.fromBufferAttribute(attr, i);
+      sample.applyMatrix4(child.matrixWorld);
+      positions.push(sample.x, sample.y, sample.z);
+      const roll = Math.random();
+      if (roll < 0.42) tint.copy(colorCyan);
+      else if (roll < 0.78) tint.copy(colorPurple);
+      else tint.copy(colorGold);
+      colors.push(tint.r, tint.g, tint.b);
+    }
+  });
+
+  const baseCount = positions.length / 3;
+  if (baseCount > 0 && baseCount < 9000) {
+    for (let i = 0; i < baseCount; i += 3) {
+      const ix = i * 3;
+      positions.push(
+        positions[ix] + (Math.random() - 0.5) * 0.014,
+        positions[ix + 1] + (Math.random() - 0.5) * 0.014,
+        positions[ix + 2] + (Math.random() - 0.5) * 0.014
+      );
+      colors.push(colors[ix], colors[ix + 1], colors[ix + 2]);
+    }
+  }
+
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
+  geometry.setAttribute("color", new THREE.Float32BufferAttribute(colors, 3));
+
+  const material = new THREE.PointsMaterial({
+    size: pointSize,
+    vertexColors: true,
+    transparent: true,
+    opacity: 0.9,
+    blending: THREE.AdditiveBlending,
+    depthWrite: false,
+    sizeAttenuation: true,
+  });
+
+  return new THREE.Points(geometry, material);
+}
+
 const loader = new GLTFLoader();
 const dracoLoader = new DRACOLoader();
 dracoLoader.setDecoderPath("https://www.gstatic.com/draco/versioned/decoders/1.5.6/");
 loader.setDRACOLoader(dracoLoader);
 
-const progressEl = document.getElementById("glb-progress");
-const progressLabelEl = document.getElementById("glb-progress-label");
-
-function setGlbProgress(pct) {
-  if (!progressEl) return;
-  const value = Math.max(0, Math.min(100, pct));
-  const rounded = Math.round(value);
-  progressEl.style.setProperty("--glb-progress", `${value}%`);
-  progressEl.setAttribute("aria-valuenow", String(rounded));
-  progressEl.setAttribute("aria-hidden", "false");
-  progressEl.classList.add("glb-progress--visible");
-  if (progressLabelEl) progressLabelEl.textContent = `Cargando ${rounded}%`;
-}
-
-function hideGlbProgress() {
-  if (!progressEl) return;
-  progressEl.classList.remove("glb-progress--visible");
-  progressEl.setAttribute("aria-hidden", "true");
-}
-
 let glbLoadTriggered = false;
 
-function loadHeroModel() {
-  if (glbLoadTriggered) return;
+function loadNavBrainModel() {
+  if (!wrap || glbLoadTriggered) return;
   glbLoadTriggered = true;
-  setGlbProgress(0);
 
   loader.load(
     "./assets/3d/logo.glb",
@@ -178,42 +216,41 @@ function loadHeroModel() {
       const box = new THREE.Box3().setFromObject(model);
       const size = box.getSize(new THREE.Vector3());
       const maxDim = Math.max(size.x, size.y, size.z) || 1;
-      const scale = 1.95 / maxDim;
+      const scale = 1.42 / maxDim;
       model.scale.setScalar(scale);
       box.setFromObject(model);
       const center = box.getCenter(new THREE.Vector3());
       model.position.sub(center);
+
+      model.traverse((child) => {
+        if (!child.isMesh || !child.material) return;
+        const materials = Array.isArray(child.material) ? child.material : [child.material];
+        materials.forEach((mat) => {
+          if (!mat) return;
+          if (mat.map) mat.map.colorSpace = THREE.SRGBColorSpace;
+          mat.vertexColors = false;
+          if ("emissive" in mat && mat.color) {
+            mat.emissive.copy(mat.color).multiplyScalar(0.14);
+            mat.emissiveIntensity = 0.24;
+          }
+          if ("metalness" in mat) mat.metalness = Math.min(0.65, (mat.metalness || 0.35) + 0.06);
+          if ("roughness" in mat) mat.roughness = Math.max(0.28, (mat.roughness || 0.45) - 0.06);
+          mat.needsUpdate = true;
+        });
+      });
+
       tiltGroup.add(model);
-      setGlbProgress(100);
-      window.setTimeout(hideGlbProgress, 380);
     },
-    (xhr) => {
-      if (xhr && xhr.total) {
-        setGlbProgress((xhr.loaded / xhr.total) * 100);
-      }
-    },
+    undefined,
     () => {
-      hideGlbProgress();
+      /* fallback mesh ya visible */
     }
   );
 }
 
-addFallbackMesh();
-
-if (wrap && typeof IntersectionObserver !== "undefined") {
-  const heroIo = new IntersectionObserver(
-    (entries, obs) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
-        loadHeroModel();
-        obs.disconnect();
-      });
-    },
-    { root: null, threshold: 0.05, rootMargin: "0px 0px 10% 0px" }
-  );
-  heroIo.observe(wrap);
-} else {
-  loadHeroModel();
+if (wrap) {
+  addFallbackMesh();
+  loadNavBrainModel();
 }
 
 let glowLevel = 0;
@@ -239,25 +276,20 @@ function animate() {
     syncBrainRectFromWrap(wrapRect);
   }
 
-  if (prefersReducedMotionGlobal) {
-    spinGroup.rotation.y += dt * 0.18;
-    tiltGroup.rotation.x = 0;
-    tiltGroup.rotation.y = 0;
+  if (wrap && renderer) {
+    if (prefersReducedMotionGlobal) {
+      spinGroup.rotation.y += dt * 0.16;
+      tiltGroup.rotation.x = 0;
+      tiltGroup.rotation.y = 0;
+    } else {
+      currentMouseX += (targetMouseX - currentMouseX) * 0.05;
+      currentMouseY += (targetMouseY - currentMouseY) * 0.05;
+      spinGroup.rotation.y += dt * 0.28;
+      tiltGroup.rotation.y = currentMouseX * 0.18;
+      tiltGroup.rotation.x = -currentMouseY * 0.12;
+    }
+  } else if (prefersReducedMotionGlobal) {
     sceneMotion.sharedPulse = 0;
-  } else {
-    currentMouseX += (targetMouseX - currentMouseX) * 0.05;
-    currentMouseY += (targetMouseY - currentMouseY) * 0.05;
-    sceneMotion.scrollSpinBoost *= 0.9;
-    const spinSpeed = 0.24 + sceneMotion.scrollSpinBoost;
-    spinGroup.rotation.y += dt * spinSpeed;
-    tiltGroup.rotation.y = currentMouseX * 0.35;
-    tiltGroup.rotation.x = -currentMouseY * 0.22;
-  }
-
-  if (!prefersReducedMotionGlobal) {
-    const heroRange = Math.min(Math.max(latestScrollY / Math.max(window.innerHeight, 1), 0), 1.8);
-    targetCameraZ = baseCameraZ + heroRange * 0.9;
-    camera.position.z += (targetCameraZ - camera.position.z) * 0.05;
   }
 
   const pulse = (Math.sin(t * 2.2) + 1) * 0.5;
@@ -267,17 +299,21 @@ function animate() {
   }
   const targetGlow = docProgress > 0.5 ? (docProgress - 0.5) * 2 : 0;
   glowLevel += (targetGlow - glowLevel) * 0.06;
-  if (prefersReducedMotionGlobal) {
-    innerPulseLight.intensity = 0.95;
-    innerPulseLight.color.set(0x0fffd4);
-    dir.intensity = 0.9;
-    fill.intensity = 0.45;
-  } else {
-    innerPulseLight.intensity = pulseIntensity + glowLevel * 0.35;
-    pulseColor.copy(cyanColor).lerp(purpleColor, pulse);
-    innerPulseLight.color.copy(pulseColor);
-    dir.intensity = 1.1 + glowLevel * 0.7;
-    fill.intensity = 0.55 + glowLevel * 0.5;
+  if (wrap && renderer) {
+    if (prefersReducedMotionGlobal) {
+      innerPulseLight.intensity = 0.38;
+      innerPulseLight.color.set(0x0fffd4);
+      dir.intensity = 0.72;
+      fill.intensity = 0.34;
+      rim.intensity = 0.14;
+    } else {
+      innerPulseLight.intensity = 0.34 + pulse * 0.18 + glowLevel * 0.06;
+      pulseColor.copy(cyanColor).lerp(purpleColor, pulse * 0.22);
+      innerPulseLight.color.copy(pulseColor);
+      dir.intensity = 0.78 + glowLevel * 0.1;
+      fill.intensity = 0.38 + glowLevel * 0.08;
+      rim.intensity = 0.16 + pulse * 0.05;
+    }
   }
 
   drawPerspectiveGrid(docProgress);
@@ -285,7 +321,9 @@ function animate() {
   drawNeuralNetwork();
   updateNebula(docProgress, currentMouseX * 0.02, currentMouseY * 0.02);
 
-  renderer.render(scene, camera);
+  if (renderer) {
+    renderer.render(scene, camera);
+  }
 }
 
 export { animate };
