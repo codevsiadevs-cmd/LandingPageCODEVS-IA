@@ -18,7 +18,7 @@
   --font-body: "IBM Plex Sans", system-ui, sans-serif;
   --glass-border: rgba(180, 195, 220, 0.08);
   --glass-bg: rgba(10, 12, 16, 0.78);
-  --nav-height: 4.25rem;
+  --nav-height: calc(4.25rem + 0.25cm);
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --bg-tech: #000000;
   /* Velo sobre la red neuronal (#bg-neural-canvas) en secciones donde debe verse */

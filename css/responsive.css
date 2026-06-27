@@ -88,7 +88,7 @@
     font-family: var(--font-heading);
     font-weight: 600;
     letter-spacing: -0.02em;
-    color: rgba(238, 241, 247, 0.88);
+    color: #ffffff;
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   }
 
@@ -98,11 +98,11 @@
 
   .nav__links a:hover,
   .nav__links a.nav__link--active {
-    color: var(--text-primary);
+    color: #ffffff;
   }
 
   .nav__links a.nav__link--active {
-    color: var(--accent-primary);
+    color: #ffffff;
   }
 
   .nav-indicator {
