@@ -13,63 +13,74 @@ import {
 } from "./background.js";
 import { drawNeuralNetwork, initNeuralBackground } from "./neural-background.js";
 
-const wrap = document.getElementById("nav-brain-wrap");
+const navWrap = document.getElementById("nav-brain-wrap");
+const heroWrap = document.getElementById("hero-brain-wrap");
+const hasBrainScene = Boolean(navWrap || heroWrap);
 
-/**
- * El cerebro 3D vive en el logo del navbar (#nav-brain-wrap). Cacheamos su rect
- * para el attract de partículas de fondo y el resize del renderer.
- */
-let wrapRect = wrap ? wrap.getBoundingClientRect() : null;
+let navWrapRect = navWrap ? navWrap.getBoundingClientRect() : null;
+let heroWrapRect = heroWrap ? heroWrap.getBoundingClientRect() : null;
 
-function refreshWrapRect() {
-  if (!wrap) return;
-  wrapRect = wrap.getBoundingClientRect();
+function refreshWrapRects() {
+  if (navWrap) navWrapRect = navWrap.getBoundingClientRect();
+  if (heroWrap) heroWrapRect = heroWrap.getBoundingClientRect();
+  const particleTarget =
+    heroWrapRect && heroWrapRect.width > 120 ? heroWrapRect : navWrapRect;
+  syncBrainRectFromWrap(particleTarget);
 }
 
-if (wrap && typeof ResizeObserver !== "undefined") {
-  const wrapResizeObserver = new ResizeObserver(refreshWrapRect);
-  wrapResizeObserver.observe(wrap);
+if (hasBrainScene && typeof ResizeObserver !== "undefined") {
+  const wrapResizeObserver = new ResizeObserver(refreshWrapRects);
+  if (navWrap) wrapResizeObserver.observe(navWrap);
+  if (heroWrap) wrapResizeObserver.observe(heroWrap);
 }
-window.addEventListener("resize", refreshWrapRect, { passive: true });
-
-let reducedOffscreen = null;
+window.addEventListener("resize", refreshWrapRects, { passive: true });
 
 export const scene = new THREE.Scene();
 export const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
 camera.position.set(0, 0.05, 2.15);
 
-export let renderer = null;
 export const spinGroup = new THREE.Group();
 export const tiltGroup = new THREE.Group();
 scene.add(spinGroup);
 spinGroup.add(tiltGroup);
 
-if (wrap) {
-  renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-  renderer.outputColorSpace = THREE.SRGBColorSpace;
-  renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 0.96;
-  wrap.appendChild(renderer.domElement);
+const renderTargets = [];
+const HERO_Y_OFFSET = Math.PI * 0.38;
 
-  renderer.domElement.addEventListener("webglcontextlost", (event) => {
+function createRenderer(wrap, { maxPixelRatio = 2, role = "nav" } = {}) {
+  if (!wrap) return null;
+  const targetRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  targetRenderer.outputColorSpace = THREE.SRGBColorSpace;
+  targetRenderer.toneMapping = THREE.ACESFilmicToneMapping;
+  targetRenderer.toneMappingExposure = 0.96;
+  wrap.appendChild(targetRenderer.domElement);
+
+  targetRenderer.domElement.addEventListener("webglcontextlost", (event) => {
     event.preventDefault();
   });
-  renderer.domElement.addEventListener("webglcontextrestored", () => {
+  targetRenderer.domElement.addEventListener("webglcontextrestored", () => {
     updateRendererSize();
   });
+
+  renderTargets.push({ wrap, renderer: targetRenderer, maxPixelRatio, role });
+  return targetRenderer;
+}
+
+export let renderer = null;
+if (hasBrainScene) {
+  renderer = createRenderer(navWrap, { maxPixelRatio: isMobileBg ? 1 : 2, role: "nav" });
+  createRenderer(heroWrap, { maxPixelRatio: isMobileBg ? 1 : 1.75, role: "hero" });
 }
 
 updateBackgroundCanvasSize();
 initParticles();
-if (typeof OffscreenCanvas !== "undefined" && !isMobileBg) {
-  reducedOffscreen = new OffscreenCanvas(1, 1);
-}
 window.addEventListener("resize", () => {
   updateRendererSize();
   updateBackgroundCanvasSize();
   initParticles();
 });
-if (wrap) {
+if (hasBrainScene) {
+  refreshWrapRects();
   updateRendererSize();
 }
 
@@ -109,7 +120,7 @@ const pulseColor = new THREE.Color();
 let fallbackMesh = null;
 
 function addFallbackMesh() {
-  if (!wrap || fallbackMesh) return;
+  if (!hasBrainScene || fallbackMesh) return;
   const geo = new THREE.IcosahedronGeometry(0.62, 1);
   const mat = new THREE.MeshStandardMaterial({
     color: 0x1a2235,
@@ -142,61 +153,6 @@ function removeFallbackMesh() {
   fallbackMesh = null;
 }
 
-function modelToParticleCloud(source, { pointSize = 0.016, step = 1 } = {}) {
-  const positions = [];
-  const colors = [];
-  const colorCyan = new THREE.Color(0x0fffd4);
-  const colorPurple = new THREE.Color(0x7b61ff);
-  const colorGold = new THREE.Color(0xffc857);
-  const sample = new THREE.Vector3();
-  const tint = new THREE.Color();
-
-  source.updateMatrixWorld(true);
-  source.traverse((child) => {
-    if (!child.isMesh || !child.geometry?.attributes?.position) return;
-    const attr = child.geometry.attributes.position;
-    for (let i = 0; i < attr.count; i += step) {
-      sample.fromBufferAttribute(attr, i);
-      sample.applyMatrix4(child.matrixWorld);
-      positions.push(sample.x, sample.y, sample.z);
-      const roll = Math.random();
-      if (roll < 0.42) tint.copy(colorCyan);
-      else if (roll < 0.78) tint.copy(colorPurple);
-      else tint.copy(colorGold);
-      colors.push(tint.r, tint.g, tint.b);
-    }
-  });
-
-  const baseCount = positions.length / 3;
-  if (baseCount > 0 && baseCount < 9000) {
-    for (let i = 0; i < baseCount; i += 3) {
-      const ix = i * 3;
-      positions.push(
-        positions[ix] + (Math.random() - 0.5) * 0.014,
-        positions[ix + 1] + (Math.random() - 0.5) * 0.014,
-        positions[ix + 2] + (Math.random() - 0.5) * 0.014
-      );
-      colors.push(colors[ix], colors[ix + 1], colors[ix + 2]);
-    }
-  }
-
-  const geometry = new THREE.BufferGeometry();
-  geometry.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
-  geometry.setAttribute("color", new THREE.Float32BufferAttribute(colors, 3));
-
-  const material = new THREE.PointsMaterial({
-    size: pointSize,
-    vertexColors: true,
-    transparent: true,
-    opacity: 0.9,
-    blending: THREE.AdditiveBlending,
-    depthWrite: false,
-    sizeAttenuation: true,
-  });
-
-  return new THREE.Points(geometry, material);
-}
-
 const loader = new GLTFLoader();
 const dracoLoader = new DRACOLoader();
 dracoLoader.setDecoderPath("https://www.gstatic.com/draco/versioned/decoders/1.5.6/");
@@ -204,8 +160,8 @@ loader.setDRACOLoader(dracoLoader);
 
 let glbLoadTriggered = false;
 
-function loadNavBrainModel() {
-  if (!wrap || glbLoadTriggered) return;
+function loadBrainModel() {
+  if (!hasBrainScene || glbLoadTriggered) return;
   glbLoadTriggered = true;
 
   loader.load(
@@ -248,61 +204,66 @@ function loadNavBrainModel() {
   );
 }
 
-if (wrap) {
+if (hasBrainScene) {
   addFallbackMesh();
-  loadNavBrainModel();
+  loadBrainModel();
 }
 
 let glowLevel = 0;
 
+function applyBrainRotation({ role, scrollRot, scrollBlend }) {
+  const yOffset = role === "hero" ? HERO_Y_OFFSET : 0;
+
+  if (prefersReducedMotionGlobal) {
+    spinGroup.rotation.y = yOffset + scrollRot * 0.35;
+    tiltGroup.rotation.x = 0;
+    tiltGroup.rotation.y = 0;
+    return;
+  }
+
+  spinGroup.rotation.y = yOffset + scrollRot;
+  tiltGroup.rotation.y = currentMouseX * 0.18 * scrollBlend;
+  tiltGroup.rotation.x = -currentMouseY * 0.12 * scrollBlend;
+}
+
 function updateRendererSize() {
-  if (!wrap || !renderer) return;
-  refreshWrapRect();
-  const size = Math.max(Math.round(wrapRect ? wrapRect.width : wrap.clientWidth), 1);
-  camera.aspect = 1;
-  camera.updateProjectionMatrix();
-  renderer.setSize(size, size, false);
-  renderer.setPixelRatio(isMobileBg ? 1 : Math.min(window.devicePixelRatio, 2));
+  if (!renderTargets.length) return;
+  refreshWrapRects();
+  renderTargets.forEach(({ wrap, renderer: targetRenderer, maxPixelRatio }) => {
+    const size = Math.max(Math.round(wrap.clientWidth), 1);
+    camera.aspect = 1;
+    camera.updateProjectionMatrix();
+    targetRenderer.setSize(size, size, false);
+    targetRenderer.setPixelRatio(Math.min(window.devicePixelRatio, maxPixelRatio));
+  });
 }
 
 const clock = new THREE.Clock();
 function animate() {
   requestAnimationFrame(animate);
-  const dt = Math.min(clock.getDelta(), 0.05);
   const t = clock.elapsedTime;
   const docMaxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
   const docProgress = Math.min(Math.max(latestScrollY / docMaxScroll, 0), 1);
-  if (wrapRect) {
-    syncBrainRectFromWrap(wrapRect);
-  }
 
-  if (wrap && renderer) {
+  if (renderTargets.length) {
     const scrollRot = docProgress * Math.PI * 2.75;
     const scrollBlend = Math.min(Math.max(latestScrollY / 320, 0), 1);
 
-    if (prefersReducedMotionGlobal) {
-      spinGroup.rotation.y = scrollRot * 0.35;
-      tiltGroup.rotation.x = 0;
-      tiltGroup.rotation.y = 0;
-    } else {
+    if (!prefersReducedMotionGlobal) {
       currentMouseX += (targetMouseX - currentMouseX) * 0.05;
       currentMouseY += (targetMouseY - currentMouseY) * 0.05;
-      spinGroup.rotation.y = scrollRot;
-      tiltGroup.rotation.y = currentMouseX * 0.18 * scrollBlend;
-      tiltGroup.rotation.x = -currentMouseY * 0.12 * scrollBlend;
     }
   } else if (prefersReducedMotionGlobal) {
     sceneMotion.sharedPulse = 0;
   }
 
   const pulse = (Math.sin(t * 2.2) + 1) * 0.5;
-  const pulseIntensity = 0.8 + pulse * 1.7;
   if (!prefersReducedMotionGlobal) {
     sceneMotion.sharedPulse += (pulse - sceneMotion.sharedPulse) * 0.22;
   }
   const targetGlow = docProgress > 0.5 ? (docProgress - 0.5) * 2 : 0;
   glowLevel += (targetGlow - glowLevel) * 0.06;
-  if (wrap && renderer) {
+  if (renderTargets.length) {
     if (prefersReducedMotionGlobal) {
       innerPulseLight.intensity = 0.38;
       innerPulseLight.color.set(0x0fffd4);
@@ -324,9 +285,13 @@ function animate() {
   drawNeuralNetwork();
   updateNebula(docProgress, currentMouseX * 0.02, currentMouseY * 0.02);
 
-  if (renderer) {
-    renderer.render(scene, camera);
-  }
+  const scrollRot = docProgress * Math.PI * 2.75;
+  const scrollBlend = Math.min(Math.max(latestScrollY / 320, 0), 1);
+
+  renderTargets.forEach(({ renderer: targetRenderer, role }) => {
+    applyBrainRotation({ role, scrollRot, scrollBlend });
+    targetRenderer.render(scene, camera);
+  });
 }
 
 export { animate };

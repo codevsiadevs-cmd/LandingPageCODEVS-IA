@@ -262,14 +262,14 @@
 }
 
 .hero__canvas-wrap {
-  position: fixed;
+  position: absolute;
   z-index: 1;
   left: auto;
   top: 50%;
-  right: clamp(-2rem, -1vw, 0.5rem);
+  right: clamp(-1.5rem, -1vw, 1.25rem);
   bottom: auto;
-  width: min(920px, 72vw);
-  height: min(920px, 72vw);
+  width: min(980px, 58vw);
+  height: min(980px, 58vw);
   margin: 0;
   flex-shrink: 0;
   transform: translate(0, -50%);

@@ -137,14 +137,17 @@ export function updateNebula(docProgress, mouseXNorm, mouseYNorm) {
   if (!nebula1 || !nebula2 || !nebula3 || prefersReducedMotionGlobal) return;
   const section = document.body.dataset.section || "inicio";
   const orbit = performance.now() * 0.00005;
+  const motionScale = isMobileBg ? 0.42 : 1;
   const parallaxX = isMobileBg ? 0 : mouseXNorm * 2;
   const parallaxY = isMobileBg ? 0 : mouseYNorm * 2;
-  const centerPullX = ((brainRectCenterX / Math.max(window.innerWidth, 1)) - 0.5) * 240;
-  const centerPullY = ((brainRectCenterY / Math.max(window.innerHeight, 1)) - 0.5) * 200;
+  const centerPullX =
+    ((brainRectCenterX / Math.max(window.innerWidth, 1)) - 0.5) * 240 * motionScale;
+  const centerPullY =
+    ((brainRectCenterY / Math.max(window.innerHeight, 1)) - 0.5) * 200 * motionScale;
 
-  nebula1.style.transform = `translate3d(${Math.sin(orbit) * 36 + parallaxX}px, ${Math.cos(orbit) * 30 + parallaxY}px, 0)`;
-  nebula3.style.transform = `translate3d(${Math.cos(orbit * 0.9) * 30 - parallaxX * 0.8}px, ${Math.sin(orbit * 0.7) * 26 - parallaxY * 0.7}px, 0)`;
-  nebula2.style.transform = `translate3d(${Math.sin(orbit * 1.1) * 26 + centerPullX * 0.25}px, ${Math.cos(orbit * 0.8) * 28 + centerPullY * 0.25}px, 0)`;
+  nebula1.style.transform = `translate3d(${Math.sin(orbit) * 36 * motionScale + parallaxX}px, ${Math.cos(orbit) * 30 * motionScale + parallaxY}px, 0)`;
+  nebula3.style.transform = `translate3d(${Math.cos(orbit * 0.9) * 30 * motionScale - parallaxX * 0.8}px, ${Math.sin(orbit * 0.7) * 26 * motionScale - parallaxY * 0.7}px, 0)`;
+  nebula2.style.transform = `translate3d(${Math.sin(orbit * 1.1) * 26 * motionScale + centerPullX * 0.25}px, ${Math.cos(orbit * 0.8) * 28 * motionScale + centerPullY * 0.25}px, 0)`;
 
   const base2 = 0.05 + sceneMotion.sharedPulse * 0.03;
   const sectionBoost = section === "proyectos" ? 1.35 : section === "contacto" ? 1.25 : 1;
