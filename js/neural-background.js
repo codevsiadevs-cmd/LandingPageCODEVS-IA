@@ -22,15 +22,15 @@ function isMobileView() {
 /** Red moderada: solo móvil (≤768px). Desktop sin cambios. */
 function mobileNeuralConfig() {
   return {
-    gridDiv: 10,
-    linkCount: 2,
-    near: 3200,
-    mid: 9000,
-    far: 16000,
-    maxEdgeLenSq: 3600,
-    maxLinkMidDistSq: 7200,
-    maxLines: 14,
-    wander: 12,
+    gridDiv: 11,
+    linkCount: 3,
+    near: 5600,
+    mid: 14500,
+    far: 26000,
+    maxEdgeLenSq: 5800,
+    maxLinkMidDistSq: 13000,
+    maxLines: 28,
+    wander: 14,
   };
 }
 
@@ -80,14 +80,14 @@ function drawMobileNeuralNetwork(mobileCfg) {
     const d2 = getDistanceSq(p, target);
 
     if (d2 < mobileCfg.near) {
-      p.active = 0.34;
-      p.circle.active = 0.56;
+      p.active = 0.38;
+      p.circle.active = 0.62;
     } else if (d2 < mobileCfg.mid) {
-      p.active = 0.15;
-      p.circle.active = 0.3;
+      p.active = 0.2;
+      p.circle.active = 0.36;
     } else if (d2 < mobileCfg.far) {
-      p.active = 0.06;
-      p.circle.active = 0.14;
+      p.active = 0.1;
+      p.circle.active = 0.2;
     } else {
       p.active = 0;
       p.circle.active = 0;
