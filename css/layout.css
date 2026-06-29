@@ -265,7 +265,7 @@
 .hero__canvas-wrap {
   position: fixed;
   z-index: 0;
-  left: 73%;
+  left: var(--brain-scroll-x, 73%);
   right: auto;
   top: var(--brain-scroll-y, 50vh);
   bottom: auto;
@@ -275,7 +275,7 @@
   flex-shrink: 0;
   transform: translate(-50%, -50%);
   transition: filter 300ms ease;
-  will-change: top;
+  will-change: top, left;
   pointer-events: none;
   overflow: visible;
   mask-image: radial-gradient(

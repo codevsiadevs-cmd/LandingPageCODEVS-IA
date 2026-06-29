@@ -301,7 +301,7 @@
   }
 
   .hero__canvas-wrap {
-    left: 50%;
+    left: var(--brain-scroll-x, 50%);
     right: auto;
     top: var(--brain-scroll-y, 56vh);
     width: min(580px, 97vw);

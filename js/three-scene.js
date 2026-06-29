@@ -72,6 +72,14 @@ function syncHeroBrainWithScroll() {
   /* 1:1 con el scroll: cada px de scroll baja el cerebro 1 px (position: fixed). */
   const topY = startY + Math.max(latestScrollY, 0);
   heroWrap.style.setProperty("--brain-scroll-y", `${topY}px`);
+
+  const docMaxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
+  const docProgress = Math.min(Math.max(latestScrollY / docMaxScroll, 0), 1);
+  /* Posición inicial; al bajar el scroll se desplaza hacia la izquierda. */
+  const startX = isMobile ? 50 : 73;
+  const endX = isMobile ? 28 : 32;
+  const xPercent = startX + (endX - startX) * docProgress;
+  heroWrap.style.setProperty("--brain-scroll-x", `${xPercent}%`);
 }
 
 /* ——— Nav: cerebro GLB original (Three.js) ——— */
