@@ -267,7 +267,7 @@
   z-index: 0;
   left: 73%;
   right: auto;
-  top: var(--brain-scroll-y, 46vh);
+  top: var(--brain-scroll-y, 50vh);
   bottom: auto;
   width: min(1320px, 72vw);
   height: min(1320px, 72vw);
