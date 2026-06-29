@@ -221,14 +221,13 @@
 /* ——— Hero ——— */
 .hero {
   position: relative;
-  z-index: 1;
   min-height: 100svh;
   padding-top: var(--nav-height);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
+  overflow: visible;
   text-align: center;
   pointer-events: none;
   --hero-brand-left: clamp(0.2rem, 0.85vw, 0.65rem);
@@ -264,11 +263,11 @@
 }
 
 .hero__canvas-wrap {
-  position: absolute;
+  position: fixed;
   z-index: 0;
   left: 73%;
   right: auto;
-  top: var(--brain-scroll-y, 50%);
+  top: var(--brain-scroll-y, 46vh);
   bottom: auto;
   width: min(1320px, 72vw);
   height: min(1320px, 72vw);
@@ -276,7 +275,7 @@
   flex-shrink: 0;
   transform: translate(-50%, -50%);
   transition: filter 300ms ease;
-  will-change: top, filter;
+  will-change: top, transform;
   pointer-events: none;
   overflow: visible;
   mask-image: radial-gradient(

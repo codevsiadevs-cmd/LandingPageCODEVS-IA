@@ -46,7 +46,11 @@ window.addEventListener("resize", refreshWrapRects, { passive: true });
 function syncHeroBrainWithScroll() {
   if (!heroWrap) return;
   const isMobile = window.matchMedia("(max-width: 768px)").matches;
-  heroWrap.style.setProperty("--brain-scroll-y", isMobile ? "54%" : "50%");
+  const startRatio = isMobile ? 0.52 : 0.46;
+  const startY = window.innerHeight * startRatio;
+  /* 1:1 con el scroll: cada px de scroll baja el cerebro 1 px (position: fixed). */
+  const topY = startY + Math.max(latestScrollY, 0);
+  heroWrap.style.setProperty("--brain-scroll-y", `${topY}px`);
 }
 
 /* ——— Nav: cerebro GLB original (Three.js) ——— */
