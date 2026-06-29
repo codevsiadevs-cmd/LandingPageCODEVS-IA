@@ -48,6 +48,23 @@ function observeReveal(target, onEnter, onLeave, options = {}) {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
+ * #presentacion — párrafo intro entre hero y stack.
+ * ─────────────────────────────────────────────────────────────────────────── */
+const heroIntro = document.getElementById("presentacion");
+if (heroIntro) {
+  if (prefersReducedMotionGlobal) {
+    heroIntro.classList.add("hero-intro--visible");
+  } else {
+    observeReveal(
+      heroIntro,
+      () => heroIntro.classList.add("hero-intro--visible"),
+      () => heroIntro.classList.remove("hero-intro--visible"),
+      { rootMargin: "0px 0px -12% 0px", threshold: 0.15 }
+    );
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
  * #tecnologias — tech badges cascade left → right (20ms per badge).
  * Bidireccional: la cascada se replay cada vez que la sección entra al
  * viewport. CSS .tech-badge:not(.tech--cascading...) hace transition: none

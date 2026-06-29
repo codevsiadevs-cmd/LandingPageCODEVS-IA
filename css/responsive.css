@@ -271,6 +271,25 @@
     top: auto;
     bottom: calc(var(--hero-brand-bottom) + env(safe-area-inset-bottom, 0px));
   }
+
+  .hero-intro {
+    margin-top: 4cm;
+    min-height: clamp(13rem, 40vh, 20rem);
+    padding-bottom: clamp(2rem, 6vh, 3.25rem);
+    padding-left: max(0.15rem, env(safe-area-inset-left, 0px));
+  }
+
+  .hero-intro__inner {
+    padding-left: var(--hero-brand-left);
+  }
+
+  .hero-intro__text {
+    width: calc(100vw - var(--hero-brand-left) - max(0.5rem, env(safe-area-inset-right, 0px)));
+    max-width: none;
+    font-size: clamp(1.95rem, 8.5vw, 3.15rem);
+    line-height: 1.26;
+  }
+
   .hero__canvas-wrap {
     left: 50%;
     right: auto;
@@ -324,6 +343,11 @@
 @media (prefers-reduced-motion: reduce) {
   .tech-marquee__track {
     animation: none;
+  }
+
+  .hero-intro__text {
+    opacity: 1;
+    transform: none;
   }
 }
 

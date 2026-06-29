@@ -486,6 +486,43 @@
   animation: scrollBounce 2s ease-in-out infinite;
 }
 
+/* ——— Párrafo intro (entre hero y stack) ——— */
+.hero-intro {
+  position: relative;
+  z-index: 5;
+  margin-top: 4cm;
+  min-height: clamp(18rem, 52vh, 30rem);
+  display: flex;
+  align-items: flex-end;
+  padding: clamp(1.5rem, 5vh, 3rem) max(0.25rem, env(safe-area-inset-right, 0px))
+    clamp(3rem, 8vh, 5rem)
+    max(0.15rem, env(safe-area-inset-left, 0px));
+  pointer-events: auto;
+}
+
+.hero-intro__inner {
+  width: 100%;
+  margin: 0;
+  padding-left: var(--hero-brand-left, clamp(0.2rem, 0.85vw, 0.65rem));
+}
+
+.hero-intro__text {
+  max-width: none;
+  width: calc(100vw - var(--hero-brand-left, 0.65rem) - max(0.35rem, env(safe-area-inset-left, 0px)) - max(0.35rem, env(safe-area-inset-right, 0px)));
+  margin: 0;
+  font-size: clamp(2.45rem, 7.2vw, 4.75rem);
+  font-weight: 400;
+  line-height: 1.28;
+  color: #ffffff;
+  text-align: left;
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.hero-intro--visible .hero-intro__text {
+  animation: heroIntroReveal 0.75s var(--ease-out) forwards;
+}
+
 /* ——— Tecnologías ——— */
 .tech {
   scroll-margin-top: calc(var(--nav-height) + 1rem);

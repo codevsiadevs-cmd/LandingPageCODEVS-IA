@@ -51,6 +51,7 @@ if (typeof MutationObserver !== "undefined") {
  */
 const SECTION_IDS = [
   "inicio",
+  "presentacion",
   "tecnologias",
   "proyectos",
   "proceso",
@@ -175,9 +176,10 @@ export function updateGlobalScrollEffects() {
   }
 
   if (navLinks.length) {
+    const navSection = currentSection === "presentacion" ? "inicio" : currentSection;
     navLinks.forEach((link) => {
       const id = link.getAttribute("href")?.slice(1);
-      link.classList.toggle("nav__link--active", id === currentSection);
+      link.classList.toggle("nav__link--active", id === navSection);
     });
     updateNavIndicator();
   }
