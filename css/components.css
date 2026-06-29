@@ -18,6 +18,10 @@
   will-change: transform;
 }
 
+#bg-neural-canvas.bg-neural-canvas--disabled {
+  visibility: hidden;
+}
+
 /* Promueve el bloque del hero a su propia capa GPU para abaratar composiciones
    (equivalente al .large-header del demo Codrops). */
 .hero {

@@ -5,6 +5,9 @@
  */
 import { prefersReducedMotionGlobal } from "./scroll.js";
 
+/** Activa/desactiva la red de conexiones de fondo (desktop y móvil). */
+export const NEURAL_BACKGROUND_ENABLED = false;
+
 const canvas = document.getElementById("bg-neural-canvas");
 const ctx = canvas ? canvas.getContext("2d") : null;
 
@@ -205,6 +208,11 @@ function syncCanvasSize() {
 }
 
 export function initNeuralBackground() {
+  if (!NEURAL_BACKGROUND_ENABLED) {
+    canvas?.classList.add("bg-neural-canvas--disabled");
+    return;
+  }
+  canvas?.classList.remove("bg-neural-canvas--disabled");
   if (!canvas || !ctx || prefersReducedMotionGlobal) return;
 
   if (!listenersAttached) {
@@ -251,7 +259,7 @@ export function initNeuralBackground() {
 }
 
 export function resizeNeuralBackground() {
-  if (!canvas || !ctx || prefersReducedMotionGlobal) return;
+  if (!NEURAL_BACKGROUND_ENABLED || !canvas || !ctx || prefersReducedMotionGlobal) return;
   sceneRevision += 1;
   syncCanvasSize();
   const mobileCfg = isMobileView() ? mobileNeuralConfig() : null;
@@ -264,7 +272,7 @@ export function resizeNeuralBackground() {
 }
 
 export function drawNeuralNetwork() {
-  if (!canvas || !ctx || prefersReducedMotionGlobal || points.length === 0) return;
+  if (!NEURAL_BACKGROUND_ENABLED || !canvas || !ctx || prefersReducedMotionGlobal || points.length === 0) return;
 
   ctx.clearRect(0, 0, width, height);
   const mobileCfg = isMobileView() ? mobileNeuralConfig() : null;
