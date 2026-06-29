@@ -50,7 +50,8 @@
   border-radius: 0;
 }
 
-.nav__brain-wrap canvas {
+.nav__brain-wrap canvas,
+.nav__brain-wrap spline-viewer {
   display: block;
   width: 100% !important;
   height: 100% !important;
@@ -288,7 +289,8 @@
   );
 }
 
-.hero__canvas-wrap canvas {
+.hero__canvas-wrap canvas,
+.hero__canvas-wrap spline-viewer {
   width: 100% !important;
   height: 100% !important;
   margin: 0 auto;
