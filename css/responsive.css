@@ -174,7 +174,7 @@
   .hero__canvas-wrap {
     left: 50%;
     right: auto;
-    top: 54%;
+    top: var(--brain-scroll-y, 54vh);
     width: min(400px, 82vw);
     height: min(400px, 82vw);
     transform: translate(-50%, -50%);
@@ -487,7 +487,7 @@
     max-width: 100%;
   }
   .hero__canvas-wrap {
-    top: 52%;
+    top: var(--brain-scroll-y, 52vh);
     width: min(360px, 86vw);
     height: min(360px, 86vw);
   }

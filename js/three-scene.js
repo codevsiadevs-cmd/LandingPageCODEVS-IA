@@ -35,6 +35,15 @@ if (hasBrainScene && typeof ResizeObserver !== "undefined") {
 }
 window.addEventListener("resize", refreshWrapRects, { passive: true });
 
+function syncHeroBrainWithScroll() {
+  if (!heroWrap) return;
+  const isMobile = window.matchMedia("(max-width: 768px)").matches;
+  const startRatio = isMobile ? 0.52 : 0.46;
+  const startY = window.innerHeight * startRatio;
+  const docY = startY + Math.max(latestScrollY, 0);
+  heroWrap.style.setProperty("--brain-scroll-y", `${docY}px`);
+}
+
 export const scene = new THREE.Scene();
 export const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
 camera.position.set(0, 0.05, 2.15);
@@ -78,10 +87,12 @@ window.addEventListener("resize", () => {
   updateRendererSize();
   updateBackgroundCanvasSize();
   initParticles();
+  syncHeroBrainWithScroll();
 });
 if (hasBrainScene) {
   refreshWrapRects();
   updateRendererSize();
+  syncHeroBrainWithScroll();
 }
 
 initNeuralBackground();
@@ -244,6 +255,8 @@ function animate() {
   const t = clock.elapsedTime;
   const docMaxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
   const docProgress = Math.min(Math.max(latestScrollY / docMaxScroll, 0), 1);
+  syncHeroBrainWithScroll();
+  refreshWrapRects();
 
   if (renderTargets.length) {
     const scrollRot = docProgress * Math.PI * 2.75;
