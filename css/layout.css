@@ -275,7 +275,7 @@
   flex-shrink: 0;
   transform: translate(-50%, -50%);
   transition: filter 300ms ease;
-  will-change: top, transform;
+  will-change: top;
   pointer-events: none;
   overflow: visible;
   mask-image: radial-gradient(

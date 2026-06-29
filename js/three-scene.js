@@ -25,6 +25,27 @@ const hasNavBrain = Boolean(navWrap);
 const hasHeroBrain = Boolean(heroWrap);
 const hasBrainScene = hasNavBrain || hasHeroBrain;
 
+/** Tamaño y zoom del hero Spline fijados al valor inicial (no cambian con el scroll). */
+let lockedHeroBrainPx = null;
+let lockedHeroBrainZoom = null;
+
+function lockHeroBrainDimensions() {
+  if (!heroWrap) return null;
+  heroWrap.style.removeProperty("width");
+  heroWrap.style.removeProperty("height");
+  const size = Math.max(Math.round(heroWrap.getBoundingClientRect().width), 1);
+  lockedHeroBrainPx = size;
+  heroWrap.style.width = `${size}px`;
+  heroWrap.style.height = `${size}px`;
+  return size;
+}
+
+function getHeroBrainRenderSize() {
+  if (lockedHeroBrainPx) return lockedHeroBrainPx;
+  if (!heroWrap) return 1;
+  return Math.max(Math.round(heroWrap.clientWidth), 1);
+}
+
 let navWrapRect = navWrap ? navWrap.getBoundingClientRect() : null;
 let heroWrapRect = heroWrap ? heroWrap.getBoundingClientRect() : null;
 
@@ -274,8 +295,11 @@ function wireHeroBrainDragRotate(target) {
 
 function applyHeroBrainZoom(target) {
   if (!target?.ready) return;
-  const isMobile = window.matchMedia("(max-width: 768px)").matches;
-  target.app.setZoom?.(isMobile ? HERO_BRAIN_ZOOM_MOBILE : HERO_BRAIN_ZOOM_DESKTOP);
+  if (lockedHeroBrainZoom == null) {
+    const isMobile = window.matchMedia("(max-width: 768px)").matches;
+    lockedHeroBrainZoom = isMobile ? HERO_BRAIN_ZOOM_MOBILE : HERO_BRAIN_ZOOM_DESKTOP;
+  }
+  target.app.setZoom?.(lockedHeroBrainZoom);
 }
 
 function createHeroSplineBrain() {
@@ -308,6 +332,7 @@ function createHeroSplineBrain() {
 }
 
 if (hasHeroBrain) {
+  lockHeroBrainDimensions();
   createHeroSplineBrain();
 }
 
@@ -318,30 +343,21 @@ function syncSplineDomRect(target) {
   if (ctx) ctx.domRect = target.canvas.getBoundingClientRect();
 }
 
-/** Parallax suave en el contenedor; al arrastrar, Spline orbit controla la rotación. */
-function applyHeroWrapEffects({ scrollRot, scrollBlend }) {
+/** Centrado fijo: sin rotación por scroll para que el cerebro conserve el mismo tamaño visual. */
+function applyHeroWrapEffects() {
   if (!heroWrap) return;
-
-  const base = "translate(-50%, -50%)";
-  if (heroBrainDragging || prefersReducedMotionGlobal) {
-    heroWrap.style.transform = base;
-    return;
-  }
-
-  const rotY = scrollRot * 0.16;
-  const rotX = -currentMouseY * 0.05 * scrollBlend;
-  heroWrap.style.transform = `${base} rotateX(${rotX}rad) rotateY(${rotY}rad)`;
+  heroWrap.style.transform = "translate(-50%, -50%)";
 }
 
-function applyHeroSplineRotation(target, motion) {
-  applyHeroWrapEffects(motion);
+function syncHeroSplineFrame(target) {
+  applyHeroWrapEffects();
   syncSplineDomRect(target);
 }
 
 function resizeHeroSpline() {
   if (!splineTargets.length) return;
+  const size = getHeroBrainRenderSize();
   splineTargets.forEach((target) => {
-    const size = Math.max(Math.round(target.wrap.clientWidth), 1);
     target.app.setSize(size, size);
     applyHeroBrainZoom(target);
     syncSplineDomRect(target);
@@ -356,16 +372,33 @@ function resizeBrains() {
 updateBackgroundCanvasSize();
 initParticles();
 window.addEventListener("resize", () => {
+  lockedHeroBrainPx = null;
+  lockedHeroBrainZoom = null;
+  lockHeroBrainDimensions();
   resizeBrains();
   updateBackgroundCanvasSize();
   initParticles();
   syncHeroBrainWithScroll();
 });
 if (hasBrainScene) {
+  if (hasHeroBrain && !lockedHeroBrainPx) lockHeroBrainDimensions();
   refreshWrapRects();
   resizeBrains();
   syncHeroBrainWithScroll();
 }
+
+window.addEventListener(
+  "load",
+  () => {
+    if (!hasHeroBrain) return;
+    lockedHeroBrainPx = null;
+    lockedHeroBrainZoom = null;
+    lockHeroBrainDimensions();
+    resizeHeroSpline();
+    refreshWrapRects();
+  },
+  { once: true }
+);
 
 initNeuralBackground();
 
@@ -436,7 +469,7 @@ function animate(now) {
   }
 
   splineTargets.forEach((target) => {
-    applyHeroSplineRotation(target, { scrollRot, scrollBlend });
+    syncHeroSplineFrame(target);
   });
 
   drawPerspectiveGrid(docProgress);
