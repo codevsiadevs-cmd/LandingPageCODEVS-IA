@@ -274,9 +274,9 @@
   .hero__canvas-wrap {
     left: 50%;
     right: auto;
-    top: var(--brain-scroll-y, 54vh);
-    width: min(400px, 82vw);
-    height: min(400px, 82vw);
+    top: var(--brain-scroll-y, 54%);
+    width: min(580px, 97vw);
+    height: min(580px, 97vw);
     transform: translate(-50%, -50%);
     opacity: 1;
     mask-image: radial-gradient(
@@ -587,8 +587,8 @@
     max-width: 100%;
   }
   .hero__canvas-wrap {
-    top: var(--brain-scroll-y, 52vh);
-    width: min(360px, 86vw);
-    height: min(360px, 86vw);
+    top: var(--brain-scroll-y, 52%);
+    width: min(520px, 98vw);
+    height: min(520px, 98vw);
   }
 }

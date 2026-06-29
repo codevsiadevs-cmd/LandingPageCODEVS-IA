@@ -15,6 +15,9 @@ import {
 import { drawNeuralNetwork, initNeuralBackground } from "./neural-background.js";
 
 const SPLINE_SCENE_URL = "./assets/3d/particle-ai-brain.splinecode";
+/** Zoom Spline = cerebro más grande en pantalla (sin solo desplazar el contenedor). */
+const HERO_BRAIN_ZOOM_DESKTOP = 2.28;
+const HERO_BRAIN_ZOOM_MOBILE = 1.55;
 
 const navWrap = document.getElementById("nav-brain-wrap");
 const heroWrap = document.getElementById("hero-brain-wrap");
@@ -43,10 +46,7 @@ window.addEventListener("resize", refreshWrapRects, { passive: true });
 function syncHeroBrainWithScroll() {
   if (!heroWrap) return;
   const isMobile = window.matchMedia("(max-width: 768px)").matches;
-  const startRatio = isMobile ? 0.52 : 0.46;
-  const startY = window.innerHeight * startRatio;
-  const docY = startY + Math.max(latestScrollY, 0);
-  heroWrap.style.setProperty("--brain-scroll-y", `${docY}px`);
+  heroWrap.style.setProperty("--brain-scroll-y", isMobile ? "54%" : "50%");
 }
 
 /* ——— Nav: cerebro GLB original (Three.js) ——— */
@@ -221,6 +221,7 @@ function updateNavRendererSize() {
 
 /* ——— Hero: Particle AI Brain (Spline) ——— */
 const splineTargets = [];
+let heroBrainDragging = false;
 
 /**
  * No rotar Brain_Part_06 ni emitters: la escena Particle AI Brain de Spline
@@ -230,10 +231,54 @@ function pickRotationRoot() {
   return null;
 }
 
+function enableHeroBrainOrbit(target) {
+  const orbit = target.app.controls?.orbitControls;
+  if (!orbit) return;
+  orbit.enabled = true;
+  orbit.enableRotate = true;
+  orbit.enableDamping = true;
+}
+
+function wireHeroBrainDragRotate(target) {
+  const { canvas } = target;
+  if (!canvas) return;
+
+  const endDrag = (event) => {
+    if (heroBrainDragging && canvas.hasPointerCapture?.(event.pointerId)) {
+      canvas.releasePointerCapture(event.pointerId);
+    }
+    heroBrainDragging = false;
+  };
+
+  canvas.addEventListener(
+    "pointerdown",
+    (event) => {
+      if (event.button !== 0 || !target.ready) return;
+      heroBrainDragging = true;
+      canvas.setPointerCapture?.(event.pointerId);
+      syncSplineDomRect(target);
+    },
+    { passive: true }
+  );
+
+  canvas.addEventListener("pointerup", endDrag, { passive: true });
+  canvas.addEventListener("pointercancel", endDrag, { passive: true });
+  canvas.addEventListener("lostpointercapture", () => {
+    heroBrainDragging = false;
+  });
+}
+
+function applyHeroBrainZoom(target) {
+  if (!target?.ready) return;
+  const isMobile = window.matchMedia("(max-width: 768px)").matches;
+  target.app.setZoom?.(isMobile ? HERO_BRAIN_ZOOM_MOBILE : HERO_BRAIN_ZOOM_DESKTOP);
+}
+
 function createHeroSplineBrain() {
   if (!heroWrap) return null;
 
   const canvas = document.createElement("canvas");
+  canvas.className = "hero__brain-canvas";
   canvas.setAttribute("aria-hidden", "true");
   heroWrap.appendChild(canvas);
 
@@ -247,7 +292,10 @@ function createHeroSplineBrain() {
       target.ready = true;
       target.rotRoot = pickRotationRoot(app);
       app.play?.();
-      wireSplinePointerEvents(target);
+      applyHeroBrainZoom(target);
+      enableHeroBrainOrbit(target);
+      wireHeroBrainDragRotate(target);
+      syncSplineDomRect(target);
       resizeHeroSpline();
     })
     .catch(() => {});
@@ -259,61 +307,31 @@ if (hasHeroBrain) {
   createHeroSplineBrain();
 }
 
-function wireSplinePointerEvents(target) {
-  const hero = document.getElementById("inicio");
-  const { canvas } = target;
-  if (!hero || !canvas) return;
-
-  const relay = (event) => {
-    if (!target.ready || event.target === canvas) return;
-
-    const heroRect = hero.getBoundingClientRect();
-    if (
-      event.clientX < heroRect.left ||
-      event.clientX > heroRect.right ||
-      event.clientY < heroRect.top ||
-      event.clientY > heroRect.bottom
-    ) {
-      return;
-    }
-
-    canvas.dispatchEvent(
-      new PointerEvent(event.type, {
-        bubbles: true,
-        cancelable: true,
-        clientX: event.clientX,
-        clientY: event.clientY,
-        pointerId: event.pointerId ?? 1,
-        pointerType: event.pointerType ?? "mouse",
-        buttons: event.buttons ?? 0,
-        pressure: event.pressure ?? 0,
-        view: window,
-      })
-    );
-  };
-
-  window.addEventListener("pointermove", relay, { passive: true });
-  window.addEventListener("pointerdown", relay, { passive: true });
-  window.addEventListener("pointerup", relay, { passive: true });
+/** Spline cachea getBoundingClientRect(); refrescarlo si el wrap se mueve o rota. */
+function syncSplineDomRect(target) {
+  if (!target?.ready || !target.canvas) return;
+  const ctx = target.app._eventManager?.eventContext;
+  if (ctx) ctx.domRect = target.canvas.getBoundingClientRect();
 }
 
-/** Parallax suave en el contenedor; Spline gestiona hover + Particle Force. */
+/** Parallax suave en el contenedor; al arrastrar, Spline orbit controla la rotación. */
 function applyHeroWrapEffects({ scrollRot, scrollBlend }) {
   if (!heroWrap) return;
 
-  const isMobile = window.matchMedia("(max-width: 768px)").matches;
-  const rotY = prefersReducedMotionGlobal ? scrollRot * 0.12 : scrollRot * 0.16;
-  const rotX = prefersReducedMotionGlobal ? 0 : -currentMouseY * 0.05 * scrollBlend;
-
-  if (isMobile) {
-    heroWrap.style.transform = `translate(-50%, -50%) rotateX(${rotX}rad) rotateY(${rotY}rad)`;
-  } else {
-    heroWrap.style.transform = `translate(0, -50%) rotateX(${rotX}rad) rotateY(${rotY}rad)`;
+  const base = "translate(-50%, -50%)";
+  if (heroBrainDragging || prefersReducedMotionGlobal) {
+    heroWrap.style.transform = base;
+    return;
   }
+
+  const rotY = scrollRot * 0.16;
+  const rotX = -currentMouseY * 0.05 * scrollBlend;
+  heroWrap.style.transform = `${base} rotateX(${rotX}rad) rotateY(${rotY}rad)`;
 }
 
 function applyHeroSplineRotation(target, motion) {
   applyHeroWrapEffects(motion);
+  syncSplineDomRect(target);
 }
 
 function resizeHeroSpline() {
@@ -321,6 +339,8 @@ function resizeHeroSpline() {
   splineTargets.forEach((target) => {
     const size = Math.max(Math.round(target.wrap.clientWidth), 1);
     target.app.setSize(size, size);
+    applyHeroBrainZoom(target);
+    syncSplineDomRect(target);
   });
 }
 

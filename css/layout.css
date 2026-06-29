@@ -221,7 +221,7 @@
 /* ——— Hero ——— */
 .hero {
   position: relative;
-  z-index: 0;
+  z-index: 1;
   min-height: 100svh;
   padding-top: var(--nav-height);
   display: flex;
@@ -230,6 +230,7 @@
   justify-content: center;
   overflow: hidden;
   text-align: center;
+  pointer-events: none;
   --hero-brand-left: clamp(0.2rem, 0.85vw, 0.65rem);
   --hero-title-size: clamp(5rem, 17vw, 11.5rem);
   --hero-brand-top: calc(50% - clamp(0.35rem, 1.1vh, 0.75rem) + 1cm);
@@ -264,38 +265,46 @@
 
 .hero__canvas-wrap {
   position: absolute;
-  z-index: 3;
-  left: auto;
-  top: var(--brain-scroll-y, 46vh);
-  right: clamp(-1.5rem, -1vw, 1.25rem);
+  z-index: 0;
+  left: 73%;
+  right: auto;
+  top: var(--brain-scroll-y, 50%);
   bottom: auto;
-  width: min(980px, 58vw);
-  height: min(980px, 58vw);
+  width: min(1320px, 72vw);
+  height: min(1320px, 72vw);
   margin: 0;
   flex-shrink: 0;
-  transform: translate(0, -50%);
+  transform: translate(-50%, -50%);
   transition: filter 300ms ease;
   will-change: top, filter;
   pointer-events: none;
+  overflow: visible;
   mask-image: radial-gradient(
-    ellipse 72% 68% at 58% 50%,
-    #000 35%,
-    transparent 78%
+    ellipse 84% 80% at 50% 50%,
+    #000 42%,
+    transparent 88%
   );
   -webkit-mask-image: radial-gradient(
-    ellipse 72% 68% at 58% 50%,
-    #000 35%,
-    transparent 78%
+    ellipse 84% 80% at 50% 50%,
+    #000 42%,
+    transparent 88%
   );
 }
 
 .hero__canvas-wrap canvas,
-.hero__canvas-wrap spline-viewer {
+.hero__canvas-wrap spline-viewer,
+.hero__brain-canvas {
   width: 100% !important;
   height: 100% !important;
   margin: 0 auto;
   pointer-events: auto;
   touch-action: none;
+  cursor: grab;
+}
+
+.hero__canvas-wrap canvas:active,
+.hero__brain-canvas:active {
+  cursor: grabbing;
 }
 
 .hero__canvas-tooltip {
@@ -376,7 +385,7 @@
 
 .hero__brand {
   position: absolute;
-  z-index: 3;
+  z-index: 2;
   top: var(--hero-brand-top);
   bottom: auto;
   left: var(--hero-brand-left);
