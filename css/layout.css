@@ -227,7 +227,8 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  overflow: visible;
+  overflow-x: clip;
+  overflow-y: visible;
   text-align: center;
   pointer-events: none;
   --hero-brand-left: clamp(0.2rem, 0.85vw, 0.65rem);
@@ -494,6 +495,7 @@
   min-height: clamp(18rem, 52vh, 30rem);
   display: flex;
   align-items: flex-end;
+  overflow-x: clip;
   padding: clamp(1.5rem, 5vh, 3rem) max(0.25rem, env(safe-area-inset-right, 0px))
     clamp(3rem, 8vh, 5rem)
     max(0.15rem, env(safe-area-inset-left, 0px));
@@ -511,7 +513,7 @@
 
 .hero-intro__text {
   max-width: none;
-  width: calc(100vw - var(--hero-brand-left, 0.65rem) - max(0.35rem, env(safe-area-inset-left, 0px)) - max(0.35rem, env(safe-area-inset-right, 0px)));
+  width: 100%;
   margin: 0;
   font-size: clamp(2.45rem, 7.2vw, 4.75rem);
   font-weight: 400;
@@ -621,7 +623,8 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: clamp(1.25rem, 2.5vw, 2rem);
-  width: calc(100vw - var(--hero-brand-left, 0.65rem) - max(0.35rem, env(safe-area-inset-left, 0px)) - max(0.35rem, env(safe-area-inset-right, 0px)));
+  width: 100%;
+  max-width: 100%;
   margin: 0;
   padding: 0;
   text-align: center;
@@ -678,6 +681,7 @@
 .projects {
   scroll-margin-top: calc(var(--nav-height) + 1rem);
   padding: clamp(4rem, 10vw, 6.5rem) clamp(1.25rem, 4vw, 3rem);
+  overflow-x: clip;
 }
 
 .projects__heading-wrap {
@@ -741,6 +745,7 @@
   scroll-margin-top: calc(var(--nav-height) + 1rem);
   background: transparent;
   padding: clamp(4rem, 10vw, 6.5rem) clamp(1.25rem, 4vw, 3rem);
+  overflow-x: clip;
 }
 
 .proceso__inner {
@@ -984,6 +989,7 @@
   background: var(--bg-tech);
   border-top: 1px solid var(--glass-border);
   padding: 2.5rem clamp(1.25rem, 4vw, 3rem) 1rem;
+  margin-bottom: 0;
   opacity: 0;
   transform: translateY(22px);
   transition: opacity 0.65s var(--ease-out), transform 0.65s var(--ease-out);

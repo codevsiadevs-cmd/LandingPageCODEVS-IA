@@ -75,10 +75,8 @@ function syncHeroBrainWithScroll() {
 
   const docMaxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
   const docProgress = Math.min(Math.max(latestScrollY / docMaxScroll, 0), 1);
-  /* Posición inicial; al bajar el scroll se desplaza hacia la izquierda. */
-  const startX = isMobile ? 50 : 73;
-  const endX = isMobile ? 28 : 32;
-  const xPercent = startX + (endX - startX) * docProgress;
+  /* Desktop: al bajar el scroll se desplaza hacia la izquierda. Móvil: siempre centrado. */
+  const xPercent = isMobile ? 50 : 73 + (32 - 73) * docProgress;
   heroWrap.style.setProperty("--brain-scroll-x", `${xPercent}%`);
 }
 

@@ -64,6 +64,12 @@ const SECTION_IDS = [
 let sectionRects = [];
 let cachedDocMaxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
 
+function getFooterMaxScroll() {
+  const footer = document.getElementById("site-footer");
+  if (!footer) return null;
+  return Math.max(0, footer.offsetTop + footer.offsetHeight - window.innerHeight);
+}
+
 function recalcSectionRects() {
   const next = [];
   for (let i = 0; i < SECTION_IDS.length; i += 1) {
@@ -74,7 +80,14 @@ function recalcSectionRects() {
     next.push({ id: SECTION_IDS[i], top, bottom });
   }
   sectionRects = next;
-  cachedDocMaxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
+  const docMax = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
+  const footerMax = getFooterMaxScroll();
+  cachedDocMaxScroll = footerMax != null ? Math.min(docMax, footerMax) : docMax;
+}
+
+function clampScrollToPageEnd() {
+  if (window.scrollY <= cachedDocMaxScroll + 1) return;
+  window.scrollTo(0, cachedDocMaxScroll);
 }
 
 recalcSectionRects();
@@ -82,6 +95,8 @@ recalcSectionRects();
 if (typeof ResizeObserver !== "undefined") {
   const layoutRo = new ResizeObserver(() => recalcSectionRects());
   layoutRo.observe(document.body);
+  const footer = document.getElementById("site-footer");
+  if (footer) layoutRo.observe(footer);
 }
 window.addEventListener("load", recalcSectionRects);
 window.addEventListener("resize", recalcSectionRects, { passive: true });
@@ -110,6 +125,7 @@ window.addEventListener("resize", updateNavIndicator, { passive: true });
 window.addEventListener("load", updateNavIndicator);
 
 export function updateGlobalScrollEffects() {
+  clampScrollToPageEnd();
   latestScrollY = window.scrollY;
   nav.classList.toggle("nav--scrolled", latestScrollY > 50);
   sharedScrollVelocity = latestScrollY - previousScrollY;

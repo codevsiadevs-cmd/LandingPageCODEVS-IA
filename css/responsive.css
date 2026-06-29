@@ -284,14 +284,15 @@
   }
 
   .hero-intro__text {
-    width: calc(100vw - var(--hero-brand-left) - max(0.5rem, env(safe-area-inset-right, 0px)));
-    max-width: none;
+    width: 100%;
+    max-width: 100%;
     font-size: clamp(1.95rem, 8.5vw, 3.15rem);
     line-height: 1.26;
   }
 
   .hero-intro .tech-metrics {
-    width: calc(100vw - var(--hero-brand-left) - max(0.5rem, env(safe-area-inset-right, 0px)));
+    width: 100%;
+    max-width: 100%;
     margin-top: clamp(5rem, 18vh, 9rem);
     gap: 1.25rem;
   }
@@ -301,7 +302,7 @@
   }
 
   .hero__canvas-wrap {
-    left: var(--brain-scroll-x, 50%);
+    left: 50%;
     right: auto;
     top: var(--brain-scroll-y, 56vh);
     width: min(580px, 97vw);
