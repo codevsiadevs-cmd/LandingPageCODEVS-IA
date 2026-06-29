@@ -290,6 +290,16 @@
     line-height: 1.26;
   }
 
+  .hero-intro .tech-metrics {
+    width: calc(100vw - var(--hero-brand-left) - max(0.5rem, env(safe-area-inset-right, 0px)));
+    margin-top: clamp(5rem, 18vh, 9rem);
+    gap: 1.25rem;
+  }
+
+  .hero-intro .tech-metric__value {
+    font-size: clamp(2rem, 8vw, 2.75rem);
+  }
+
   .hero__canvas-wrap {
     left: 50%;
     right: auto;
