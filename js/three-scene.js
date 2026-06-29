@@ -15,7 +15,6 @@ import {
 import { drawNeuralNetwork, initNeuralBackground } from "./neural-background.js";
 
 const SPLINE_SCENE_URL = "./assets/3d/particle-ai-brain.splinecode";
-const HERO_Y_OFFSET = Math.PI * 0.38;
 
 const navWrap = document.getElementById("nav-brain-wrap");
 const heroWrap = document.getElementById("hero-brain-wrap");
@@ -223,13 +222,12 @@ function updateNavRendererSize() {
 /* ——— Hero: Particle AI Brain (Spline) ——— */
 const splineTargets = [];
 
-function pickRotationRoot(app) {
-  const objects = typeof app.getAllObjects === "function" ? app.getAllObjects() : [];
-  if (!objects.length) return null;
-  return (
-    objects.find((obj) => obj?.name && /brain|head|root|scene|group/i.test(obj.name)) ||
-    objects[0]
-  );
+/**
+ * No rotar Brain_Part_06 ni emitters: la escena Particle AI Brain de Spline
+ * usa Particle Force + hover sobre ese mesh; sobrescribir rotation.* lo rompe.
+ */
+function pickRotationRoot() {
+  return null;
 }
 
 function createHeroSplineBrain() {
@@ -248,6 +246,8 @@ function createHeroSplineBrain() {
     .then(() => {
       target.ready = true;
       target.rotRoot = pickRotationRoot(app);
+      app.play?.();
+      wireSplinePointerEvents(target);
       resizeHeroSpline();
     })
     .catch(() => {});
@@ -259,17 +259,61 @@ if (hasHeroBrain) {
   createHeroSplineBrain();
 }
 
-function applyHeroSplineRotation(target, { scrollRot, scrollBlend }) {
-  if (!target.ready || !target.rotRoot?.rotation) return;
+function wireSplinePointerEvents(target) {
+  const hero = document.getElementById("inicio");
+  const { canvas } = target;
+  if (!hero || !canvas) return;
 
-  if (prefersReducedMotionGlobal) {
-    target.rotRoot.rotation.y = HERO_Y_OFFSET + scrollRot * 0.35;
-    target.rotRoot.rotation.x = 0;
-    return;
+  const relay = (event) => {
+    if (!target.ready || event.target === canvas) return;
+
+    const heroRect = hero.getBoundingClientRect();
+    if (
+      event.clientX < heroRect.left ||
+      event.clientX > heroRect.right ||
+      event.clientY < heroRect.top ||
+      event.clientY > heroRect.bottom
+    ) {
+      return;
+    }
+
+    canvas.dispatchEvent(
+      new PointerEvent(event.type, {
+        bubbles: true,
+        cancelable: true,
+        clientX: event.clientX,
+        clientY: event.clientY,
+        pointerId: event.pointerId ?? 1,
+        pointerType: event.pointerType ?? "mouse",
+        buttons: event.buttons ?? 0,
+        pressure: event.pressure ?? 0,
+        view: window,
+      })
+    );
+  };
+
+  window.addEventListener("pointermove", relay, { passive: true });
+  window.addEventListener("pointerdown", relay, { passive: true });
+  window.addEventListener("pointerup", relay, { passive: true });
+}
+
+/** Parallax suave en el contenedor; Spline gestiona hover + Particle Force. */
+function applyHeroWrapEffects({ scrollRot, scrollBlend }) {
+  if (!heroWrap) return;
+
+  const isMobile = window.matchMedia("(max-width: 768px)").matches;
+  const rotY = prefersReducedMotionGlobal ? scrollRot * 0.12 : scrollRot * 0.16;
+  const rotX = prefersReducedMotionGlobal ? 0 : -currentMouseY * 0.05 * scrollBlend;
+
+  if (isMobile) {
+    heroWrap.style.transform = `translate(-50%, -50%) rotateX(${rotX}rad) rotateY(${rotY}rad)`;
+  } else {
+    heroWrap.style.transform = `translate(0, -50%) rotateX(${rotX}rad) rotateY(${rotY}rad)`;
   }
+}
 
-  target.rotRoot.rotation.y = HERO_Y_OFFSET + scrollRot;
-  target.rotRoot.rotation.x = -currentMouseY * 0.12 * scrollBlend;
+function applyHeroSplineRotation(target, motion) {
+  applyHeroWrapEffects(motion);
 }
 
 function resizeHeroSpline() {

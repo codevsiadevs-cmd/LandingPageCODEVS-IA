@@ -294,6 +294,8 @@
   width: 100% !important;
   height: 100% !important;
   margin: 0 auto;
+  pointer-events: auto;
+  touch-action: none;
 }
 
 .hero__canvas-tooltip {
@@ -379,6 +381,7 @@
   bottom: auto;
   left: var(--hero-brand-left);
   margin: 0;
+  pointer-events: none;
   font-family: var(--font-heading);
   font-weight: 400;
   font-size: var(--hero-title-size);
