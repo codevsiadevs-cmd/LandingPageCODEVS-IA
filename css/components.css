@@ -726,113 +726,35 @@
   line-height: 1.6;
 }
 
-/* Color del cursor por sección. Lo expone como CSS variable que reutilizan
-   el cursor principal, los puntos de trail y las partículas del burst. */
-body { --cursor-color: #00d4ff; }
-body[data-section="inicio"]      { --cursor-color: #00d4ff; }
-body[data-section="tecnologias"] { --cursor-color: #06b6d4; }
-body[data-section="proyectos"]   { --cursor-color: #f59e0b; }
-body[data-section="proceso"]     { --cursor-color: #10b981; }
-body[data-section="nosotros"]    { --cursor-color: #3b82f6; }
-body[data-section="testimonios"] { --cursor-color: #ec4899; }
-body[data-section="contacto"]    { --cursor-color: #00d4ff; }
-
+/* Visor circular: invierte los colores del contenido debajo del cursor. */
 .custom-cursor {
   --cursor-x: 0px;
   --cursor-y: 0px;
-  --cursor-scale: 1;
   position: fixed;
   top: 0;
   left: 0;
-  width: 16px;
-  height: 16px;
-  border: 1.5px solid var(--cursor-color, var(--accent-primary));
+  width: 52px;
+  height: 52px;
+  border: none;
   border-radius: 50%;
+  overflow: hidden;
   pointer-events: none;
   z-index: 220;
   opacity: 0;
-  transform: translate(var(--cursor-x), var(--cursor-y)) translate(-50%, -50%) scale(var(--cursor-scale));
-  transition:
-    background-color 300ms ease,
-    border-color 300ms ease,
-    opacity 250ms ease,
-    mix-blend-mode 0s,
-    transform 0s;
-  background: rgba(15, 255, 212, 0);
-  will-change: transform, background-color, border-color;
+  transform: translate(var(--cursor-x), var(--cursor-y)) translate(-50%, -50%);
+  transition: opacity 250ms ease;
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: invert(1);
+  -webkit-backdrop-filter: invert(1);
+  will-change: transform, opacity;
 }
 
 .custom-cursor--visible {
   opacity: 1;
 }
 
-.custom-cursor--active {
-  --cursor-scale: 2.5;
-  background: var(--cursor-color, rgba(15, 255, 212, 0.2));
-  border-color: var(--cursor-color, rgba(15, 255, 212, 0.8));
-  mix-blend-mode: difference;
-}
-
-/* Trail dots: 8 puntos siguiendo al cursor con retraso creciente.
-   La posición la setea JS en --tx/--ty cada frame; el color es la variable
-   global --cursor-color con transición suave entre secciones. */
-.cursor-trail {
-  --tx: 0px;
-  --ty: 0px;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: var(--trail-size, 4px);
-  height: var(--trail-size, 4px);
-  border-radius: 50%;
-  background: var(--cursor-color, var(--accent-primary));
-  pointer-events: none;
-  z-index: 219;
-  opacity: 0;
-  transform: translate(var(--tx), var(--ty)) translate(-50%, -50%);
-  transition: background-color 300ms ease, opacity 250ms ease;
-  will-change: transform, opacity;
-  box-shadow: 0 0 8px var(--cursor-color, rgba(15, 255, 212, 0.6));
-}
-
-.cursor-trail--visible {
-  opacity: var(--trail-opacity, 0.7);
-}
-
-/* Partículas del click-burst (4 por click). Se generan en JS, animan vía CSS
-   y se eliminan tras 400ms. */
-.cursor-burst-particle {
-  --burst-dx: 0px;
-  --burst-dy: 0px;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--cursor-color, var(--accent-primary));
-  box-shadow: 0 0 8px var(--cursor-color, rgba(15, 255, 212, 0.7));
-  pointer-events: none;
-  z-index: 219;
-  will-change: transform, opacity;
-  animation: cursorBurst 400ms ease-out forwards;
-}
-
-@keyframes cursorBurst {
-  0% {
-    transform: translate(var(--burst-x, 0px), var(--burst-y, 0px)) translate(-50%, -50%) translate(0, 0) scale(1);
-    opacity: 1;
-  }
-  100% {
-    transform: translate(var(--burst-x, 0px), var(--burst-y, 0px)) translate(-50%, -50%)
-      translate(var(--burst-dx), var(--burst-dy)) scale(0.4);
-    opacity: 0;
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .cursor-trail,
-  .cursor-burst-particle {
+  .custom-cursor {
     display: none !important;
   }
 }

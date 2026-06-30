@@ -39,7 +39,16 @@
 }
 
 @media (pointer: fine) {
-  body {
+  body,
+  a,
+  button,
+  input,
+  select,
+  textarea,
+  label,
+  .fan-card,
+  .hero__canvas-wrap canvas,
+  .hero__brain-canvas {
     cursor: none;
   }
 }
@@ -332,7 +341,7 @@
   }
 
   .hero__keyword--digital {
-    padding-right: 0;
+    right: clamp(0.75rem, 3vw, 1rem);
   }
   .hero__scroll {
     right: clamp(1rem, 4vw, 1.5rem);
@@ -606,8 +615,7 @@
   }
 
   .hero__keyword--digital {
-    justify-self: end;
-    padding-right: 0;
+    right: 0.35rem;
   }
 
   .projects,

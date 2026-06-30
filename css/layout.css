@@ -378,9 +378,11 @@
 }
 
 .hero__keyword--digital {
-  justify-self: end;
-  align-self: center;
-  padding-right: clamp(0.5rem, 6vw, 3.5rem);
+  position: absolute;
+  right: var(--hero-brand-left);
+  top: 50%;
+  left: auto;
+  transform: translateY(-50%);
 }
 
 .hero__brand {
