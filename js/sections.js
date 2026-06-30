@@ -65,40 +65,6 @@ if (heroIntro) {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
- * #tecnologias — tech badges cascade left → right (20ms per badge).
- * Bidireccional: la cascada se replay cada vez que la sección entra al
- * viewport. CSS .tech-badge:not(.tech--cascading...) hace transition: none
- * para que el reset al salir sea instantáneo (fuera de cámara).
- * ─────────────────────────────────────────────────────────────────────────── */
-{
-  const sec = document.getElementById("tecnologias");
-  const badges = sec ? sec.querySelectorAll(".tech-badge") : [];
-  if (sec && badges.length) {
-    badges.forEach((b, i) => {
-      const delay = prefersReducedMotionGlobal ? 0 : i * 20;
-      b.style.setProperty("--cascade-delay", `${delay}ms`);
-    });
-    if (prefersReducedMotionGlobal) {
-      sec.classList.add("tech--cascading");
-    } else {
-      observeReveal(
-        sec,
-        () => sec.classList.add("tech--cascading"),
-        () => sec.classList.remove("tech--cascading"),
-        { rootMargin: "0px 0px -10% 0px", threshold: 0.1 }
-      );
-    }
-  }
-}
-
-/* ─────────────────────────────────────────────────────────────────────────────
- * #proyectos — el reveal y la rotación del fan deck viven ahora en
- * js/projects-fan.js (IO bidireccional + scroll-rotation + click-to-center).
- * Aquí ya no hay nada que hacer. La clase --inview quedó deprecada; las
- * cards usan .fan-card--revealed gestionada por projects-fan.js.
- * ─────────────────────────────────────────────────────────────────────────── */
-
-/* ─────────────────────────────────────────────────────────────────────────────
  * #proceso — typewriter-style left border per step (scaleY 0 → 1, top origin).
  * Bidireccional: cada step se observa por separado y la línea se replay al
  * re-entrar. La línea decorativa global y los dots iluminados se manejan

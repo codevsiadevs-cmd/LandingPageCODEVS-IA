@@ -142,23 +142,27 @@
 
 .tech-badge {
   display: inline-flex;
+  flex-direction: column;
   align-items: center;
-  gap: 0.65rem;
-  padding: 0.65rem 1.15rem;
-  border-radius: 999px;
-  border: 1px solid var(--glass-border);
-  background: rgba(26, 34, 53, 0.55);
-  backdrop-filter: blur(12px) saturate(1.15);
-  -webkit-backdrop-filter: blur(12px) saturate(1.15);
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.18);
+  justify-content: center;
+  gap: 0.45rem;
+  width: clamp(4.75rem, 12vw, 6rem);
+  height: clamp(4.75rem, 12vw, 6rem);
+  padding: 0.65rem 0.5rem;
+  border-radius: 0.45rem;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(10px) saturate(1.1);
+  -webkit-backdrop-filter: blur(10px) saturate(1.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.22);
   flex-shrink: 0;
   position: relative;
   transform-origin: center center;
 }
 
 .tech-badge__icon {
-  width: 1.75rem;
-  height: 1.75rem;
+  width: 1.65rem;
+  height: 1.65rem;
   flex-shrink: 0;
 }
 
@@ -198,10 +202,16 @@
 
 .tech-badge__name {
   font-family: var(--font-heading);
-  font-weight: 700;
-  font-size: 0.9375rem;
+  font-weight: 600;
+  font-size: clamp(0.62rem, 1.6vw, 0.72rem);
   letter-spacing: -0.01em;
   white-space: nowrap;
+  text-align: center;
+  line-height: 1.1;
+  color: rgba(255, 255, 255, 0.88);
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .tech-badge--frontend {
@@ -1462,54 +1472,7 @@ textarea.contact__control:not(:placeholder-shown) ~ .contact__label {
  * Section entrance animations (driven by IntersectionObserver in sections.js)
  * --------------------------------------------------------------------------- */
 
-/* #tecnologias — tech badges cascade left → right.
-   El track del marquee mantiene su transform infinito en el padre; aquí solo
-   animamos cada badge desde translateX(-20px) opacity:0 hasta su estado final. */
-.tech-badge {
-  opacity: 0;
-  transform: translateX(-20px);
-  transition:
-    opacity 0.45s ease var(--cascade-delay, 0ms),
-    transform 0.55s cubic-bezier(0.22, 1, 0.36, 1) var(--cascade-delay, 0ms);
-  will-change: opacity, transform;
-}
-
-.tech--cascading .tech-badge {
-  opacity: 1;
-  transform: translateX(0);
-}
-
-@media (hover: hover) {
-  .tech--cascading .tech-badge:hover {
-    transform: translateX(0) scale(1.1) translateY(-4px);
-    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.34);
-    z-index: 4;
-    transition:
-      opacity 0.45s ease var(--cascade-delay, 0ms),
-      transform 0.32s var(--ease-out),
-      box-shadow 0.32s var(--ease-out),
-      border-color 0.32s var(--ease-out);
-  }
-
-  .tech-badge--frontend:hover {
-    border-color: rgba(15, 255, 212, 0.45);
-  }
-
-  .tech-badge--backend:hover {
-    border-color: rgba(123, 97, 255, 0.5);
-  }
-
-  .tech-badge--ai:hover {
-    border-color: rgba(15, 255, 212, 0.35);
-  }
-}
-
-/* Reset instantáneo cuando #tecnologias deja el viewport (ver sections.js).
- * Evita un fade-out visible de los badges al salir; el rootMargin -10%
- * asegura que ocurra fuera de cámara. */
-.tech:not(.tech--cascading) .tech-badge {
-  transition: none !important;
-}
+/* #tecnologias — grid de logos en cuadros (estilo referencia partners) */
 
 /* #proceso — línea “typewriter” por paso, dibujada de arriba hacia abajo. */
 .proceso-step {
@@ -1558,6 +1521,7 @@ textarea.contact__control:not(:placeholder-shown) ~ .contact__label {
 /* prefers-reduced-motion: dejar el resultado final sin animar. Mantenemos
    las transformaciones de layout (fan-stage) para no romper el diseño. */
 @media (prefers-reduced-motion: reduce) {
+  .tech-tile__logo,
   .tech-badge {
     opacity: 1;
     transform: none;

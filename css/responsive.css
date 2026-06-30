@@ -367,8 +367,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .tech-marquee__track {
-    animation: none;
+  .tech-row__track {
+    transform: none !important;
   }
 
   .hero-intro__text {
@@ -512,7 +512,7 @@
   .hero__bg-dots,
   .hero__scroll-line,
   .hero__scroll-icon,
-  .tech-marquee__track,
+  .tech-row__track,
   .why__quote-shell::before {
     animation: none !important;
   }
