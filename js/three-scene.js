@@ -115,25 +115,82 @@ if (hasNavBrain) {
   createNavRenderer();
 }
 
-const hemi = new THREE.HemisphereLight(0xf0f4ff, 0x1a2235, 0.82);
+const hemi = new THREE.HemisphereLight(0xffffff, 0x0a0a0a, 0.82);
 scene.add(hemi);
-const dir = new THREE.DirectionalLight(0x0fffd4, 0.92);
+const dir = new THREE.DirectionalLight(0xffffff, 0.95);
 dir.position.set(1.5, 2.5, 2);
 scene.add(dir);
-const fill = new THREE.DirectionalLight(0x7b61ff, 0.42);
+const fill = new THREE.DirectionalLight(0xd0d0d0, 0.34);
 fill.position.set(-2, 0.5, -1);
 scene.add(fill);
-const rim = new THREE.DirectionalLight(0xffffff, 0.18);
+const rim = new THREE.DirectionalLight(0xffffff, 0.2);
 rim.position.set(0, 0, -2);
 scene.add(rim);
 
-export const innerPulseLight = new THREE.PointLight(0x0fffd4, 0.42, 6, 2);
+export const innerPulseLight = new THREE.PointLight(0xffffff, 0.42, 6, 2);
 innerPulseLight.position.set(0, 0.1, 0.35);
 tiltGroup.add(innerPulseLight);
 
-const cyanColor = new THREE.Color(0x0fffd4);
-const purpleColor = new THREE.Color(0x7b61ff);
+const whiteColor = new THREE.Color(0xffffff);
+const softGrayColor = new THREE.Color(0xb0b0b0);
 const pulseColor = new THREE.Color();
+
+/** Convierte la textura base del GLB a escala de grises (el color neón viene del map, no de mat.color). */
+function textureToMonochrome(texture) {
+  const image = texture?.image;
+  if (!image?.width || !image?.height) return texture;
+
+  const canvas = document.createElement("canvas");
+  canvas.width = image.width;
+  canvas.height = image.height;
+  const ctx = canvas.getContext("2d", { willReadFrequently: true });
+  ctx.drawImage(image, 0, 0);
+
+  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  const { data } = imageData;
+  for (let i = 0; i < data.length; i += 4) {
+    const lum = data[i] * 0.2126 + data[i + 1] * 0.7152 + data[i + 2] * 0.0722;
+    const contrast = 1.2;
+    const centered = (lum / 255 - 0.5) * contrast + 0.5;
+    const v = Math.round(Math.min(255, Math.max(0, centered * 255)));
+    data[i] = data[i + 1] = data[i + 2] = v;
+  }
+  ctx.putImageData(imageData, 0, 0);
+
+  const grayTex = new THREE.CanvasTexture(canvas);
+  grayTex.colorSpace = THREE.SRGBColorSpace;
+  grayTex.flipY = Boolean(texture.flipY);
+  grayTex.needsUpdate = true;
+  return grayTex;
+}
+
+function applyNavBrainMonochromeMaterials(root) {
+  root.traverse((child) => {
+    if (!child.isMesh || !child.material) return;
+    const materials = Array.isArray(child.material) ? child.material : [child.material];
+    materials.forEach((mat) => {
+      if (!mat) return;
+      mat.vertexColors = false;
+
+      if (mat.map) {
+        mat.map = textureToMonochrome(mat.map);
+      }
+      if (mat.emissiveMap) {
+        mat.emissiveMap.dispose?.();
+        mat.emissiveMap = null;
+      }
+
+      mat.color.set(0xffffff);
+      if ("emissive" in mat) {
+        mat.emissive.set(0x000000);
+        mat.emissiveIntensity = 0;
+      }
+      if ("metalness" in mat) mat.metalness = 0.42;
+      if ("roughness" in mat) mat.roughness = 0.48;
+      mat.needsUpdate = true;
+    });
+  });
+}
 
 let fallbackMesh = null;
 
@@ -141,17 +198,17 @@ function addFallbackMesh() {
   if (!hasNavBrain || fallbackMesh) return;
   const geo = new THREE.IcosahedronGeometry(0.62, 1);
   const mat = new THREE.MeshStandardMaterial({
-    color: 0x1a2235,
-    metalness: 0.4,
-    roughness: 0.35,
-    emissive: 0x0a3d35,
-    emissiveIntensity: 0.35,
+    color: 0xf2f2f2,
+    metalness: 0.52,
+    roughness: 0.34,
+    emissive: 0x141414,
+    emissiveIntensity: 0.12,
   });
   const mesh = new THREE.Mesh(geo, mat);
   const edges = new THREE.EdgesGeometry(geo);
   const line = new THREE.LineSegments(
     edges,
-    new THREE.LineBasicMaterial({ color: 0x0fffd4, transparent: true, opacity: 0.5 })
+    new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.42 })
   );
   mesh.add(line);
   tiltGroup.add(mesh);
@@ -196,22 +253,7 @@ function loadNavBrainModel() {
       const center = box.getCenter(new THREE.Vector3());
       model.position.sub(center);
 
-      model.traverse((child) => {
-        if (!child.isMesh || !child.material) return;
-        const materials = Array.isArray(child.material) ? child.material : [child.material];
-        materials.forEach((mat) => {
-          if (!mat) return;
-          if (mat.map) mat.map.colorSpace = THREE.SRGBColorSpace;
-          mat.vertexColors = false;
-          if ("emissive" in mat && mat.color) {
-            mat.emissive.copy(mat.color).multiplyScalar(0.14);
-            mat.emissiveIntensity = 0.24;
-          }
-          if ("metalness" in mat) mat.metalness = Math.min(0.65, (mat.metalness || 0.35) + 0.06);
-          if ("roughness" in mat) mat.roughness = Math.max(0.28, (mat.roughness || 0.45) - 0.06);
-          mat.needsUpdate = true;
-        });
-      });
+      applyNavBrainMonochromeMaterials(model);
 
       tiltGroup.add(model);
     },
@@ -453,13 +495,13 @@ function animate(now) {
   if (hasNavBrain) {
     if (prefersReducedMotionGlobal) {
       innerPulseLight.intensity = 0.38;
-      innerPulseLight.color.set(0x0fffd4);
+      innerPulseLight.color.set(0xffffff);
       dir.intensity = 0.72;
       fill.intensity = 0.34;
       rim.intensity = 0.14;
     } else {
       innerPulseLight.intensity = 0.34 + pulse * 0.18 + glowLevel * 0.06;
-      pulseColor.copy(cyanColor).lerp(purpleColor, pulse * 0.22);
+      pulseColor.copy(whiteColor).lerp(softGrayColor, pulse * 0.22);
       innerPulseLight.color.copy(pulseColor);
       dir.intensity = 0.78 + glowLevel * 0.1;
       fill.intensity = 0.38 + glowLevel * 0.08;

@@ -56,8 +56,11 @@
   width: 100% !important;
   height: 100% !important;
   filter:
-    drop-shadow(0 0 6px rgba(15, 255, 212, 0.22))
-    drop-shadow(0 0 10px rgba(123, 97, 255, 0.12));
+    grayscale(1)
+    contrast(1.08)
+    brightness(1.04)
+    drop-shadow(0 0 6px rgba(255, 255, 255, 0.16))
+    drop-shadow(0 0 10px rgba(0, 0, 0, 0.28));
 }
 
 .nav__brand-text {
