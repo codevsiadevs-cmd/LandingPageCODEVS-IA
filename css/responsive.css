@@ -128,11 +128,11 @@
     border: none;
     border-radius: 0;
     background: var(--nav-mobile-menu-bg);
-    color: #ffffff;
+    color: #121212;
   }
 
   .nav__toggle:hover {
-    background: #5274f0;
+    background: #f0f0f0;
     border-color: transparent;
   }
 
