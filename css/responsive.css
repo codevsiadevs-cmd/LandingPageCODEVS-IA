@@ -341,7 +341,13 @@
   }
 
   .hero__keyword--digital {
-    right: clamp(0.75rem, 3vw, 1rem);
+    position: relative;
+    top: auto;
+    right: auto;
+    left: auto;
+    transform: none;
+    justify-self: end;
+    align-self: center;
   }
   .hero__scroll {
     right: clamp(1rem, 4vw, 1.5rem);
@@ -615,7 +621,13 @@
   }
 
   .hero__keyword--digital {
-    right: 0.35rem;
+    position: relative;
+    top: auto;
+    right: auto;
+    left: auto;
+    transform: none;
+    justify-self: end;
+    align-self: center;
   }
 
   .projects,
