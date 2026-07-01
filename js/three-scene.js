@@ -325,7 +325,6 @@ function updateNavRendererSize() {
 
 /* ——— Hero: Particle AI Brain (Spline) ——— */
 const splineTargets = [];
-let heroBrainDragging = false;
 
 /**
  * No rotar Brain_Part_06 ni emitters: la escena Particle AI Brain de Spline
@@ -335,41 +334,177 @@ function pickRotationRoot() {
   return null;
 }
 
-function enableHeroBrainOrbit(target) {
-  const orbit = target.app.controls?.orbitControls;
-  if (!orbit) return;
-  orbit.enabled = true;
-  orbit.enableRotate = true;
-  orbit.enableDamping = true;
+function getHeroBrainOrbit(target) {
+  return target.app.controls?.orbitControls ?? null;
 }
 
-function wireHeroBrainDragRotate(target) {
+function setHeroBrainOrbit(target, enabled) {
+  const orbit = getHeroBrainOrbit(target);
+  if (!orbit) return;
+  orbit.enabled = enabled;
+  orbit.enableRotate = enabled;
+  orbit.enableZoom = false;
+  orbit.enablePan = false;
+  if (enabled) orbit.enableDamping = true;
+}
+
+/** Spline puede bloquear touchmove si preventTouchScroll está activo en la escena. */
+function patchSplineScrollFlags(target) {
+  const eventManager = target.app.eventManager;
+  if (!eventManager) return;
+  eventManager.preventScroll = false;
+  eventManager.preventTouchScroll = false;
+}
+
+function isTouchPrimaryDevice() {
+  return window.matchMedia("(pointer: coarse)").matches;
+}
+
+function forwardOrbitPointerDown(target, event, clientX, clientY) {
+  const orbit = getHeroBrainOrbit(target);
+  if (!orbit?.onPointerDown) return false;
+
+  orbit.onPointerDown(
+    new PointerEvent("pointerdown", {
+      bubbles: true,
+      cancelable: true,
+      pointerId: event.pointerId,
+      pointerType: event.pointerType,
+      clientX,
+      clientY,
+      button: 0,
+      buttons: 1,
+      isPrimary: true,
+    })
+  );
+  return true;
+}
+
+/** En desktop el scroll es con rueda; el drag siempre puede rotar el cerebro. */
+function wireHeroBrainWheelPassthrough(target) {
   const { canvas } = target;
   if (!canvas) return;
 
-  const endDrag = (event) => {
-    if (heroBrainDragging && canvas.hasPointerCapture?.(event.pointerId)) {
-      canvas.releasePointerCapture(event.pointerId);
+  const onWheel = (event) => {
+    event.stopImmediatePropagation();
+  };
+
+  queueMicrotask(() => {
+    canvas.addEventListener("wheel", onWheel, { capture: true, passive: true });
+  });
+}
+
+/**
+ * Solo touch: scroll vertical libre; rotación solo tras arrastre horizontal.
+ * Orbit se engancha con un pointerdown sintético (Spline lo requiere desde el inicio).
+ */
+function wireHeroBrainTouchScrollGuard(target) {
+  const { canvas } = target;
+  if (!canvas) return;
+
+  const SCROLL_THRESHOLD = 14;
+  const SCROLL_DOMINANCE = 1.08;
+  const INTERACT_DOMINANCE = 1.05;
+
+  let gestureMode = "idle";
+  let startX = 0;
+  let startY = 0;
+  let activePointerId = null;
+
+  const resetTouchGesture = (event) => {
+    if (activePointerId != null && event?.pointerId !== activePointerId) return;
+
+    if (gestureMode === "interact") {
+      getHeroBrainOrbit(target)?.onPointerUp?.(event);
     }
-    heroBrainDragging = false;
+
+    gestureMode = "idle";
+    activePointerId = null;
+    canvas.classList.remove("hero__brain-canvas--interacting");
+    canvas.style.touchAction = "pan-y";
+    setHeroBrainOrbit(target, false);
   };
 
   canvas.addEventListener(
     "pointerdown",
     (event) => {
-      if (event.button !== 0 || !target.ready) return;
-      heroBrainDragging = true;
-      canvas.setPointerCapture?.(event.pointerId);
+      if (event.pointerType !== "touch" || event.button !== 0 || !target.ready) return;
+      gestureMode = "pending";
+      activePointerId = event.pointerId;
+      startX = event.clientX;
+      startY = event.clientY;
+      canvas.style.touchAction = "pan-y";
+      setHeroBrainOrbit(target, false);
       syncSplineDomRect(target);
     },
     { passive: true }
   );
 
-  canvas.addEventListener("pointerup", endDrag, { passive: true });
-  canvas.addEventListener("pointercancel", endDrag, { passive: true });
-  canvas.addEventListener("lostpointercapture", () => {
-    heroBrainDragging = false;
-  });
+  canvas.addEventListener(
+    "pointermove",
+    (event) => {
+      if (event.pointerType !== "touch" || event.pointerId !== activePointerId || !target.ready) return;
+      if (gestureMode === "scroll" || gestureMode === "interact") return;
+
+      const dx = Math.abs(event.clientX - startX);
+      const dy = Math.abs(event.clientY - startY);
+      if (Math.max(dx, dy) < SCROLL_THRESHOLD) return;
+
+      if (dy >= dx * SCROLL_DOMINANCE) {
+        gestureMode = "scroll";
+        setHeroBrainOrbit(target, false);
+        canvas.style.touchAction = "pan-y";
+        return;
+      }
+
+      if (dx >= dy * INTERACT_DOMINANCE) {
+        gestureMode = "interact";
+        canvas.classList.add("hero__brain-canvas--interacting");
+        canvas.style.touchAction = "none";
+        setHeroBrainOrbit(target, true);
+        syncSplineDomRect(target);
+        if (forwardOrbitPointerDown(target, event, startX, startY)) {
+          getHeroBrainOrbit(target)?.onPointerMove?.(event);
+        }
+      }
+    },
+    { passive: true }
+  );
+
+  canvas.addEventListener("pointerup", resetTouchGesture, { passive: true });
+  canvas.addEventListener("pointercancel", resetTouchGesture, { passive: true });
+}
+
+function configureHeroBrainInteraction(target) {
+  const { canvas } = target;
+  if (!canvas) return;
+
+  patchSplineScrollFlags(target);
+  wireHeroBrainWheelPassthrough(target);
+  wireHeroBrainTouchScrollGuard(target);
+
+  const touchPrimary = isTouchPrimaryDevice();
+  setHeroBrainOrbit(target, !touchPrimary);
+  canvas.style.touchAction = touchPrimary ? "pan-y" : "auto";
+
+  if (!touchPrimary) {
+    canvas.addEventListener(
+      "pointerdown",
+      (event) => {
+        if (event.pointerType === "touch") return;
+        canvas.classList.add("hero__brain-canvas--interacting");
+      },
+      { passive: true }
+    );
+    canvas.addEventListener(
+      "pointerup",
+      (event) => {
+        if (event.pointerType === "touch") return;
+        canvas.classList.remove("hero__brain-canvas--interacting");
+      },
+      { passive: true }
+    );
+  }
 }
 
 function applyHeroBrainZoom(target) {
@@ -400,8 +535,7 @@ function createHeroSplineBrain() {
       target.rotRoot = pickRotationRoot(app);
       app.play?.();
       applyHeroBrainZoom(target);
-      enableHeroBrainOrbit(target);
-      wireHeroBrainDragRotate(target);
+      configureHeroBrainInteraction(target);
       syncSplineDomRect(target);
       resizeHeroSpline();
     })

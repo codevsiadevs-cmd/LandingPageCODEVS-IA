@@ -325,10 +325,11 @@
   height: 100% !important;
   margin: 0 auto;
   pointer-events: auto;
-  touch-action: none;
+  touch-action: pan-y;
   cursor: grab;
 }
 
+.hero__brain-canvas--interacting,
 .hero__canvas-wrap canvas:active,
 .hero__brain-canvas:active {
   cursor: grabbing;
