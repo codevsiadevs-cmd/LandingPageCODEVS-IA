@@ -412,7 +412,8 @@ function wireHeroBrainTouchScrollGuard(target) {
   let activePointerId = null;
 
   const resetTouchGesture = (event) => {
-    if (activePointerId != null && event?.pointerId !== activePointerId) return;
+    if (activePointerId == null) return;
+    if (event != null && event.pointerId !== activePointerId) return;
 
     if (gestureMode === "interact") {
       getHeroBrainOrbit(target)?.onPointerUp?.(event);
@@ -492,6 +493,8 @@ function configureHeroBrainInteraction(target) {
       "pointerdown",
       (event) => {
         if (event.pointerType === "touch") return;
+        setHeroBrainOrbit(target, true);
+        syncSplineDomRect(target);
         canvas.classList.add("hero__brain-canvas--interacting");
       },
       { passive: true }
@@ -501,6 +504,7 @@ function configureHeroBrainInteraction(target) {
       (event) => {
         if (event.pointerType === "touch") return;
         canvas.classList.remove("hero__brain-canvas--interacting");
+        setHeroBrainOrbit(target, true);
       },
       { passive: true }
     );
