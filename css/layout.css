@@ -653,16 +653,19 @@
 
 /* ——— Proyectos ——— */
 .projects {
+  --projects-panel-width: 33.333vw;
+  --projects-slider-height: calc(72vh - var(--nav-height) * 0.35);
   scroll-margin-top: calc(var(--nav-height) + 1rem);
-  padding: clamp(4rem, 10vw, 6.5rem) clamp(1.25rem, 4vw, 3rem);
-  overflow-x: clip;
+  padding: clamp(2rem, 5vw, 3rem) 0 0;
+  overflow: hidden;
+  background: #000000;
 }
 
 .projects__heading-wrap {
   max-width: 72rem;
-  margin: 0 auto clamp(1.5rem, 2.5vw, 2rem);
+  margin: 0 auto clamp(1.25rem, 2.5vw, 1.75rem);
   text-align: center;
-  padding: 0 clamp(0.5rem, 2vw, 1rem);
+  padding: 0 clamp(1.25rem, 4vw, 3rem);
 }
 
 .projects__title {
@@ -683,18 +686,246 @@
   margin: 0;
 }
 
-#projects-fan-deck.projects__fan-deck {
-  display: block;
-  grid-template-columns: unset;
-  gap: 0;
-  margin: 0 auto;
-  height: 100%;
-  perspective: none;
-  transform-style: flat;
-  overflow: visible;
+.projects__slider {
+  position: relative;
+  height: var(--projects-slider-height);
+  min-height: 22rem;
+  max-height: calc(100vh - var(--nav-height) - 4.5cm);
+  width: 100%;
 }
 
-.projects__fan-live {
+.projects__viewport {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
+  outline: none;
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+@media (pointer: fine) {
+  .projects__viewport {
+    cursor: grab;
+  }
+
+  .projects__viewport.projects__viewport--dragging {
+    cursor: grabbing;
+  }
+}
+
+.projects__viewport.projects__viewport--dragging .projects__panel-caption {
+  pointer-events: none;
+}
+
+.projects__viewport::-webkit-scrollbar {
+  display: none;
+}
+
+.projects__controls {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  pointer-events: none;
+}
+
+.projects__track {
+  display: flex;
+  height: 100%;
+  width: max-content;
+}
+
+.projects__panel {
+  position: relative;
+  flex: 0 0 var(--projects-panel-width);
+  width: var(--projects-panel-width);
+  height: 100%;
+  overflow: hidden;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+.projects__panel-index {
+  position: absolute;
+  top: clamp(1rem, 2.5vw, 1.75rem);
+  left: clamp(1rem, 2.5vw, 1.75rem);
+  z-index: 2;
+  font-family: var(--font-heading);
+  font-size: clamp(3.25rem, 9vw, 6rem);
+  font-weight: 300;
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  color: #ffffff;
+  pointer-events: none;
+}
+
+.projects__panel-media {
+  position: absolute;
+  inset: 0;
+  background-color: #111111;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.projects__panel-caption {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  z-index: 2;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.75rem;
+  width: min(88%, 24rem);
+  max-width: min(88%, 24rem);
+  min-height: 3.35rem;
+  padding: clamp(0.85rem, 1.6vw, 1.05rem) clamp(1rem, 2vw, 1.35rem);
+  background: #ffffff;
+  overflow: hidden;
+  transition: min-height 0.38s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.projects__panel-caption-inner {
+  flex: 1;
+  min-width: 0;
+  transform: translateY(0.35rem);
+  transition: transform 0.38s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.projects__panel-title {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: clamp(0.95rem, 1.35vw, 1.15rem);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: #111111;
+}
+
+.projects__panel-desc {
+  margin: 0;
+  margin-top: 0.55rem;
+  font-family: var(--font-body, "IBM Plex Sans", sans-serif);
+  font-size: clamp(0.78rem, 1.05vw, 0.875rem);
+  font-weight: 400;
+  line-height: 1.45;
+  color: #666666;
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transform: translateY(0.35rem);
+  transition:
+    opacity 0.38s cubic-bezier(0.22, 1, 0.36, 1),
+    max-height 0.38s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.38s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.projects__panel-arrow {
+  flex-shrink: 0;
+  align-self: flex-end;
+  font-size: clamp(1.35rem, 2vw, 1.65rem);
+  line-height: 1;
+  color: #111111;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(0.35rem);
+  transition:
+    opacity 0.38s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.38s cubic-bezier(0.22, 1, 0.36, 1),
+    visibility 0.38s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (hover: hover) {
+  .projects__panel:hover .projects__panel-caption {
+    min-height: 6.5rem;
+  }
+
+  .projects__panel:hover .projects__panel-caption-inner {
+    transform: translateY(-0.15rem);
+  }
+
+  .projects__panel:hover .projects__panel-desc {
+    opacity: 1;
+    max-height: 5rem;
+    transform: translateY(0);
+  }
+
+  .projects__panel:hover .projects__panel-arrow {
+    opacity: 0.85;
+    visibility: visible;
+    transform: translate(2px, -2px);
+  }
+}
+
+.projects__panel:focus-within .projects__panel-caption {
+  min-height: 6.5rem;
+}
+
+.projects__panel:focus-within .projects__panel-caption-inner {
+  transform: translateY(-0.15rem);
+}
+
+.projects__panel:focus-within .projects__panel-desc {
+  opacity: 1;
+  max-height: 5rem;
+  transform: translateY(0);
+}
+
+.projects__panel:focus-within .projects__panel-arrow {
+  opacity: 0.85;
+  visibility: visible;
+  transform: translate(2px, -2px);
+}
+
+.projects__nav {
+  position: absolute;
+  top: 50%;
+  z-index: 31;
+  transform: translateY(-50%);
+  pointer-events: auto;
+  cursor: pointer;
+  width: clamp(2.5rem, 4vw, 3rem);
+  height: clamp(2.5rem, 4vw, 3rem);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  background: rgba(0, 0, 0, 0.88);
+  color: #ffffff;
+  font-size: 1.15rem;
+  line-height: 1;
+  cursor: pointer !important;
+  transition: background 0.2s ease, opacity 0.2s ease;
+}
+
+.projects__nav:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.projects__nav:not(:disabled):hover {
+  background: #000000;
+}
+
+.projects__nav--prev {
+  left: 0;
+}
+
+.projects__nav--next {
+  right: 0;
+}
+
+.projects__live {
   position: absolute;
   width: 1px;
   height: 1px;

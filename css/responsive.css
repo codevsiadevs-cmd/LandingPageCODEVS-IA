@@ -46,7 +46,7 @@
   select,
   textarea,
   label,
-  .fan-card,
+  .projects__panel,
   .hero__canvas-wrap canvas,
   .hero__brain-canvas {
     cursor: none;
@@ -391,79 +391,60 @@
 
 /* Fan deck en prefers-reduced-motion: cards visibles, sin transitions ni
  * abanico (todas en posición center, apiladas). Lo mínimo para no animar. */
-@media (prefers-reduced-motion: reduce) {
-  .fan-card,
-  .fan-card--revealed {
-    opacity: 1 !important;
-    transition: none !important;
-  }
-  .fan-card.fan-card--revealed,
-  .fan-card.fan-card--revealed.fan-card--center,
-  .fan-card.fan-card--revealed.fan-card--near-left,
-  .fan-card.fan-card--revealed.fan-card--near-right,
-  .fan-card.fan-card--revealed.fan-card--far-left,
-  .fan-card.fan-card--revealed.fan-card--far-right,
-  .fan-card.fan-card--revealed.fan-card--far-left-2,
-  .fan-card.fan-card--revealed.fan-card--far-right-2 {
-    transform: translateX(-50%) translateY(0) rotate(0deg) scale(1) !important;
+@media (max-width: 900px) {
+  .projects {
+    --projects-panel-width: 50vw;
   }
 }
 
-/* MOBILE (max-width: 767px): el abanico se sustituye por una tira
- * horizontal con scroll-snap. JS (projects-fan.js) sigue corriendo pero
- * los transforms de las clases de posición se neutralizan; las cards
- * fluyen en row scrollable con flex y snap-align center. */
 @media (max-width: 767px) {
-  .projects__fan-wrap {
-    min-height: auto;
-    width: 100%;
-    overflow-x: auto;
-    overflow-y: visible;
-    scrollbar-width: none;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    padding: 0.5rem 0 1.5rem;
-  }
-  .projects__fan-wrap::-webkit-scrollbar {
-    display: none;
+  .projects {
+    /* ~86% ancho activo + asomo derecho con el número del siguiente */
+    --projects-panel-width: 86vw;
+    --projects-slider-height: calc(62vh - var(--nav-height) * 0.25);
+    padding-top: 1.25rem;
   }
 
-  .projects__fan-deck {
-    display: flex !important;
-    flex-direction: row !important;
-    gap: 1rem;
-    padding: 0.5rem 1.25rem;
-    width: max-content;
-    height: auto !important;
-    position: relative !important;
+  .projects__slider {
+    min-height: 18rem;
+    max-height: calc(100vh - var(--nav-height) - 5cm);
   }
 
-  .fan-card,
-  .fan-card.fan-card--revealed,
-  .fan-card.fan-card--revealed.fan-card--center,
-  .fan-card.fan-card--revealed.fan-card--near-left,
-  .fan-card.fan-card--revealed.fan-card--near-right,
-  .fan-card.fan-card--revealed.fan-card--far-left,
-  .fan-card.fan-card--revealed.fan-card--far-right,
-  .fan-card.fan-card--revealed.fan-card--far-left-2,
-  .fan-card.fan-card--revealed.fan-card--far-right-2 {
-    position: relative !important;
-    left: auto !important;
-    top: auto !important;
-    transform: none !important;
-    width: 17rem !important;
-    height: 22.5rem !important;
-    flex-shrink: 0;
-    scroll-snap-align: center;
-    opacity: 1 !important;
-    box-shadow: 0 14px 36px rgba(0, 0, 0, 0.42) !important;
+  .projects__heading-wrap {
+    margin-bottom: 0.85rem;
+    text-align: left;
+    padding: 0 1.15rem;
   }
 
-  /* Hover: en mobile no hay hover real; deshacemos el dim de las hermanas
-   * (porque :hover puede dispararse al tap brevemente). */
-  .projects__fan-deck:hover .fan-card--revealed {
-    opacity: 1;
-    filter: none;
+  .projects__title {
+    font-size: clamp(1.65rem, 7vw, 2rem);
+    text-align: left;
+  }
+
+  .projects__panel-index {
+    top: 1.15rem;
+    left: 1.15rem;
+    font-size: clamp(3.5rem, 18vw, 5.25rem);
+  }
+
+  .projects__panel-caption {
+    width: calc(100% - 1.15rem);
+    max-width: calc(100% - 1.15rem);
+    min-height: 3.1rem;
+  }
+
+  .projects__panel-title {
+    font-size: 1rem;
+  }
+
+  .projects__panel-desc {
+    font-size: 0.8rem;
+  }
+
+  .projects__nav {
+    width: 2.65rem;
+    height: 2.65rem;
+    font-size: 1rem;
   }
 }
 
@@ -592,9 +573,6 @@
 }
 
 @media (max-width: 768px) {
-  .fan-card:hover {
-    transform: none;
-  }
   .footer__bottom {
     flex-direction: column;
     align-items: flex-start;
@@ -630,13 +608,17 @@
     align-self: center;
   }
 
-  .projects,
   .proceso,
   .why,
   .testimonials,
   .contact {
     padding-left: 1rem;
     padding-right: 1rem;
+  }
+
+  .projects {
+    padding-left: 0;
+    padding-right: 0;
   }
   .contact__form-wrap {
     max-width: 100%;

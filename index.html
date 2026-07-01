@@ -172,147 +172,128 @@
         <h2 class="projects__title" id="proyectos-title">Proyectos Destacados</h2>
       </div>
 
-      <div class="projects__fan-wrap">
-        <div
-          class="projects__fan-deck"
-          id="projects-fan-deck"
-          role="region"
-          aria-label="Proyectos destacados"
-          tabindex="0"
-        >
-          <div
-            class="project-card fan-card fan-card--far-left-2"
-            data-fan-index="0"
-            data-project-id="1"
-            data-filter="inteligencia-artificial"
-            role="button"
-            tabindex="0"
-            aria-label="Ver proyecto Chatbot IA"
-          >
-            <div
-              class="fan-card__image-wrap fan-card__image-wrap--gradient"
-              style="background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);"
-            ></div>
-            <div class="fan-card__overlay">
-              <span class="fan-card__category">Inteligencia Artificial</span>
-              <h3 class="fan-card__title">Chatbot IA</h3>
-            </div>
-          </div>
+      <div
+        class="projects__slider"
+        id="projects-slider"
+        role="region"
+        aria-label="Carrusel de proyectos destacados"
+      >
+        <div class="projects__viewport" id="projects-viewport" tabindex="0">
+          <div class="projects__track" id="projects-slider-track">
+            <article class="projects__panel project-card" data-project-id="1">
+              <span class="projects__panel-index" aria-hidden="true">1</span>
+              <div
+                class="projects__panel-media"
+                style="background-image: linear-gradient(135deg, #0f0c29 0%, #302b63 45%, #24243e 100%);"
+              ></div>
+              <div class="projects__panel-caption">
+                <div class="projects__panel-caption-inner">
+                  <h3 class="projects__panel-title">Chatbot IA</h3>
+                  <p class="projects__panel-desc">
+                    Asistente conversacional para atención al cliente, soporte y respuestas inteligentes 24/7.
+                  </p>
+                </div>
+                <span class="projects__panel-arrow" aria-hidden="true">↗</span>
+              </div>
+            </article>
 
-          <div
-            class="project-card fan-card fan-card--far-left"
-            data-fan-index="1"
-            data-project-id="2"
-            data-filter="ecommerce"
-            role="button"
-            tabindex="0"
-            aria-label="Ver proyecto E-commerce IA"
-          >
-            <div
-              class="fan-card__image-wrap fan-card__image-wrap--gradient"
-              style="background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);"
-            ></div>
-            <div class="fan-card__overlay">
-              <span class="fan-card__category">Comercio Digital</span>
-              <h3 class="fan-card__title">E-commerce IA</h3>
-            </div>
-          </div>
+            <article class="projects__panel project-card" data-project-id="2">
+              <span class="projects__panel-index" aria-hidden="true">2</span>
+              <div
+                class="projects__panel-media"
+                style="background-image: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);"
+              ></div>
+              <div class="projects__panel-caption">
+                <div class="projects__panel-caption-inner">
+                  <h3 class="projects__panel-title">E-commerce IA</h3>
+                  <p class="projects__panel-desc">
+                    Comercio digital con recomendaciones personalizadas, búsqueda semántica y checkout optimizado.
+                  </p>
+                </div>
+                <span class="projects__panel-arrow" aria-hidden="true">↗</span>
+              </div>
+            </article>
 
-          <div
-            class="project-card fan-card fan-card--near-left"
-            data-fan-index="2"
-            data-project-id="3"
-            data-filter="infraestructura"
-            role="button"
-            tabindex="0"
-            aria-label="Ver proyecto API Gateway"
-          >
-            <div
-              class="fan-card__image-wrap fan-card__image-wrap--gradient"
-              style="background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);"
-            ></div>
-            <div class="fan-card__overlay">
-              <span class="fan-card__category">Infraestructura</span>
-              <h3 class="fan-card__title">API Gateway</h3>
-            </div>
-          </div>
+            <article class="projects__panel project-card" data-project-id="3">
+              <span class="projects__panel-index" aria-hidden="true">3</span>
+              <div
+                class="projects__panel-media"
+                style="background-image: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);"
+              ></div>
+              <div class="projects__panel-caption">
+                <div class="projects__panel-caption-inner">
+                  <h3 class="projects__panel-title">API Gateway</h3>
+                  <p class="projects__panel-desc">
+                    Infraestructura escalable para conectar, proteger y orquestar microservicios empresariales.
+                  </p>
+                </div>
+                <span class="projects__panel-arrow" aria-hidden="true">↗</span>
+              </div>
+            </article>
 
-          <div
-            class="project-card fan-card fan-card--center"
-            data-fan-index="3"
-            data-project-id="4"
-            data-filter="inteligencia-artificial"
-            role="button"
-            tabindex="0"
-            aria-label="Ver proyecto Agentes IA"
-          >
-            <div
-              class="fan-card__image-wrap fan-card__image-wrap--gradient"
-              style="background: linear-gradient(135deg, #0d0d0d, #1a0533, #2d0057);"
-            ></div>
-            <div class="fan-card__overlay">
-              <span class="fan-card__category">Inteligencia Artificial</span>
-              <h3 class="fan-card__title">Agentes IA</h3>
-            </div>
-          </div>
+            <article class="projects__panel project-card" data-project-id="4">
+              <span class="projects__panel-index" aria-hidden="true">4</span>
+              <div
+                class="projects__panel-media"
+                style="background-image: linear-gradient(135deg, #0d0d0d 0%, #1a0533 55%, #2d0057 100%);"
+              ></div>
+              <div class="projects__panel-caption">
+                <div class="projects__panel-caption-inner">
+                  <h3 class="projects__panel-title">Agentes IA</h3>
+                  <p class="projects__panel-desc">
+                    Sistemas autónomos que planifican, ejecutan y resuelven flujos de trabajo con modelos de lenguaje.
+                  </p>
+                </div>
+                <span class="projects__panel-arrow" aria-hidden="true">↗</span>
+              </div>
+            </article>
 
-          <div
-            class="project-card fan-card fan-card--near-right"
-            data-fan-index="4"
-            data-project-id="5"
-            data-filter="productividad"
-            role="button"
-            tabindex="0"
-            aria-label="Ver proyecto Automatización de Documentos"
-          >
-            <div
-              class="fan-card__image-wrap fan-card__image-wrap--gradient"
-              style="background: linear-gradient(135deg, #0f0c29, #1a3a1a, #0d2d0d);"
-            ></div>
-            <div class="fan-card__overlay">
-              <span class="fan-card__category">Productividad</span>
-              <h3 class="fan-card__title">Automatización de Documentos</h3>
-            </div>
-          </div>
+            <article class="projects__panel project-card" data-project-id="5">
+              <span class="projects__panel-index" aria-hidden="true">5</span>
+              <div
+                class="projects__panel-media"
+                style="background-image: linear-gradient(135deg, #0f0c29 0%, #1a3a1a 50%, #0d2d0d 100%);"
+              ></div>
+              <div class="projects__panel-caption">
+                <div class="projects__panel-caption-inner">
+                  <h3 class="projects__panel-title">Automatización de Documentos</h3>
+                  <p class="projects__panel-desc">
+                    Extracción, clasificación y procesamiento inteligente de documentos para equipos operativos.
+                  </p>
+                </div>
+                <span class="projects__panel-arrow" aria-hidden="true">↗</span>
+              </div>
+            </article>
 
-          <div
-            class="project-card fan-card fan-card--far-right"
-            data-fan-index="5"
-            data-project-id="6"
-            data-filter="voz"
-            role="button"
-            tabindex="0"
-            aria-label="Ver proyecto Asistentes de Voz"
-          >
-            <div
-              class="fan-card__image-wrap fan-card__image-wrap--gradient"
-              style="background: linear-gradient(135deg, #1a0a00, #3d1a00, #1a0a00);"
-            ></div>
-            <div class="fan-card__overlay">
-              <span class="fan-card__category">Voz e IA</span>
-              <h3 class="fan-card__title">Asistentes de Voz</h3>
-            </div>
-          </div>
-
-          <div
-            class="project-card fan-card fan-card--far-right-2"
-            data-fan-index="6"
-            data-project-id="7"
-            data-filter="business-intelligence"
-            role="button"
-            tabindex="0"
-            aria-label="Ver proyecto Datos y Analítica"
-          >
-            <div
-              class="fan-card__image-wrap fan-card__image-wrap--gradient"
-              style="background: linear-gradient(135deg, #001a33, #003366, #001a33);"
-            ></div>
-            <div class="fan-card__overlay">
-              <span class="fan-card__category">Business Intelligence</span>
-              <h3 class="fan-card__title">Datos y Analítica</h3>
-            </div>
+            <article class="projects__panel project-card" data-project-id="6">
+              <span class="projects__panel-index" aria-hidden="true">6</span>
+              <div
+                class="projects__panel-media"
+                style="background-image: linear-gradient(135deg, #1a0a00 0%, #3d1a00 50%, #120600 100%);"
+              ></div>
+              <div class="projects__panel-caption">
+                <div class="projects__panel-caption-inner">
+                  <h3 class="projects__panel-title">Asistentes de Voz</h3>
+                  <p class="projects__panel-desc">
+                    Interfaces de voz naturales para productos, servicios y experiencias conversacionales en tiempo real.
+                  </p>
+                </div>
+                <span class="projects__panel-arrow" aria-hidden="true">↗</span>
+              </div>
+            </article>
           </div>
         </div>
+
+        <div class="projects__controls">
+          <button type="button" class="projects__nav projects__nav--prev" aria-label="Proyecto anterior">
+            <span aria-hidden="true">←</span>
+          </button>
+          <button type="button" class="projects__nav projects__nav--next" aria-label="Proyecto siguiente">
+            <span aria-hidden="true">→</span>
+          </button>
+        </div>
+
+        <span class="projects__live" aria-live="polite"></span>
       </div>
     </section>
 
