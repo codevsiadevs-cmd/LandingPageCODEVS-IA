@@ -476,8 +476,8 @@
   }
 
   .proceso-step-item {
-    flex: 0 0 clamp(19rem, 88vw, 24rem);
-    width: clamp(19rem, 88vw, 24rem);
+    flex: 0 0 clamp(19rem, 82vw, 24rem);
+    width: clamp(19rem, 82vw, 24rem);
   }
 
   .proceso-step-item__num {

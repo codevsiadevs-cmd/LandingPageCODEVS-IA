@@ -1045,7 +1045,8 @@
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  width: 100%;
+  width: 100vw;
+  margin-inline: calc(50% - 50vw);
   min-height: clamp(22rem, 50vh, 34rem);
   padding: 0;
 }

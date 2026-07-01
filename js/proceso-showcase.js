@@ -31,12 +31,26 @@ function initProcesoShowcase() {
     const gap = Number.parseFloat(getComputedStyle(track).columnGap || getComputedStyle(track).gap) || 0;
     const stepSpan = stepPx + gap;
     const viewportPx = viewport.clientWidth;
-    const slidePx = Math.min(Math.max(viewportPx * 0.28, 110), 320);
+    const centerOffset = (viewportPx - stepPx) / 2;
+    const edgeSlidePx = centerOffset - gap;
+    const slidePx = edgeSlidePx > 20 ? edgeSlidePx : Math.max(viewportPx * 0.14, 16);
 
     section.style.setProperty("--proceso-step-w", `${stepPx}px`);
     section.style.setProperty("--proceso-viewport-w", `${viewportPx}px`);
 
-    return { stepPx, stepSpan, viewportPx, slidePx };
+    return { stepPx, stepSpan, viewportPx, slidePx, centerOffset };
+  }
+
+  function getCardLeft(i, index, centerOffset, stepSpan, slidePx) {
+    return centerOffset + (i - index) * (stepSpan + slidePx);
+  }
+
+  function getVisibleRatio(cardLeft, stepPx, viewportPx) {
+    const cardRight = cardLeft + stepPx;
+    const hiddenLeft = Math.max(0, -cardLeft);
+    const hiddenRight = Math.max(0, cardRight - viewportPx);
+    const visiblePx = Math.max(0, stepPx - hiddenLeft - hiddenRight);
+    return stepPx > 0 ? visiblePx / stepPx : 0;
   }
 
   function getMobileTrackOffset() {
@@ -48,8 +62,7 @@ function initProcesoShowcase() {
   }
 
   function applyTimeline(index) {
-    const { stepPx, stepSpan, viewportPx, slidePx } = measure();
-    const centerOffset = (viewportPx - stepPx) / 2;
+    const { stepPx, stepSpan, viewportPx, slidePx, centerOffset } = measure();
     const mobileOffset = getMobileTrackOffset();
     const firstStepBoost = mobileOffset > 0 ? mobileOffset * Math.max(0, 1 - index / 0.85) : 0;
 
@@ -58,11 +71,13 @@ function initProcesoShowcase() {
     steps.forEach((step, i) => {
       const delta = i - index;
       const x = delta * slidePx;
+      const cardLeft = getCardLeft(i, index, centerOffset, stepSpan, slidePx) + firstStepBoost;
+      const visibleRatio = getVisibleRatio(cardLeft, stepPx, viewportPx);
 
       step.classList.toggle("is-active", Math.abs(delta) < 0.45);
       step.classList.toggle("is-near", Math.abs(delta) >= 0.45 && Math.abs(delta) < 1.35);
       step.style.transform = `translate3d(${x}px, 0, 0)`;
-      step.style.opacity = Math.abs(delta) > 2.2 ? "0.15" : "";
+      step.style.opacity = visibleRatio < 0.04 ? "0" : "";
     });
 
     section.dataset.scrollDir = index >= lastIndex ? "down" : "up";
