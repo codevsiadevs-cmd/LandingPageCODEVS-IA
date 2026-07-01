@@ -8,7 +8,7 @@ import "./interactions.js";
 import "./nav-mobile.js";
 import "./tech-stack.js";
 import "./sections.js";
-import "./projects-slider.js";
+import "./projects-hover.js";
 import "./music-toggle.js";
 
 updateGlobalScrollEffects();

@@ -192,110 +192,94 @@
         <h2 class="projects__title" id="proyectos-title">Proyectos Destacados</h2>
       </div>
 
-      <div
-        class="projects__slider"
-        id="projects-slider"
-        role="region"
-        aria-label="Carrusel de proyectos destacados"
-      >
-        <div class="projects__viewport" id="projects-viewport" tabindex="0">
-          <div class="projects__track" id="projects-slider-track">
-            <article class="projects__panel project-card" data-project-id="1">
-              <span class="projects__panel-index" aria-hidden="true">1</span>
-              <div class="projects__panel-media"></div>
-              <div class="projects__panel-caption">
-                <div class="projects__panel-caption-inner">
-                  <h3 class="projects__panel-title">Chatbot IA</h3>
-                  <p class="projects__panel-desc">
-                    Asistente conversacional para atención al cliente, soporte y respuestas inteligentes 24/7.
-                  </p>
-                </div>
-                <span class="projects__panel-arrow" aria-hidden="true">↗</span>
-              </div>
-            </article>
-
-            <article class="projects__panel project-card" data-project-id="2">
-              <span class="projects__panel-index" aria-hidden="true">2</span>
-              <div class="projects__panel-media"></div>
-              <div class="projects__panel-caption">
-                <div class="projects__panel-caption-inner">
-                  <h3 class="projects__panel-title">E-commerce IA</h3>
-                  <p class="projects__panel-desc">
-                    Comercio digital con recomendaciones personalizadas, búsqueda semántica y checkout optimizado.
-                  </p>
-                </div>
-                <span class="projects__panel-arrow" aria-hidden="true">↗</span>
-              </div>
-            </article>
-
-            <article class="projects__panel project-card" data-project-id="3">
-              <span class="projects__panel-index" aria-hidden="true">3</span>
-              <div class="projects__panel-media"></div>
-              <div class="projects__panel-caption">
-                <div class="projects__panel-caption-inner">
-                  <h3 class="projects__panel-title">API Gateway</h3>
-                  <p class="projects__panel-desc">
-                    Infraestructura escalable para conectar, proteger y orquestar microservicios empresariales.
-                  </p>
-                </div>
-                <span class="projects__panel-arrow" aria-hidden="true">↗</span>
-              </div>
-            </article>
-
-            <article class="projects__panel project-card" data-project-id="4">
-              <span class="projects__panel-index" aria-hidden="true">4</span>
-              <div class="projects__panel-media"></div>
-              <div class="projects__panel-caption">
-                <div class="projects__panel-caption-inner">
-                  <h3 class="projects__panel-title">Agentes IA</h3>
-                  <p class="projects__panel-desc">
-                    Sistemas autónomos que planifican, ejecutan y resuelven flujos de trabajo con modelos de lenguaje.
-                  </p>
-                </div>
-                <span class="projects__panel-arrow" aria-hidden="true">↗</span>
-              </div>
-            </article>
-
-            <article class="projects__panel project-card" data-project-id="5">
-              <span class="projects__panel-index" aria-hidden="true">5</span>
-              <div class="projects__panel-media"></div>
-              <div class="projects__panel-caption">
-                <div class="projects__panel-caption-inner">
-                  <h3 class="projects__panel-title">Automatización de Documentos</h3>
-                  <p class="projects__panel-desc">
-                    Extracción, clasificación y procesamiento inteligente de documentos para equipos operativos.
-                  </p>
-                </div>
-                <span class="projects__panel-arrow" aria-hidden="true">↗</span>
-              </div>
-            </article>
-
-            <article class="projects__panel project-card" data-project-id="6">
-              <span class="projects__panel-index" aria-hidden="true">6</span>
-              <div class="projects__panel-media"></div>
-              <div class="projects__panel-caption">
-                <div class="projects__panel-caption-inner">
-                  <h3 class="projects__panel-title">Asistentes de Voz</h3>
-                  <p class="projects__panel-desc">
-                    Interfaces de voz naturales para productos, servicios y experiencias conversacionales en tiempo real.
-                  </p>
-                </div>
-                <span class="projects__panel-arrow" aria-hidden="true">↗</span>
-              </div>
-            </article>
+      <div class="projects__list" role="list">
+        <article class="projects__row" role="listitem">
+          <div class="projects__row-inner">
+            <figure class="projects__row-thumb" aria-hidden="true">
+              <img src="./assets/images/projects/chatbot-ia.svg" alt="" width="400" height="400" loading="lazy" decoding="async" />
+            </figure>
+            <div class="projects__row-body">
+              <p class="projects__row-title">
+                Chatbot IA — Asistente conversacional para atención al cliente, soporte y respuestas inteligentes 24/7
+              </p>
+              <span class="projects__row-arrow" aria-hidden="true">↗</span>
+            </div>
           </div>
-        </div>
+        </article>
 
-        <div class="projects__controls">
-          <button type="button" class="projects__nav projects__nav--prev" aria-label="Proyecto anterior">
-            <span aria-hidden="true">←</span>
-          </button>
-          <button type="button" class="projects__nav projects__nav--next" aria-label="Proyecto siguiente">
-            <span aria-hidden="true">→</span>
-          </button>
-        </div>
+        <article class="projects__row" role="listitem">
+          <div class="projects__row-inner">
+            <figure class="projects__row-thumb" aria-hidden="true">
+              <img src="./assets/images/projects/ecommerce-ia.svg" alt="" width="400" height="400" loading="lazy" decoding="async" />
+            </figure>
+            <div class="projects__row-body">
+              <p class="projects__row-title">
+                E-commerce IA — Comercio digital con recomendaciones personalizadas, búsqueda semántica y checkout
+                optimizado
+              </p>
+              <span class="projects__row-arrow" aria-hidden="true">↗</span>
+            </div>
+          </div>
+        </article>
 
-        <span class="projects__live" aria-live="polite"></span>
+        <article class="projects__row" role="listitem">
+          <div class="projects__row-inner">
+            <figure class="projects__row-thumb" aria-hidden="true">
+              <img src="./assets/images/projects/api-gateway.svg" alt="" width="400" height="400" loading="lazy" decoding="async" />
+            </figure>
+            <div class="projects__row-body">
+              <p class="projects__row-title">
+                API Gateway — Infraestructura escalable para conectar, proteger y orquestar microservicios empresariales
+              </p>
+              <span class="projects__row-arrow" aria-hidden="true">↗</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="projects__row" role="listitem">
+          <div class="projects__row-inner">
+            <figure class="projects__row-thumb" aria-hidden="true">
+              <img src="./assets/images/projects/agentes-ia.svg" alt="" width="400" height="400" loading="lazy" decoding="async" />
+            </figure>
+            <div class="projects__row-body">
+              <p class="projects__row-title">
+                Agentes IA — Sistemas autónomos que planifican, ejecutan y resuelven flujos de trabajo con modelos de
+                lenguaje
+              </p>
+              <span class="projects__row-arrow" aria-hidden="true">↗</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="projects__row" role="listitem">
+          <div class="projects__row-inner">
+            <figure class="projects__row-thumb" aria-hidden="true">
+              <img src="./assets/images/projects/documentos-ia.svg" alt="" width="400" height="400" loading="lazy" decoding="async" />
+            </figure>
+            <div class="projects__row-body">
+              <p class="projects__row-title">
+                Automatización de Documentos — Extracción, clasificación y procesamiento inteligente de documentos para
+                equipos operativos
+              </p>
+              <span class="projects__row-arrow" aria-hidden="true">↗</span>
+            </div>
+          </div>
+        </article>
+
+        <article class="projects__row" role="listitem">
+          <div class="projects__row-inner">
+            <figure class="projects__row-thumb" aria-hidden="true">
+              <img src="./assets/images/projects/voz-ia.svg" alt="" width="400" height="400" loading="lazy" decoding="async" />
+            </figure>
+            <div class="projects__row-body">
+              <p class="projects__row-title">
+                Asistentes de Voz — Interfaces de voz naturales para productos, servicios y experiencias conversacionales
+                en tiempo real
+              </p>
+              <span class="projects__row-arrow" aria-hidden="true">↗</span>
+            </div>
+          </div>
+        </article>
       </div>
     </section>
 
