@@ -1,3 +1,4 @@
+import "./preloader.js";
 import "./console-easter.js";
 import { updateGlobalScrollEffects } from "./scroll.js";
 import { updateBackgroundCanvasSize, initParticles } from "./background.js";
