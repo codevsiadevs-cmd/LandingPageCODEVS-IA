@@ -56,7 +56,6 @@ const SECTION_IDS = [
   "proyectos",
   "proceso",
   "nosotros",
-  "testimonios",
   "contacto",
 ];
 
@@ -146,7 +145,7 @@ export function updateGlobalScrollEffects() {
    * Detección robusta de la sección activa.
    *
    * Antes usábamos un test de “sección que cruza el tercio superior”, que
-   * fallaba para las secciones cortas del final (#nosotros, #testimonios,
+   * fallaba para las secciones cortas del final (#nosotros, #contacto,
    * #contacto): cuando alguna no llegaba a tapar el threshold, la barra se
    * quedaba mostrando #proceso. Ahora elegimos la sección con mayor área
    * visible dentro del viewport y forzamos #contacto cuando el usuario llega

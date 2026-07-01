@@ -172,33 +172,6 @@ if (whySection) {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
- * #testimonios — flip 3D sutil (rotateX 8deg → 0). Bidireccional: cada
- * card se observa por separado y la rotación se replay al re-entrar.
- * ─────────────────────────────────────────────────────────────────────────── */
-{
-  const sec = document.getElementById("testimonios");
-  const cards = sec ? sec.querySelectorAll(".testimonial-card") : [];
-  if (sec && cards.length) {
-    cards.forEach((c, i) => {
-      const delay = prefersReducedMotionGlobal ? 0 : i * 100;
-      c.style.setProperty("--reveal-delay", `${delay}ms`);
-    });
-    if (prefersReducedMotionGlobal) {
-      cards.forEach((c) => c.classList.add("testimonial-card--visible"));
-    } else {
-      cards.forEach((card) => {
-        observeReveal(
-          card,
-          () => card.classList.add("testimonial-card--visible"),
-          () => card.classList.remove("testimonial-card--visible"),
-          { rootMargin: "0px 0px -80px 0px", threshold: 0.1 }
-        );
-      });
-    }
-  }
-}
-
-/* ─────────────────────────────────────────────────────────────────────────────
  * Footer reveal — bidireccional. Si el usuario scrollea hacia arriba desde
  * el footer y vuelve a bajar, el reveal se replay.
  * ─────────────────────────────────────────────────────────────────────────── */
