@@ -279,9 +279,13 @@
   height: min(1320px, 72vw);
   margin: 0;
   flex-shrink: 0;
-  transform: translate(-50%, -50%);
-  transition: filter 300ms ease;
-  will-change: top, left;
+  transform: translate(-50%, -50%) scale(var(--brain-scale, 1));
+  transition:
+    filter 300ms ease,
+    width 0.65s var(--ease-out),
+    height 0.65s var(--ease-out),
+    transform 0.65s var(--ease-out);
+  will-change: top, left, transform;
   pointer-events: none;
   overflow: visible;
   mask-image: radial-gradient(
@@ -293,6 +297,24 @@
     ellipse 84% 80% at 50% 50%,
     #000 42%,
     transparent 88%
+  );
+}
+
+.hero__canvas-wrap.hero__canvas-wrap--proceso {
+  z-index: 7;
+  width: clamp(8rem, 15vw, 11rem);
+  height: clamp(8rem, 15vw, 11rem);
+  --brain-scale: 1;
+  pointer-events: auto;
+  mask-image: radial-gradient(
+    ellipse 88% 84% at 50% 50%,
+    #000 55%,
+    transparent 92%
+  );
+  -webkit-mask-image: radial-gradient(
+    ellipse 88% 84% at 50% 50%,
+    #000 55%,
+    transparent 92%
   );
 }
 
@@ -972,31 +994,39 @@
   border: 0;
 }
 
-/* ——— Proceso ——— */
-.proceso-defs {
-  position: absolute;
-  width: 0;
-  height: 0;
-  overflow: hidden;
-}
-
+/* ——— Proceso (sticky scroll-pinned) ——— */
 .proceso {
+  --proceso-steps: 6;
   position: relative;
-  scroll-margin-top: calc(var(--nav-height) + 1rem);
-  background: transparent;
-  padding: clamp(4rem, 10vw, 6.5rem) clamp(1.25rem, 4vw, 3rem);
-  overflow-x: clip;
+  height: calc(var(--proceso-steps) * 100vh);
+  scroll-margin-top: var(--nav-height);
+  background: #ffffff;
+  isolation: isolate;
 }
 
-.proceso__inner {
-  max-width: 72rem;
-  margin: 0 auto;
+.proceso__pin {
+  position: sticky;
+  top: 0;
+  z-index: 6;
+  height: 100vh;
+  width: 100%;
+  pointer-events: none;
 }
 
-.proceso__header {
-  text-align: center;
-  max-width: 38rem;
-  margin: 0 auto clamp(2.5rem, 5vw, 3.5rem);
+.proceso__slider {
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(1.5rem, 3.5vw, 2.5rem);
+  padding: calc(var(--nav-height) + 1.5rem) clamp(1.25rem, 6vw, 5rem) 2.5rem;
+  background: #ffffff;
+  pointer-events: auto;
+}
+
+.proceso--pinned .proceso__slider {
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.06);
 }
 
 .proceso__title {
@@ -1004,68 +1034,141 @@
   font-weight: 700;
   font-size: clamp(1.85rem, 4vw, 2.5rem);
   letter-spacing: -0.02em;
-  color: var(--text-primary);
-  margin-bottom: 0.65rem;
+  line-height: 1.15;
+  color: #000000;
+  text-align: center;
+  margin: 0;
 }
 
-.proceso__subtitle {
-  font-size: clamp(1rem, 2vw, 1.125rem);
-  color: var(--text-secondary);
-  line-height: 1.65;
-}
-
-.proceso__timeline {
+.proceso__stage {
   position: relative;
-  margin-top: 0.5rem;
-}
-
-.proceso-line-svg {
-  position: absolute;
-  pointer-events: none;
-  overflow: visible;
-}
-
-.proceso-line-svg--h {
-  display: none;
-  left: 0;
-  right: 0;
-  top: 1.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
   width: 100%;
-  height: 4.5rem;
+  min-height: clamp(22rem, 50vh, 34rem);
+  padding: 0;
 }
 
-.proceso-line-svg--v {
-  left: 1.35rem;
-  top: 2rem;
-  width: 4rem;
-  height: calc(100% - 2rem);
-  display: block;
-}
-
-.proceso__line-path {
-  fill: none;
-  stroke: url(#procesoLineGrad);
-  stroke-width: 3;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-dasharray: 1;
-  stroke-dashoffset: 1;
-  vector-effect: non-scaling-stroke;
-}
-
-.proceso--line-fallback .proceso__line-path--scroll {
-  animation: none;
-  stroke-dashoffset: var(--proceso-line-progress, 1);
-}
-
-.proceso__steps {
+.proceso__steps-viewport {
   position: relative;
   z-index: 1;
+  width: 100%;
+  overflow: hidden;
+}
+
+.proceso__steps-track {
   list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: clamp(1.75rem, 4vw, 3.25rem);
+  width: max-content;
+  will-change: transform;
+}
+
+.proceso-step-item {
+  position: relative;
+  flex: 0 0 clamp(22rem, 42vw, 36rem);
+  width: clamp(22rem, 42vw, 36rem);
   display: flex;
   flex-direction: column;
-  gap: 2rem;
-  padding: 0 0 0 3.75rem;
+  align-items: flex-start;
+  gap: 1.1rem;
+  padding-top: 0.35rem;
+  opacity: 0.45;
+  will-change: transform, opacity;
+  transform: translate3d(0, 0, 0);
+}
+
+.proceso-step-item.is-active {
+  opacity: 1;
+}
+
+.proceso-step-item.is-near {
+  opacity: 0.78;
+}
+
+.proceso-step-item__num {
+  font-family: var(--font-heading);
+  font-size: clamp(3rem, 7vw, 5.25rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: #000000;
+}
+
+.proceso-step-item__body {
+  min-width: 0;
+  width: 100%;
+}
+
+.proceso-step-item__title {
+  margin: 0 0 0.65rem;
+  font-family: var(--font-heading);
+  font-size: clamp(1.85rem, 4.2vw, 3.1rem);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.02em;
+  color: #000000;
+}
+
+.proceso-step-item__desc {
+  margin: 0;
+  font-size: clamp(1.05rem, 1.7vw, 1.28rem);
+  line-height: 1.55;
+  color: rgba(0, 0, 0, 0.52);
+  max-width: 28rem;
+}
+
+.proceso-step-item.is-active .proceso-step-item__desc {
+  color: rgba(0, 0, 0, 0.65);
+}
+
+.proceso__brain-anchor {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  z-index: 2;
+  width: clamp(5.5rem, 11vw, 8rem);
+  height: clamp(5.5rem, 11vw, 8rem);
+  transform: translate(-50%, -72%);
+  pointer-events: none;
+}
+
+.proceso__scroll-track {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .proceso {
+    height: auto;
+  }
+
+  .proceso__pin {
+    position: relative;
+    height: auto;
+  }
+
+  .proceso__slider {
+    min-height: auto;
+    box-shadow: none;
+  }
+}
+
+.visually-hidden,
+.proceso__steps-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 /* ——— Por qué CODEVS ——— */

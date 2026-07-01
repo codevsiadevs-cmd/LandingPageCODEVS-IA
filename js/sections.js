@@ -65,35 +65,6 @@ if (heroIntro) {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
- * #proceso — typewriter-style left border per step (scaleY 0 → 1, top origin).
- * Bidireccional: cada step se observa por separado y la línea se replay al
- * re-entrar. La línea decorativa global y los dots iluminados se manejan
- * más abajo (lógica preexistente, scroll-progress-based, ya bidireccional).
- * ─────────────────────────────────────────────────────────────────────────── */
-{
-  const sec = document.getElementById("proceso");
-  const steps = sec ? sec.querySelectorAll(".proceso-step") : [];
-  if (sec && steps.length) {
-    steps.forEach((s, i) => {
-      const delay = prefersReducedMotionGlobal ? 0 : i * 120;
-      s.style.setProperty("--reveal-delay", `${delay}ms`);
-    });
-    if (prefersReducedMotionGlobal) {
-      steps.forEach((s) => s.classList.add("proceso-step--inview"));
-    } else {
-      steps.forEach((step) => {
-        observeReveal(
-          step,
-          () => step.classList.add("proceso-step--inview"),
-          () => step.classList.remove("proceso-step--inview"),
-          { rootMargin: "0px 0px -80px 0px", threshold: 0.12 }
-        );
-      });
-    }
-  }
-}
-
-/* ─────────────────────────────────────────────────────────────────────────────
  * Stats count-up con requestAnimationFrame (1200ms, easeOutCubic).
  * Cancellable: cada elemento guarda su rAF id en _countRafId (expando) para
  * poder abortarse y reiniciarse cuando la sección sale/vuelve al viewport.
@@ -225,68 +196,6 @@ if (whySection) {
       });
     }
   }
-}
-
-/* ─────────────────────────────────────────────────────────────────────────────
- * Lógica preexistente del proceso (línea decorativa global + dots iluminados).
- * Se mantiene tal cual para no perder el comportamiento por scroll en
- * navegadores sin soporte de view-timeline.
- * ─────────────────────────────────────────────────────────────────────────── */
-const procesoSection = document.getElementById("proceso");
-const procesoSteps = procesoSection ? procesoSection.querySelectorAll(".proceso-step") : [];
-
-if (procesoSection) {
-  const supportsViewTimeline =
-    typeof CSS !== "undefined" &&
-    typeof CSS.supports === "function" &&
-    CSS.supports("view-timeline-name", "--proceso-line");
-
-  if (!supportsViewTimeline && !prefersReducedMotionGlobal) {
-    procesoSection.classList.add("proceso--line-fallback");
-    function updateProcesoLineProgress() {
-      const r = procesoSection.getBoundingClientRect();
-      const vh = window.innerHeight;
-      const span = r.height + vh * 0.35;
-      const t = (vh * 0.55 - r.top) / Math.max(span * 0.55, 1);
-      const p = Math.min(1, Math.max(0, t));
-      procesoSection.style.setProperty("--proceso-line-progress", String(1 - p));
-    }
-    updateProcesoLineProgress();
-    window.addEventListener("scroll", updateProcesoLineProgress, { passive: true });
-    window.addEventListener("resize", updateProcesoLineProgress, { passive: true });
-  }
-}
-
-if (procesoSection && procesoSteps.length && !prefersReducedMotionGlobal) {
-  const ioThresholds = [0.12, 0.17, 0.22, 0.28, 0.34, 0.4];
-
-  function recalcProcesoStepsLit() {
-    const vh = window.innerHeight;
-    let maxLit = -1;
-    procesoSteps.forEach((step, i) => {
-      const dot = step.querySelector(".proceso-step__dot");
-      if (!dot) return;
-      const r = dot.getBoundingClientRect();
-      const cy = r.top + r.height / 2;
-      const limit = vh * (0.38 + i * 0.036);
-      if (cy < limit) maxLit = Math.max(maxLit, i);
-    });
-    procesoSteps.forEach((s, i) => s.classList.toggle("proceso-step--lit", i <= maxLit));
-  }
-
-  procesoSteps.forEach((step, i) => {
-    const tMin = ioThresholds[i] ?? 0.2;
-    const thSet = [...new Set([0, 0.05, tMin, 0.35, 0.55, 0.75, 1])].sort((a, b) => a - b);
-    const io = new IntersectionObserver(recalcProcesoStepsLit, {
-      threshold: thSet,
-      rootMargin: `-${10 + i * 3}% 0px -${14 - i}% 0px`,
-    });
-    io.observe(step);
-  });
-  window.addEventListener("scroll", recalcProcesoStepsLit, { passive: true });
-  recalcProcesoStepsLit();
-} else if (procesoSection && procesoSteps.length && prefersReducedMotionGlobal) {
-  procesoSteps.forEach((s) => s.classList.add("proceso-step--lit"));
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────

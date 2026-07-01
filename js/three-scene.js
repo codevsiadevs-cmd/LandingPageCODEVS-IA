@@ -28,6 +28,7 @@ const hasBrainScene = hasNavBrain || hasHeroBrain;
 /** Tamaño y zoom del hero Spline fijados al valor inicial (no cambian con el scroll). */
 let lockedHeroBrainPx = null;
 let lockedHeroBrainZoom = null;
+let wasInProcesoBrain = false;
 
 function lockHeroBrainDimensions() {
   if (!heroWrap) return null;
@@ -67,15 +68,45 @@ window.addEventListener("resize", refreshWrapRects, { passive: true });
 function syncHeroBrainWithScroll() {
   if (!heroWrap) return;
   const isMobile = window.matchMedia("(max-width: 768px)").matches;
-  const startRatio = isMobile ? 0.56 : 0.50;
-  const startY = window.innerHeight * startRatio;
-  /* 1:1 con el scroll: cada px de scroll baja el cerebro 1 px (position: fixed). */
+  const vh = window.innerHeight;
+  const procesoSection = document.getElementById("proceso");
+  const procesoAnchor = document.getElementById("proceso-brain-anchor");
+
+  if (procesoSection && procesoAnchor) {
+    const sectionRect = procesoSection.getBoundingClientRect();
+    const inProceso = sectionRect.top <= vh * 0.02 && sectionRect.bottom >= vh * 0.98;
+
+    if (inProceso !== wasInProcesoBrain) {
+      wasInProcesoBrain = inProceso;
+      lockedHeroBrainPx = null;
+      lockedHeroBrainZoom = null;
+      heroWrap.style.removeProperty("width");
+      heroWrap.style.removeProperty("height");
+      lockHeroBrainDimensions();
+      resizeHeroSpline();
+    }
+
+    if (inProceso) {
+      const anchorRect = procesoAnchor.getBoundingClientRect();
+      heroWrap.classList.add("hero__canvas-wrap--proceso");
+      heroWrap.style.setProperty("--brain-scroll-x", `${anchorRect.left + anchorRect.width / 2}px`);
+      heroWrap.style.setProperty("--brain-scroll-y", `${anchorRect.top + anchorRect.height / 2}px`);
+      return;
+    }
+
+    heroWrap.classList.remove("hero__canvas-wrap--proceso");
+  } else {
+    heroWrap.classList.remove("hero__canvas-wrap--proceso");
+    wasInProcesoBrain = false;
+  }
+
+  const startRatio = isMobile ? 0.56 : 0.5;
+  const startY = vh * startRatio;
   const topY = startY + Math.max(latestScrollY, 0);
   heroWrap.style.setProperty("--brain-scroll-y", `${topY}px`);
 
-  const docMaxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
+  const docMaxScroll = Math.max(document.documentElement.scrollHeight - vh, 1);
   const docProgress = Math.min(Math.max(latestScrollY / docMaxScroll, 0), 1);
-  /* Desktop: se desplaza hacia la izquierda al bajar y termina centrado (50%). Móvil: siempre centrado. */
   const xPercent = isMobile ? 50 : 73 + (50 - 73) * docProgress;
   heroWrap.style.setProperty("--brain-scroll-x", `${xPercent}%`);
 }
@@ -391,10 +422,9 @@ function syncSplineDomRect(target) {
   if (ctx) ctx.domRect = target.canvas.getBoundingClientRect();
 }
 
-/** Centrado fijo: sin rotación por scroll para que el cerebro conserve el mismo tamaño visual. */
+/** Centrado fijo: transform lo controla CSS (translate + scale). */
 function applyHeroWrapEffects() {
-  if (!heroWrap) return;
-  heroWrap.style.transform = "translate(-50%, -50%)";
+  /* noop */
 }
 
 function syncHeroSplineFrame(target) {

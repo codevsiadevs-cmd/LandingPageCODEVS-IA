@@ -301,140 +301,61 @@
     </section>
 
     <section class="proceso" id="proceso" aria-labelledby="proceso-heading">
-      <svg class="proceso-defs" aria-hidden="true" focusable="false">
-        <defs>
-          <linearGradient id="procesoLineGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stop-color="#0FFFD4" />
-            <stop offset="100%" stop-color="#7B61FF" />
-          </linearGradient>
-        </defs>
-      </svg>
-      <div class="proceso__inner">
-        <header class="proceso__header">
+      <div class="proceso__pin">
+        <div class="proceso__slider">
           <h2 id="proceso-heading" class="proceso__title">Cómo Trabajamos</h2>
-          <p class="proceso__subtitle">Un proceso probado para entregar resultados excepcionales</p>
-        </header>
 
-        <div class="proceso__timeline">
-          <svg
-            class="proceso-line-svg proceso-line-svg--h"
-            viewBox="0 0 1000 100"
-            preserveAspectRatio="none"
-            aria-hidden="true"
-          >
-            <path
-              class="proceso__line-path proceso__line-path--scroll"
-              d="M 80 50 L 268 50 L 456 50 L 644 50 L 832 50 L 920 50"
-              pathLength="1"
-            />
-          </svg>
-          <svg
-            class="proceso-line-svg proceso-line-svg--v"
-            viewBox="0 0 80 920"
-            preserveAspectRatio="none"
-            aria-hidden="true"
-          >
-            <path
-              class="proceso__line-path proceso__line-path--scroll"
-              d="M 40 48 L 40 200 L 40 352 L 40 504 L 40 656 L 40 808"
-              pathLength="1"
-            />
-          </svg>
+          <div class="proceso__stage">
+            <div class="proceso__steps-viewport" id="proceso-steps-viewport">
+              <ol class="proceso__steps-track" id="proceso-steps-track">
+                <li class="proceso-step-item">
+                  <span class="proceso-step-item__num">1</span>
+                  <div class="proceso-step-item__body">
+                    <h3 class="proceso-step-item__title">Descubrimiento</h3>
+                    <p class="proceso-step-item__desc">Entendemos tu negocio y definimos objetivos claros</p>
+                  </div>
+                </li>
+                <li class="proceso-step-item">
+                  <span class="proceso-step-item__num">2</span>
+                  <div class="proceso-step-item__body">
+                    <h3 class="proceso-step-item__title">Diseño</h3>
+                    <p class="proceso-step-item__desc">Arquitectura técnica y prototipo de experiencia</p>
+                  </div>
+                </li>
+                <li class="proceso-step-item">
+                  <span class="proceso-step-item__num">3</span>
+                  <div class="proceso-step-item__body">
+                    <h3 class="proceso-step-item__title">Desarrollo</h3>
+                    <p class="proceso-step-item__desc">Código limpio, tests y entregas incrementales</p>
+                  </div>
+                </li>
+                <li class="proceso-step-item">
+                  <span class="proceso-step-item__num">4</span>
+                  <div class="proceso-step-item__body">
+                    <h3 class="proceso-step-item__title">QA &amp; Pruebas</h3>
+                    <p class="proceso-step-item__desc">Validación rigurosa antes de cada release</p>
+                  </div>
+                </li>
+                <li class="proceso-step-item">
+                  <span class="proceso-step-item__num">5</span>
+                  <div class="proceso-step-item__body">
+                    <h3 class="proceso-step-item__title">Deploy</h3>
+                    <p class="proceso-step-item__desc">Lanzamiento seguro con monitoreo en tiempo real</p>
+                  </div>
+                </li>
+                <li class="proceso-step-item">
+                  <span class="proceso-step-item__num">6</span>
+                  <div class="proceso-step-item__body">
+                    <h3 class="proceso-step-item__title">Soporte</h3>
+                    <p class="proceso-step-item__desc">Acompañamiento continuo post-lanzamiento</p>
+                  </div>
+                </li>
+              </ol>
+            </div>
 
-          <ol class="proceso__steps">
-            <li class="proceso-step">
-              <div class="proceso-step__top">
-                <div class="proceso-step__dot">
-                  <span class="proceso-step__num">1</span>
-                </div>
-                <div class="proceso-step__icon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="11" cy="11" r="6" stroke="currentColor" stroke-width="1.75" />
-                    <path d="M16 16l4.5 4.5" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" />
-                    <circle cx="11" cy="11" r="2" fill="currentColor" />
-                  </svg>
-                </div>
-              </div>
-              <h3 class="proceso-step__name">Descubrimiento</h3>
-              <p class="proceso-step__desc">Entendemos tu negocio y definimos objetivos claros</p>
-            </li>
-            <li class="proceso-step">
-              <div class="proceso-step__top">
-                <div class="proceso-step__dot">
-                  <span class="proceso-step__num">2</span>
-                </div>
-                <div class="proceso-step__icon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="4" y="4" width="16" height="16" rx="2" stroke="currentColor" stroke-width="1.75" />
-                    <path d="M8 9h8M8 12h6M8 15h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
-                  </svg>
-                </div>
-              </div>
-              <h3 class="proceso-step__name">Diseño</h3>
-              <p class="proceso-step__desc">Arquitectura técnica y prototipo de experiencia</p>
-            </li>
-            <li class="proceso-step">
-              <div class="proceso-step__top">
-                <div class="proceso-step__dot">
-                  <span class="proceso-step__num">3</span>
-                </div>
-                <div class="proceso-step__icon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M8 9l-3 3 3 3M16 15l3-3-3-3" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" />
-                    <path d="M13 7l-2 10" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" />
-                  </svg>
-                </div>
-              </div>
-              <h3 class="proceso-step__name">Desarrollo</h3>
-              <p class="proceso-step__desc">Código limpio, tests y entregas incrementales</p>
-            </li>
-            <li class="proceso-step">
-              <div class="proceso-step__top">
-                <div class="proceso-step__dot">
-                  <span class="proceso-step__num">4</span>
-                </div>
-                <div class="proceso-step__icon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 4l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V8l8-4z" stroke="currentColor" stroke-width="1.65" stroke-linejoin="round" />
-                    <path d="M9 12l2.5 2.5L15 10" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round" />
-                  </svg>
-                </div>
-              </div>
-              <h3 class="proceso-step__name">QA &amp; Pruebas</h3>
-              <p class="proceso-step__desc">Validación rigurosa antes de cada release</p>
-            </li>
-            <li class="proceso-step">
-              <div class="proceso-step__top">
-                <div class="proceso-step__dot">
-                  <span class="proceso-step__num">5</span>
-                </div>
-                <div class="proceso-step__icon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 3v10" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" />
-                    <path d="M8 7l4-4 4 4" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" />
-                    <path d="M5 14h14v3a4 4 0 01-4 4H9a4 4 0 01-4-4v-3z" stroke="currentColor" stroke-width="1.65" stroke-linejoin="round" />
-                  </svg>
-                </div>
-              </div>
-              <h3 class="proceso-step__name">Deploy</h3>
-              <p class="proceso-step__desc">Lanzamiento seguro con monitoreo en tiempo real</p>
-            </li>
-            <li class="proceso-step">
-              <div class="proceso-step__top">
-                <div class="proceso-step__dot">
-                  <span class="proceso-step__num">6</span>
-                </div>
-                <div class="proceso-step__icon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 21a8 8 0 01-4-14.5V5a2 2 0 114 0v1.5A8 8 0 0112 21z" stroke="currentColor" stroke-width="1.65" stroke-linejoin="round" />
-                    <path d="M9 10h.01M15 10h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-                  </svg>
-                </div>
-              </div>
-              <h3 class="proceso-step__name">Soporte</h3>
-              <p class="proceso-step__desc">Acompañamiento continuo post-lanzamiento</p>
-            </li>
-          </ol>
+            <div class="proceso__brain-anchor" id="proceso-brain-anchor"></div>
+          </div>
+
         </div>
       </div>
     </section>

@@ -421,6 +421,10 @@
     text-align: left;
   }
 
+  .proceso__title {
+    font-size: clamp(1.65rem, 7vw, 2rem);
+  }
+
   .projects__panel-index {
     top: 1.15rem;
     left: 1.15rem;
@@ -448,36 +452,53 @@
   }
 }
 
-@media (min-width: 900px) {
-  .proceso-line-svg--h {
-    display: block;
+@media (max-width: 768px) {
+  .proceso {
+    height: calc(var(--proceso-steps) * 90vh);
   }
-  .proceso-line-svg--v {
-    display: none;
-  }
-}
 
-@media (min-width: 900px) {
-  .proceso__steps {
-    flex-direction: row;
-    gap: 0.75rem;
-    padding: 0;
-    justify-content: space-between;
-    align-items: flex-start;
+  .proceso__pin {
+    height: 90vh;
   }
-}
 
-@media (min-width: 900px) {
-  .proceso-step {
-    text-align: center;
-    max-width: none;
-    padding: 0 0.35rem;
+  .proceso__slider {
+    padding-inline: 1.15rem;
+    gap: 1.15rem;
   }
-}
 
-@media (max-width: 899px) {
-  .proceso-step__top {
-    align-items: flex-start;
+  .proceso__stage {
+    min-height: clamp(20rem, 46vh, 28rem);
+  }
+
+  .proceso__steps-track {
+    gap: 1.25rem;
+  }
+
+  .proceso-step-item {
+    flex: 0 0 clamp(19rem, 88vw, 24rem);
+    width: clamp(19rem, 88vw, 24rem);
+  }
+
+  .proceso-step-item__num {
+    font-size: clamp(2.5rem, 12vw, 3.5rem);
+  }
+
+  .proceso-step-item__title {
+    font-size: clamp(1.55rem, 7.5vw, 2rem);
+  }
+
+  .proceso-step-item__desc {
+    font-size: clamp(0.98rem, 3.8vw, 1.08rem);
+  }
+
+  .proceso__brain-anchor {
+    width: clamp(6rem, 30vw, 8rem);
+    height: clamp(6rem, 30vw, 8rem);
+  }
+
+  .hero__canvas-wrap.hero__canvas-wrap--proceso {
+    width: clamp(6rem, 30vw, 8rem);
+    height: clamp(6rem, 30vw, 8rem);
   }
 }
 

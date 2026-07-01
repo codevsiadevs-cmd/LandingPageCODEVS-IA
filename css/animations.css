@@ -77,28 +77,6 @@
   }
 }
 
-@keyframes procesoLineDraw {
-  from {
-    stroke-dashoffset: 1;
-  }
-  to {
-    stroke-dashoffset: 0;
-  }
-}
-
-@supports (view-timeline-name: --proceso-line) {
-  #proceso {
-    view-timeline-name: --proceso-line;
-    view-timeline-axis: block;
-  }
-
-  .proceso__line-path--scroll {
-    animation: procesoLineDraw linear forwards;
-    animation-timeline: --proceso-line;
-    animation-range: entry 8% exit 72%;
-  }
-}
-
 @keyframes whyBorderGlow {
   to {
     transform: translate(-50%, -50%) rotate(360deg);
