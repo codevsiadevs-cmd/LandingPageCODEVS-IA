@@ -39,11 +39,21 @@ function initProcesoShowcase() {
     return { stepPx, stepSpan, viewportPx, slidePx };
   }
 
+  function getMobileTrackOffset() {
+    const raw = getComputedStyle(section).getPropertyValue("--proceso-mobile-track-offset").trim();
+    if (!raw) return 0;
+    const value = Number.parseFloat(raw);
+    if (Number.isNaN(value)) return 0;
+    return raw.endsWith("rem") ? value * Number.parseFloat(getComputedStyle(document.documentElement).fontSize) : value;
+  }
+
   function applyTimeline(index) {
     const { stepPx, stepSpan, viewportPx, slidePx } = measure();
     const centerOffset = (viewportPx - stepPx) / 2;
+    const mobileOffset = getMobileTrackOffset();
+    const firstStepBoost = mobileOffset > 0 ? mobileOffset * Math.max(0, 1 - index / 0.85) : 0;
 
-    track.style.transform = `translate3d(${centerOffset - index * stepSpan}px, 0, 0)`;
+    track.style.transform = `translate3d(${centerOffset - index * stepSpan + firstStepBoost}px, 0, 0)`;
 
     steps.forEach((step, i) => {
       const delta = i - index;

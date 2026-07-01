@@ -454,6 +454,7 @@
 
 @media (max-width: 768px) {
   .proceso {
+    --proceso-mobile-track-offset: 1.75rem;
     height: calc(var(--proceso-steps) * 90vh);
   }
 
