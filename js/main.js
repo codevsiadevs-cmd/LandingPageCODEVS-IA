@@ -1,4 +1,5 @@
 import "./i18n.js";
+import "./why-showcase.js";
 import "./preloader.js";
 import "./proceso-showcase.js";
 import "./console-easter.js";

@@ -73,15 +73,11 @@ const translations = {
     "process.6.title": "Soporte",
     "process.6.desc": "Acompañamiento continuo post-lanzamiento",
     "why.title": "¿Por qué elegir CODEVS IA?",
-    "why.lead":
-      "Unimos ingeniería sólida e inteligencia artificial para lanzar productos que escalan: menos fricción, más impacto medible y un equipo que habla el idioma de tu negocio.",
     "why.1": "Equipo senior con experiencia en productos reales",
     "why.2": "IA integrada desde el inicio, no como add-on",
     "why.3": "Comunicación transparente y entregas puntuales",
     "why.4": "Código limpio, documentado y escalable",
     "why.5": "Soporte post-lanzamiento incluido",
-    "why.quote":
-      "Trabajar con CODEVS IA es tener un partner que entiende producto, datos y plazos: entregan con claridad, cuidan la arquitectura y dejan todo listo para crecer.",
     "contact.title": "¿Listo para construir algo increíble?",
     "contact.subtitle": "Cuéntanos tu idea. Respondemos en menos de 24 horas.",
     "contact.name": "Nombre completo",
@@ -176,15 +172,11 @@ const translations = {
     "process.6.title": "Support",
     "process.6.desc": "Ongoing post-launch partnership",
     "why.title": "Why choose CODEVS IA?",
-    "why.lead":
-      "We combine solid engineering and artificial intelligence to launch products that scale: less friction, measurable impact, and a team that speaks your business language.",
     "why.1": "Senior team with real product experience",
     "why.2": "AI integrated from day one, not as an add-on",
     "why.3": "Transparent communication and on-time delivery",
     "why.4": "Clean, documented, and scalable code",
     "why.5": "Post-launch support included",
-    "why.quote":
-      "Working with CODEVS IA means having a partner who understands product, data, and deadlines: they deliver with clarity, care for architecture, and leave everything ready to grow.",
     "contact.title": "Ready to build something incredible?",
     "contact.subtitle": "Tell us your idea. We respond within 24 hours.",
     "contact.name": "Full name",

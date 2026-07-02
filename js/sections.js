@@ -138,40 +138,6 @@ if (techMetricsBlock && techMetricEls.length && techValueEls.length) {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
- * #nosotros — visibilidad de columnas + count-up bidireccional. Si la
- * sección sale del viewport, los counters se resetean a 0; al re-entrar,
- * cuentan otra vez desde 0 hasta target.
- * ─────────────────────────────────────────────────────────────────────────── */
-const whySection = document.getElementById("nosotros");
-if (whySection) {
-  const whyStats = whySection.querySelectorAll("[data-target]");
-
-  if (whyStats.length) {
-    if (prefersReducedMotionGlobal) {
-      setStaticValues(whyStats);
-    } else {
-      observeReveal(
-        whySection,
-        () => whyStats.forEach((el) => countUpRAF(el, 1200)),
-        () => whyStats.forEach((el) => resetCountUp(el)),
-        { rootMargin: "0px 0px -10% 0px", threshold: 0.15 }
-      );
-    }
-  }
-
-  if (prefersReducedMotionGlobal) {
-    whySection.classList.add("why--visible");
-  } else {
-    observeReveal(
-      whySection,
-      () => whySection.classList.add("why--visible"),
-      () => whySection.classList.remove("why--visible"),
-      { rootMargin: "0px 0px -12% 0px", threshold: 0.12 }
-    );
-  }
-}
-
-/* ─────────────────────────────────────────────────────────────────────────────
  * Footer reveal — bidireccional. Si el usuario scrollea hacia arriba desde
  * el footer y vuelve a bajar, el reveal se replay.
  * ─────────────────────────────────────────────────────────────────────────── */
