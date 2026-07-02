@@ -1,9 +1,14 @@
+import { t } from "./i18n.js";
+
 const audio = document.getElementById("site-music-audio");
 const btn = document.getElementById("music-toggle");
 
 if (audio && btn) {
   audio.volume = 0.38;
   audio.loop = false;
+
+  let playError = false;
+  let loadError = false;
 
   const barEls = () => Array.from(btn.querySelectorAll(".music-toggle__bar"));
   const prefersReducedMotion =
@@ -49,10 +54,18 @@ if (audio && btn) {
     const playing = !audio.paused;
     btn.classList.toggle("music-toggle--playing", playing);
     btn.setAttribute("aria-pressed", playing ? "true" : "false");
-    btn.setAttribute(
-      "aria-label",
-      playing ? "Pausar Ibiza Global Radio" : "Reproducir Ibiza Global Radio en directo"
-    );
+
+    if (loadError) {
+      btn.setAttribute("aria-label", t("music.errorLoad"));
+      btn.title = t("music.errorLoad");
+    } else if (playError) {
+      btn.setAttribute("aria-label", t("music.errorPlay"));
+      btn.title = t("music.errorConnect");
+    } else {
+      btn.setAttribute("aria-label", playing ? t("music.pause") : t("music.play"));
+      btn.title = t("music.titleLive");
+    }
+
     if (playing) startWaveform();
     else stopWaveform();
   }
@@ -64,17 +77,14 @@ if (audio && btn) {
       try {
         await audio.play();
         btn.classList.remove("music-toggle--error");
-        btn.title = "Ibiza Global Radio — en directo";
+        playError = false;
       } catch {
         btn.classList.add("music-toggle--error");
-        btn.setAttribute(
-          "aria-label",
-          "No se pudo reproducir la emisora. Comprueba tu conexión o inténtalo más tarde."
-        );
-        btn.title = "No se pudo conectar al stream";
+        playError = true;
       }
     } else {
       audio.pause();
+      playError = false;
     }
     syncUiFromAudio();
   });
@@ -84,7 +94,10 @@ if (audio && btn) {
 
   audio.addEventListener("error", () => {
     btn.classList.add("music-toggle--error");
-    btn.title = "Error al cargar el stream de Ibiza Global Radio";
+    loadError = true;
     stopWaveform();
+    syncUiFromAudio();
   });
+
+  document.addEventListener("codevs:langchange", syncUiFromAudio);
 }

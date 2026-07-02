@@ -1,4 +1,5 @@
 import { prefersReducedMotionGlobal } from "./scroll.js";
+import { t } from "./i18n.js";
 
 const customCursor = document.getElementById("custom-cursor");
 
@@ -92,7 +93,6 @@ if (contactSubmitBtn) {
 
   if (form && successEl && errorEl && submitBtn) {
     const labelEl = submitBtn.querySelector(".contact__submit-label");
-    const defaultLabel = labelEl?.textContent?.trim() || "Enviar mensaje";
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     const fields = [
@@ -100,28 +100,28 @@ if (contactSubmitBtn) {
         input: form.querySelector("#contact-name"),
         err: form.querySelector("#contact-name-error"),
         validate: (v) =>
-          v.trim().length >= 2 ? "" : "Escribe tu nombre completo (mínimo 2 caracteres).",
+          v.trim().length >= 2 ? "" : t("contact.error.name"),
       },
       {
         input: form.querySelector("#contact-email"),
         err: form.querySelector("#contact-email-error"),
         validate: (v) => {
           const value = v.trim();
-          if (!value) return "Necesitamos un email para responderte.";
-          if (!emailRegex.test(value)) return "El formato del email no es válido.";
+          if (!value) return t("contact.error.emailRequired");
+          if (!emailRegex.test(value)) return t("contact.error.emailInvalid");
           return "";
         },
       },
       {
         input: form.querySelector("#contact-type"),
         err: form.querySelector("#contact-type-error"),
-        validate: (v) => (v ? "" : "Selecciona el tipo de proyecto."),
+        validate: (v) => (v ? "" : t("contact.error.type")),
       },
       {
         input: form.querySelector("#contact-message"),
         err: form.querySelector("#contact-message-error"),
         validate: (v) =>
-          v.trim().length >= 10 ? "" : "Cuéntanos un poco más (mínimo 10 caracteres).",
+          v.trim().length >= 10 ? "" : t("contact.error.message"),
       },
     ].filter((f) => f.input && f.err);
 
@@ -173,7 +173,7 @@ if (contactSubmitBtn) {
     function showError(msg) {
       if (successTimer) window.clearTimeout(successTimer);
       successEl.classList.remove("contact__success--visible");
-      errorEl.textContent = msg || "No pudimos enviar tu mensaje. Inténtalo de nuevo en unos segundos.";
+      errorEl.textContent = msg || t("contact.error.send");
       errorEl.classList.add("contact__error--visible");
       if (errorTimer) window.clearTimeout(errorTimer);
       errorTimer = window.setTimeout(() => {
@@ -184,7 +184,7 @@ if (contactSubmitBtn) {
     function setSubmitting(busy) {
       submitBtn.disabled = busy;
       submitBtn.setAttribute("aria-busy", busy ? "true" : "false");
-      if (labelEl) labelEl.textContent = busy ? "Enviando..." : defaultLabel;
+      if (labelEl) labelEl.textContent = busy ? t("contact.submitting") : t("contact.submit");
     }
 
     form.addEventListener("submit", async (event) => {
@@ -204,7 +204,7 @@ if (contactSubmitBtn) {
       const accessKeyInput = form.querySelector('input[name="access_key"]');
       const accessKey = accessKeyInput?.value?.trim() || "";
       if (!accessKey || accessKey === "YOUR_WEB3FORMS_KEY") {
-        showError("Configura tu access_key de Web3Forms para activar el envío.");
+        showError(t("contact.error.config"));
         console.warn(
           "[contact-form] Falta el access_key real de Web3Forms. " +
             "Reemplaza YOUR_WEB3FORMS_KEY en index.html por la clave de https://web3forms.com."
@@ -227,13 +227,21 @@ if (contactSubmitBtn) {
           form.reset();
           clearAllFieldErrors();
         } else {
-          showError(data.message || "No pudimos enviar tu mensaje. Inténtalo de nuevo.");
+          showError(data.message || t("contact.error.sendAlt"));
         }
       } catch (err) {
-        showError("Hubo un problema con la conexión. Comprueba tu red e inténtalo de nuevo.");
+        showError(t("contact.error.network"));
       } finally {
         setSubmitting(false);
       }
     });
   }
 }
+
+document.addEventListener("codevs:langchange", () => {
+  const submitBtn = document.getElementById("contact-submit");
+  const labelEl = submitBtn?.querySelector(".contact__submit-label");
+  if (labelEl && submitBtn && !submitBtn.disabled) {
+    labelEl.textContent = t("contact.submit");
+  }
+});

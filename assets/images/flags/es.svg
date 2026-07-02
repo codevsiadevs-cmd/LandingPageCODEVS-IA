@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Espana">
+  <clipPath id="es-clip"><circle cx="32" cy="32" r="32"/></clipPath>
+  <g clip-path="url(#es-clip)">
+    <rect width="64" height="16" fill="#AA151B"/>
+    <rect y="16" width="64" height="32" fill="#F1BF00"/>
+    <rect y="48" width="64" height="16" fill="#AA151B"/>
+  </g>
+</svg>

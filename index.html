@@ -71,6 +71,7 @@
     role="progressbar"
     aria-live="polite"
     aria-label="Cargando sitio"
+    data-i18n-aria-label="preloader.loading"
     aria-valuemin="0"
     aria-valuemax="100"
     aria-valuenow="0"
@@ -98,7 +99,7 @@
   <div class="custom-cursor" id="custom-cursor" aria-hidden="true"></div>
 
   <header class="nav" id="site-nav" role="banner">
-    <a href="#inicio" class="nav__brand" aria-label="CODEVS IA — Inicio">
+    <a href="#inicio" class="nav__brand" aria-label="CODEVS IA — Inicio" data-i18n-aria-label="nav.brand">
       <span class="nav__brain-wrap" id="nav-brain-wrap" aria-hidden="true"></span>
       <span class="nav__brand-text">
         <span class="nav__brand-line">CODEVS</span>
@@ -112,26 +113,54 @@
       aria-expanded="false"
       aria-controls="nav-mobile-panel"
       aria-label="Abrir menú"
+      data-i18n-aria-label="nav.openMenu"
     >
       <span class="nav__toggle-line" aria-hidden="true"></span>
       <span class="nav__toggle-line" aria-hidden="true"></span>
       <span class="nav__toggle-line" aria-hidden="true"></span>
     </button>
 
-    <nav class="nav__links" id="nav-mobile-panel" aria-label="Principal">
-      <a href="#tecnologias">Tecnologías</a>
-      <a href="#proyectos">Proyectos</a>
-      <a href="#proceso">Proceso</a>
-      <a href="#nosotros">Nosotros</a>
+    <nav class="nav__links" id="nav-mobile-panel" aria-label="Principal" data-i18n-aria-label="nav.main">
+      <a href="#tecnologias" data-i18n="nav.technologies">Tecnologías</a>
+      <a href="#proyectos" data-i18n="nav.projects">Proyectos</a>
+      <a href="#proceso" data-i18n="nav.process">Proceso</a>
+      <a href="#nosotros" data-i18n="nav.about">Nosotros</a>
       <span class="nav-indicator" aria-hidden="true"></span>
       <a href="#contacto" class="nav__contact nav__contact--menu">
-        Contacto
+        <span data-i18n="nav.contact">Contacto</span>
         <span class="nav__contact-arrow" aria-hidden="true">↗</span>
       </a>
     </nav>
     <div class="nav__actions">
+      <div class="nav__lang" data-lang-switcher>
+        <button
+          type="button"
+          class="nav__lang-toggle"
+          aria-expanded="false"
+          aria-haspopup="listbox"
+          aria-label="Seleccionar idioma"
+          data-i18n-aria-label="nav.langLabel"
+        >
+          <span class="nav__lang-flag" aria-hidden="true">
+            <img
+              src="./assets/images/flags/es.svg"
+              alt="Español"
+              width="24"
+              height="24"
+              data-lang-flag-img
+              decoding="async"
+            />
+          </span>
+          <svg class="nav__lang-chevron" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m6 9 6 6 6-6" />
+          </svg>
+        </button>
+        <div class="nav__lang-panel" hidden>
+          <div class="nav__lang-list" data-lang-list role="listbox" aria-label="Idiomas" data-i18n-aria-label="nav.langListAria"></div>
+        </div>
+      </div>
       <a href="#contacto" class="nav__contact">
-        Contacto
+        <span data-i18n="nav.contact">Contacto</span>
         <span class="nav__contact-arrow" aria-hidden="true">↗</span>
       </a>
     </div>
@@ -144,9 +173,9 @@
       <div class="hero__gradient" aria-hidden="true"></div>
 
       <div class="hero__keywords" aria-hidden="true">
-        <span class="hero__keyword hero__keyword--tech">Technology</span>
-        <span class="hero__keyword hero__keyword--innov">Innovation</span>
-        <span class="hero__keyword hero__keyword--digital">Digital</span>
+        <span class="hero__keyword hero__keyword--tech" data-i18n="hero.keyword.tech">Tecnología</span>
+        <span class="hero__keyword hero__keyword--innov" data-i18n="hero.keyword.innov">Innovación</span>
+        <span class="hero__keyword hero__keyword--digital" data-i18n="hero.keyword.digital">Digital</span>
       </div>
 
       <h1 class="hero__brand" id="hero-heading">
@@ -158,32 +187,32 @@
 
     <section class="hero-intro" id="presentacion" aria-labelledby="hero-intro-text">
       <div class="hero-intro__inner">
-        <p class="hero-intro__text" id="hero-intro-text">
+        <p class="hero-intro__text" id="hero-intro-text" data-i18n="hero.intro">
           Promovemos y facilitamos la innovación digital y tecnológica, creando, probando e implementando soluciones diseñadas inteligentemente, más accesible y centrada en las personas.
         </p>
 
-        <div class="tech-metrics" id="tech-metrics" aria-label="Métricas de CODEVS IA">
+        <div class="tech-metrics" id="tech-metrics" aria-label="Métricas de CODEVS IA" data-i18n-aria-label="metrics.aria">
           <div class="tech-metric" style="--reveal-delay: 0ms">
             <span class="tech-metric__value" data-target="50" data-prefix="+" data-suffix="" aria-live="polite">0</span>
-            <p class="tech-metric__label">Proyectos entregados</p>
+            <p class="tech-metric__label" data-i18n="metrics.projects">Proyectos entregados</p>
           </div>
           <div class="tech-metric" style="--reveal-delay: 90ms">
             <span class="tech-metric__value" data-target="30" data-prefix="+" data-suffix="" aria-live="polite">0</span>
-            <p class="tech-metric__label">Clientes satisfechos</p>
+            <p class="tech-metric__label" data-i18n="metrics.clients">Clientes satisfechos</p>
           </div>
           <div class="tech-metric" style="--reveal-delay: 180ms">
             <span class="tech-metric__value" data-target="3" data-prefix="" data-suffix="" aria-live="polite">0</span>
-            <p class="tech-metric__label">Años de experiencia</p>
+            <p class="tech-metric__label" data-i18n="metrics.years">Años de experiencia</p>
           </div>
           <div class="tech-metric" style="--reveal-delay: 270ms">
             <span class="tech-metric__value" data-target="98" data-prefix="" data-suffix="%" aria-live="polite">0</span>
-            <p class="tech-metric__label">Tasa de éxito</p>
+            <p class="tech-metric__label" data-i18n="metrics.success">Tasa de éxito</p>
           </div>
         </div>
       </div>
     </section>
 
-    <section class="tech" id="tecnologias" aria-label="Stack tecnológico">
+    <section class="tech" id="tecnologias" aria-label="Stack tecnológico" data-i18n-aria-label="tech.aria">
       <div class="tech__rows">
         <div class="tech-row tech-row--ltr">
           <div class="tech-row__track" data-tech-row="0"></div>
@@ -196,7 +225,7 @@
 
     <section class="projects" id="proyectos" aria-labelledby="proyectos-title">
       <div class="projects__heading-wrap">
-        <h2 class="projects__title" id="proyectos-title">Proyectos Destacados</h2>
+        <h2 class="projects__title" id="proyectos-title" data-i18n="projects.title">Proyectos Destacados</h2>
       </div>
 
       <div class="projects__list" role="list">
@@ -206,7 +235,7 @@
               <img src="./assets/gifs/chatboyia.gif" alt="" width="400" height="400" loading="lazy" decoding="async" />
             </figure>
             <div class="projects__row-body">
-              <p class="projects__row-title">
+              <p class="projects__row-title" data-i18n="projects.1">
                 Chatbot IA — Asistente conversacional para atención al cliente, soporte y respuestas inteligentes 24/7
               </p>
               <span class="projects__row-arrow" aria-hidden="true">↗</span>
@@ -220,7 +249,7 @@
               <img src="./assets/gifs/ecommerce-ia.gif" alt="" width="400" height="400" loading="lazy" decoding="async" />
             </figure>
             <div class="projects__row-body">
-              <p class="projects__row-title">
+              <p class="projects__row-title" data-i18n="projects.2">
                 E-commerce IA — Comercio digital con recomendaciones personalizadas, búsqueda semántica y checkout
                 optimizado
               </p>
@@ -235,7 +264,7 @@
               <img src="./assets/gifs/api-gateway.gif" alt="" width="400" height="400" loading="lazy" decoding="async" />
             </figure>
             <div class="projects__row-body">
-              <p class="projects__row-title">
+              <p class="projects__row-title" data-i18n="projects.3">
                 API Gateway — Infraestructura escalable para conectar, proteger y orquestar microservicios empresariales
               </p>
               <span class="projects__row-arrow" aria-hidden="true">↗</span>
@@ -249,7 +278,7 @@
               <img src="./assets/gifs/agentes-ia.gif" alt="" width="400" height="400" loading="lazy" decoding="async" />
             </figure>
             <div class="projects__row-body">
-              <p class="projects__row-title">
+              <p class="projects__row-title" data-i18n="projects.4">
                 Agentes IA — Sistemas autónomos que planifican, ejecutan y resuelven flujos de trabajo con modelos de
                 lenguaje
               </p>
@@ -264,7 +293,7 @@
               <img src="./assets/gifs/automatizacion-documentos.gif" alt="" width="400" height="400" loading="lazy" decoding="async" />
             </figure>
             <div class="projects__row-body">
-              <p class="projects__row-title">
+              <p class="projects__row-title" data-i18n="projects.5">
                 Automatización de Documentos — Extracción, clasificación y procesamiento inteligente de documentos para
                 equipos operativos
               </p>
@@ -279,7 +308,7 @@
               <img src="./assets/gifs/asistentes-de-voz.gif" alt="" width="400" height="400" loading="lazy" decoding="async" />
             </figure>
             <div class="projects__row-body">
-              <p class="projects__row-title">
+              <p class="projects__row-title" data-i18n="projects.6">
                 Asistentes de Voz — Interfaces de voz naturales para productos, servicios y experiencias conversacionales
                 en tiempo real
               </p>
@@ -293,7 +322,7 @@
     <section class="proceso" id="proceso" aria-labelledby="proceso-heading">
       <div class="proceso__pin">
         <div class="proceso__slider">
-          <h2 id="proceso-heading" class="proceso__title">Cómo Trabajamos</h2>
+          <h2 id="proceso-heading" class="proceso__title" data-i18n="process.title">Cómo Trabajamos</h2>
 
           <div class="proceso__stage">
             <div class="proceso__steps-viewport" id="proceso-steps-viewport">
@@ -301,43 +330,43 @@
                 <li class="proceso-step-item">
                   <span class="proceso-step-item__num">1</span>
                   <div class="proceso-step-item__body">
-                    <h3 class="proceso-step-item__title">Descubrimiento</h3>
-                    <p class="proceso-step-item__desc">Entendemos tu negocio y definimos objetivos claros</p>
+                    <h3 class="proceso-step-item__title" data-i18n="process.1.title">Descubrimiento</h3>
+                    <p class="proceso-step-item__desc" data-i18n="process.1.desc">Entendemos tu negocio y definimos objetivos claros</p>
                   </div>
                 </li>
                 <li class="proceso-step-item">
                   <span class="proceso-step-item__num">2</span>
                   <div class="proceso-step-item__body">
-                    <h3 class="proceso-step-item__title">Diseño</h3>
-                    <p class="proceso-step-item__desc">Arquitectura técnica y prototipo de experiencia</p>
+                    <h3 class="proceso-step-item__title" data-i18n="process.2.title">Diseño</h3>
+                    <p class="proceso-step-item__desc" data-i18n="process.2.desc">Arquitectura técnica y prototipo de experiencia</p>
                   </div>
                 </li>
                 <li class="proceso-step-item">
                   <span class="proceso-step-item__num">3</span>
                   <div class="proceso-step-item__body">
-                    <h3 class="proceso-step-item__title">Desarrollo</h3>
-                    <p class="proceso-step-item__desc">Código limpio, tests y entregas incrementales</p>
+                    <h3 class="proceso-step-item__title" data-i18n="process.3.title">Desarrollo</h3>
+                    <p class="proceso-step-item__desc" data-i18n="process.3.desc">Código limpio, tests y entregas incrementales</p>
                   </div>
                 </li>
                 <li class="proceso-step-item">
                   <span class="proceso-step-item__num">4</span>
                   <div class="proceso-step-item__body">
-                    <h3 class="proceso-step-item__title">QA &amp; Pruebas</h3>
-                    <p class="proceso-step-item__desc">Validación rigurosa antes de cada release</p>
+                    <h3 class="proceso-step-item__title" data-i18n="process.4.title">QA &amp; Pruebas</h3>
+                    <p class="proceso-step-item__desc" data-i18n="process.4.desc">Validación rigurosa antes de cada release</p>
                   </div>
                 </li>
                 <li class="proceso-step-item">
                   <span class="proceso-step-item__num">5</span>
                   <div class="proceso-step-item__body">
-                    <h3 class="proceso-step-item__title">Deploy</h3>
-                    <p class="proceso-step-item__desc">Lanzamiento seguro con monitoreo en tiempo real</p>
+                    <h3 class="proceso-step-item__title" data-i18n="process.5.title">Deploy</h3>
+                    <p class="proceso-step-item__desc" data-i18n="process.5.desc">Lanzamiento seguro con monitoreo en tiempo real</p>
                   </div>
                 </li>
                 <li class="proceso-step-item">
                   <span class="proceso-step-item__num">6</span>
                   <div class="proceso-step-item__body">
-                    <h3 class="proceso-step-item__title">Soporte</h3>
-                    <p class="proceso-step-item__desc">Acompañamiento continuo post-lanzamiento</p>
+                    <h3 class="proceso-step-item__title" data-i18n="process.6.title">Soporte</h3>
+                    <p class="proceso-step-item__desc" data-i18n="process.6.desc">Acompañamiento continuo post-lanzamiento</p>
                   </div>
                 </li>
               </ol>
@@ -354,8 +383,8 @@
       <div class="why__inner">
         <div class="why__grid">
           <div class="why__col why__col--left">
-            <h2 id="why-heading" class="why__title">¿Por qué elegir CODEVS IA?</h2>
-            <p class="why__lead">
+            <h2 id="why-heading" class="why__title" data-i18n="why.title">¿Por qué elegir CODEVS IA?</h2>
+            <p class="why__lead" data-i18n="why.lead">
               Unimos ingeniería sólida e inteligencia artificial para lanzar productos que escalan: menos fricción, más impacto medible y un equipo que habla el idioma de tu negocio.
             </p>
             <ul class="why__list">
@@ -365,7 +394,7 @@
                     <path d="M6 12.5l4 4 8-9" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" />
                   </svg>
                 </span>
-                Equipo senior con experiencia en productos reales
+                <span data-i18n="why.1">Equipo senior con experiencia en productos reales</span>
               </li>
               <li class="why__item">
                 <span class="why__check" aria-hidden="true">
@@ -373,7 +402,7 @@
                     <path d="M6 12.5l4 4 8-9" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" />
                   </svg>
                 </span>
-                IA integrada desde el inicio, no como add-on
+                <span data-i18n="why.2">IA integrada desde el inicio, no como add-on</span>
               </li>
               <li class="why__item">
                 <span class="why__check" aria-hidden="true">
@@ -381,7 +410,7 @@
                     <path d="M6 12.5l4 4 8-9" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" />
                   </svg>
                 </span>
-                Comunicación transparente y entregas puntuales
+                <span data-i18n="why.3">Comunicación transparente y entregas puntuales</span>
               </li>
               <li class="why__item">
                 <span class="why__check" aria-hidden="true">
@@ -389,7 +418,7 @@
                     <path d="M6 12.5l4 4 8-9" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" />
                   </svg>
                 </span>
-                Código limpio, documentado y escalable
+                <span data-i18n="why.4">Código limpio, documentado y escalable</span>
               </li>
               <li class="why__item">
                 <span class="why__check" aria-hidden="true">
@@ -397,7 +426,7 @@
                     <path d="M6 12.5l4 4 8-9" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" />
                   </svg>
                 </span>
-                Soporte post-lanzamiento incluido
+                <span data-i18n="why.5">Soporte post-lanzamiento incluido</span>
               </li>
             </ul>
           </div>
@@ -405,7 +434,7 @@
             <div class="why__quote-shell">
               <div class="why__quote-inner">
                 <span class="why__quote-mark" aria-hidden="true">“</span>
-                <p class="why__quote-text">
+                <p class="why__quote-text" data-i18n="why.quote">
                   Trabajar con CODEVS IA es tener un partner que entiende producto, datos y plazos: entregan con claridad, cuidan la arquitectura y dejan todo listo para crecer.
                 </p>
               </div>
@@ -420,14 +449,14 @@
       <div class="contact__logo-watermark" aria-hidden="true">
         <img src="./assets/images/logo-watermark.svg" width="520" height="520" alt="" />
       </div>
-      <h2 id="contact-heading" class="contact__title">¿Listo para construir algo increíble?</h2>
-      <p class="contact__subtitle">Cuéntanos tu idea. Respondemos en menos de 24 horas.</p>
+      <h2 id="contact-heading" class="contact__title" data-i18n="contact.title">¿Listo para construir algo increíble?</h2>
+      <p class="contact__subtitle" data-i18n="contact.subtitle">Cuéntanos tu idea. Respondemos en menos de 24 horas.</p>
 
       <div class="contact__form-wrap">
         <form id="contact-form" class="contact__grid" novalidate>
           <!-- Web3Forms: reemplaza YOUR_WEB3FORMS_KEY por tu clave real (https://web3forms.com) -->
           <input type="hidden" name="access_key" value="YOUR_WEB3FORMS_KEY" />
-          <input type="hidden" name="subject" value="Nuevo mensaje desde CODEVS IA" />
+          <input type="hidden" name="subject" value="Nuevo mensaje desde CODEVS IA" data-i18n-value="contact.subject" />
           <input type="hidden" name="redirect" value="false" />
           <input
             type="checkbox"
@@ -451,7 +480,7 @@
               aria-describedby="contact-name-error"
               aria-invalid="false"
             />
-            <label class="contact__label" for="contact-name">Nombre completo</label>
+            <label class="contact__label" for="contact-name" data-i18n="contact.name">Nombre completo</label>
             <p id="contact-name-error" class="contact__error-msg" role="alert" aria-live="polite"></p>
           </div>
 
@@ -467,7 +496,7 @@
               aria-describedby="contact-email-error"
               aria-invalid="false"
             />
-            <label class="contact__label" for="contact-email">Email</label>
+            <label class="contact__label" for="contact-email" data-i18n="contact.email">Email</label>
             <p id="contact-email-error" class="contact__error-msg" role="alert" aria-live="polite"></p>
           </div>
 
@@ -481,14 +510,14 @@
               aria-invalid="false"
             >
               <option value="" disabled selected hidden></option>
-              <option>Web</option>
-              <option>Móvil</option>
-              <option>IA</option>
-              <option>Backend</option>
-              <option>Consultoría</option>
-              <option>Otro</option>
+              <option value="web" data-i18n="contact.type.web">Web</option>
+              <option value="mobile" data-i18n="contact.type.mobile">Móvil</option>
+              <option value="ai" data-i18n="contact.type.ai">IA</option>
+              <option value="backend" data-i18n="contact.type.backend">Backend</option>
+              <option value="consulting" data-i18n="contact.type.consulting">Consultoría</option>
+              <option value="other" data-i18n="contact.type.other">Otro</option>
             </select>
-            <label class="contact__label" for="contact-type">Tipo de proyecto</label>
+            <label class="contact__label" for="contact-type" data-i18n="contact.type">Tipo de proyecto</label>
             <p id="contact-type-error" class="contact__error-msg" role="alert" aria-live="polite"></p>
           </div>
 
@@ -504,13 +533,13 @@
               aria-describedby="contact-message-error"
               aria-invalid="false"
             ></textarea>
-            <label class="contact__label" for="contact-message">Cuéntanos tu proyecto</label>
+            <label class="contact__label" for="contact-message" data-i18n="contact.message">Cuéntanos tu proyecto</label>
             <p id="contact-message-error" class="contact__error-msg" role="alert" aria-live="polite"></p>
           </div>
 
           <div class="contact__actions">
             <button class="contact__submit" type="submit" id="contact-submit">
-              <span class="contact__submit-label">Enviar mensaje</span>
+              <span class="contact__submit-label" data-i18n="contact.submit">Enviar mensaje</span>
             </button>
           </div>
         </form>
@@ -519,7 +548,7 @@
             <circle class="contact__success-check-circle" cx="26" cy="26" r="22" fill="none" stroke-width="3" />
             <path class="contact__success-check-mark" d="M14 27l8 8 16-18" fill="none" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" />
           </svg>
-          <span class="contact__success-text">¡Mensaje enviado! Te contactamos pronto 🚀</span>
+          <span class="contact__success-text" data-i18n="contact.success">¡Mensaje enviado! Te contactamos pronto 🚀</span>
         </p>
         <p id="contact-error" class="contact__error" role="alert" aria-live="assertive"></p>
 
@@ -557,20 +586,20 @@
       <div class="footer__top">
         <div>
           <div class="footer__brand-title">CODEVS <span>IA</span></div>
-          <p class="footer__tagline">Software a medida y automatización inteligente para equipos que quieren crecer en serio.</p>
+          <p class="footer__tagline" data-i18n="footer.tagline">Software a medida y automatización inteligente para equipos que quieren crecer en serio.</p>
         </div>
         <div>
-          <h3 class="footer__col-title">Navegación rápida</h3>
+          <h3 class="footer__col-title" data-i18n="footer.nav">Navegación rápida</h3>
           <ul class="footer__list">
-            <li><a href="#inicio">Inicio</a></li>
-            <li><a href="#tecnologias">Tecnologías</a></li>
-            <li><a href="#proyectos">Proyectos</a></li>
-            <li><a href="#proceso">Proceso</a></li>
-            <li><a href="#contacto">Contacto</a></li>
+            <li><a href="#inicio" data-i18n="footer.home">Inicio</a></li>
+            <li><a href="#tecnologias" data-i18n="nav.technologies">Tecnologías</a></li>
+            <li><a href="#proyectos" data-i18n="nav.projects">Proyectos</a></li>
+            <li><a href="#proceso" data-i18n="nav.process">Proceso</a></li>
+            <li><a href="#contacto" data-i18n="nav.contact">Contacto</a></li>
           </ul>
         </div>
         <div>
-          <h3 class="footer__col-title">Redes sociales</h3>
+          <h3 class="footer__col-title" data-i18n="footer.social">Redes sociales</h3>
           <ul class="footer__list">
             <li><a href="https://www.linkedin.com/company/codevs-ia" target="_blank" rel="noreferrer">LinkedIn</a></li>
             <li><a href="https://github.com/codevs-ia" target="_blank" rel="noreferrer">GitHub</a></li>
@@ -579,8 +608,8 @@
         </div>
       </div>
       <div class="footer__bottom">
-        <span>© 2026 CODEVS IA. Todos los derechos reservados.</span>
-        <span>Hecho con ❤️ y mucho ☕</span>
+        <span data-i18n="footer.copyright">© 2026 CODEVS IA. Todos los derechos reservados.</span>
+        <span data-i18n="footer.made">Hecho con ❤️ y mucho ☕</span>
       </div>
     </div>
   </footer>
@@ -606,7 +635,9 @@
     id="music-toggle"
     aria-pressed="false"
     aria-label="Reproducir Ibiza Global Radio en directo"
+    data-i18n-aria-label="music.play"
     title="Ibiza Global Radio — en directo"
+    data-i18n-title="music.titleLive"
   >
     <span class="music-toggle__inner" aria-hidden="true">
       <span class="music-toggle__bar"></span>
@@ -623,7 +654,9 @@
     target="_blank"
     rel="noopener noreferrer"
     aria-label="Escríbenos por WhatsApp al +57 305 350 9190"
+    data-i18n-aria-label="whatsapp.label"
     title="WhatsApp"
+    data-i18n-title="whatsapp.title"
   >
     <span class="whatsapp-float__pulse" aria-hidden="true"></span>
     <svg class="whatsapp-float__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">

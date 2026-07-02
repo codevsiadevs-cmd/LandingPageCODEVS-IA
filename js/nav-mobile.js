@@ -1,3 +1,5 @@
+import { t } from "./i18n.js";
+
 const MOBILE_NAV_MQ = window.matchMedia("(max-width: 980px)");
 
 function isMobileNav() {
@@ -28,7 +30,7 @@ function setMenuOpen(nav, toggle, panel, open) {
   nav.classList.toggle("nav--open", open);
   panel.classList.toggle("nav__links--open", open);
   toggle.setAttribute("aria-expanded", String(open));
-  toggle.setAttribute("aria-label", open ? "Cerrar menú" : "Abrir menú");
+  toggle.setAttribute("aria-label", open ? t("nav.closeMenu") : t("nav.openMenu"));
   panel.setAttribute("aria-hidden", String(!open));
   document.body.classList.toggle("nav-menu-open", open);
 }
@@ -62,6 +64,11 @@ function initNavMobile() {
 
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") closeMenu(nav, toggle, panel);
+  });
+
+  document.addEventListener("codevs:langchange", () => {
+    const open = nav.classList.contains("nav--open");
+    toggle.setAttribute("aria-label", open ? t("nav.closeMenu") : t("nav.openMenu"));
   });
 
   MOBILE_NAV_MQ.addEventListener("change", () => {

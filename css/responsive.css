@@ -47,6 +47,8 @@
   textarea,
   label,
   .projects__row,
+  .nav__lang-toggle,
+  .nav__lang-option,
   .hero__canvas-wrap canvas,
   .hero__brain-canvas {
     cursor: none;
@@ -159,7 +161,36 @@
     grid-row: 1;
     align-self: stretch;
     align-items: stretch;
+    gap: 0;
     background: var(--nav-mobile-contact-bg);
+  }
+
+  .nav__actions .nav__lang {
+    display: flex;
+    align-items: center;
+    padding: 0 0.35rem 0 0.65rem;
+    background: rgba(0, 0, 0, 0.18);
+  }
+
+  .nav__actions .nav__lang-toggle {
+    gap: 0.35rem;
+    padding: 0.38rem 0.55rem 0.38rem 0.38rem;
+    border-radius: 999px;
+    background: #2f2f2f;
+  }
+
+  .nav__actions .nav__lang-flag {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  .nav__actions .nav__lang-chevron {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  .nav__actions .nav__lang-panel {
+    right: 0.35rem;
   }
 
   .nav__actions .nav__contact {
