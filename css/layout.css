@@ -1072,12 +1072,12 @@
   margin: 0;
   font-size: clamp(1.05rem, 1.7vw, 1.28rem);
   line-height: 1.55;
-  color: rgba(0, 0, 0, 0.52);
+  color: #000000;
   max-width: 28rem;
 }
 
 .proceso-step-item.is-active .proceso-step-item__desc {
-  color: rgba(0, 0, 0, 0.65);
+  color: #000000;
 }
 
 .proceso__brain-anchor {
@@ -1127,14 +1127,12 @@
 /* ——— Por qué CODEVS (sticky title + scroll focus list) ——— */
 .why {
   scroll-margin-top: var(--nav-height);
-  background: #ffffff;
 }
 
 .why__scroll {
   --why-steps: 5;
   position: relative;
   height: calc(var(--why-steps) * 100vh);
-  background: #ffffff;
 }
 
 .why__pin {
@@ -1150,7 +1148,6 @@
   align-items: center;
   height: 100%;
   padding: calc(var(--nav-height) + 1.5rem) clamp(1.25rem, 4vw, 3rem) 2rem;
-  background: #ffffff;
 }
 
 .why__layout {
@@ -1174,7 +1171,7 @@
   font-size: clamp(1.85rem, 3.8vw, 2.75rem);
   line-height: 1.1;
   letter-spacing: -0.03em;
-  color: #000000;
+  color: var(--text-primary);
 }
 
 .why__list-viewport {
@@ -1221,13 +1218,13 @@
   font-weight: 500;
   line-height: 1.18;
   letter-spacing: -0.025em;
-  color: rgba(0, 0, 0, 0.28);
+  color: rgba(255, 255, 255, 0.28);
   transition: color 0.15s ease;
 }
 
 .why__list-item.is-focused .why__list-text {
   font-weight: 700;
-  color: #000000;
+  color: var(--text-primary);
 }
 
 .why.why--static .why__scroll {
@@ -1269,7 +1266,7 @@
 
 .why.why--static .why__list-text {
   font-weight: 600;
-  color: #000000;
+  color: var(--text-primary);
 }
 
 @media (prefers-reduced-motion: reduce) {
