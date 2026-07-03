@@ -1,0 +1,41 @@
+.adm-preview-banner {
+  position: fixed;
+  top: calc(var(--nav-height) + 0.35rem);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 490;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  max-width: min(22rem, calc(100vw - 1.5rem));
+  padding: 0.45rem 0.85rem;
+  border: 1px solid rgba(15, 255, 212, 0.28);
+  border-radius: 0.55rem;
+  background: rgba(8, 10, 14, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  font-family: var(--font-body);
+  font-size: 0.68rem;
+  line-height: 1.35;
+  color: rgba(255, 255, 255, 0.82);
+  text-align: center;
+  pointer-events: none;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+.adm-preview-banner strong {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(15, 255, 212, 0.9);
+}
+
+@media (max-width: 768px) {
+  .adm-preview-banner {
+    top: calc(var(--nav-height) + 0.2rem);
+    font-size: 0.62rem;
+    padding: 0.4rem 0.65rem;
+  }
+}

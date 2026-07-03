@@ -1,0 +1,20 @@
+import "./i18n.js";
+import "./why-showcase.js";
+import "./preloader.js";
+import "./proceso-showcase.js";
+import "./console-easter.js";
+import { updateGlobalScrollEffects } from "./scroll.js";
+import { updateBackgroundCanvasSize, initParticles } from "./background.js";
+import "./three-scene.js";
+import "./nav-brand-neural.js";
+import "./interactions.js";
+import "./nav-mobile.js";
+import "./tech-stack.js";
+import "./sections.js";
+import "./projects-hover.js";
+import "./music-toggle.js";
+import "./adm/preview-banner.js";
+import "./adm/slide-font-preview.js";
+import "./adm/brand-frame-preview.js";
+
+updateGlobalScrollEffects();
