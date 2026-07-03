@@ -48,7 +48,6 @@
   padding: 0 clamp(0.7rem, 1.55vw, 1.05rem);
   background: transparent;
   overflow: hidden;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.72);
 }
 
 .nav__brand-neural {
