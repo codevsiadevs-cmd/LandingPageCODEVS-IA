@@ -101,22 +101,8 @@
   }
 
   .nav__brand-panel {
-    padding: 0 0.85rem;
-  }
-
-  .nav__brand-segment {
-    font-size: clamp(0.74rem, 2.8vw, 0.9rem);
-    letter-spacing: 0.1em;
-  }
-
-  .nav__brand-o {
-    width: clamp(2rem, 10vw, 2.65rem);
-    height: clamp(2rem, 10vw, 2.65rem);
-    padding: 0.18rem;
-  }
-
-  .nav__brand-segment--accent {
-    letter-spacing: 0.16em;
+    --nav-brand-mark: clamp(1.55rem, 7.8vw, 2rem);
+    padding: 0 0.5rem;
   }
 
   .nav__toggle {
@@ -193,6 +179,24 @@
 
   .nav__actions .nav__lang-panel {
     right: 0.35rem;
+  }
+
+  .nav:has(.nav__lang.is-open) {
+    overflow: visible;
+    z-index: 260;
+  }
+
+  .nav__actions .nav__lang.is-open {
+    z-index: 261;
+  }
+
+  .nav__actions .nav__lang.is-open .nav__lang-panel {
+    position: fixed;
+    top: calc(var(--nav-height) + 0.35rem);
+    right: max(0.5rem, env(safe-area-inset-right, 0px));
+    left: auto;
+    z-index: 270;
+    width: min(18.5rem, calc(100vw - 1rem));
   }
 
   .nav__actions .nav__contact {

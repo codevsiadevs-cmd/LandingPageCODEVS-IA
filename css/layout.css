@@ -36,15 +36,16 @@
 }
 
 .nav__brand-panel {
+  --nav-brand-mark: clamp(1.85rem, 3.25vw, 2.5rem);
   position: relative;
   display: inline-flex;
   flex-direction: row;
   align-items: center;
-  gap: 0.04em;
+  gap: 0.02em;
   height: 100%;
   min-height: var(--nav-height);
   min-width: 0;
-  padding: 0  clamp(1.15rem, 2.6vw, 1.85rem);
+  padding: 0 clamp(0.7rem, 1.55vw, 1.05rem);
   background: #ffffff;
   overflow: hidden;
 }
@@ -61,29 +62,33 @@
 .nav__brand-segment {
   position: relative;
   z-index: 1;
-  font-family: var(--font-heading);
-  font-size: clamp(0.92rem, 1.45vw, 1.18rem);
-  font-weight: 700;
-  letter-spacing: 0.08em;
+  font-family: "Rozha One", "Cinzel", Georgia, serif;
+  font-weight: 400;
+  font-size: calc(var(--nav-brand-mark) * 0.78);
+  font-synthesis: none;
+  letter-spacing: -0.015em;
   text-transform: uppercase;
   color: #000000;
-  line-height: 1;
+  line-height: 0.87;
   white-space: nowrap;
+  text-rendering: geometricPrecision;
 }
 
 .nav__brand-segment--accent {
-  margin-left: 0.35em;
-  letter-spacing: 0.16em;
+  margin-left: 0.14em;
+  font-size: calc(var(--nav-brand-mark) * 0.7);
+  letter-spacing: 0;
+  color: #000000;
 }
 
 .nav__brand-o {
   position: relative;
   z-index: 1;
   flex-shrink: 0;
-  width: clamp(2.5rem, 4.6vw, 3.65rem);
-  height: clamp(2.5rem, 4.6vw, 3.65rem);
-  margin: 0 0.02em;
-  padding: 0.22rem;
+  width: var(--nav-brand-mark);
+  height: var(--nav-brand-mark);
+  margin: 0;
+  padding: 0.06em;
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -141,6 +146,10 @@
 .nav__lang {
   position: relative;
   flex-shrink: 0;
+}
+
+.nav__lang.is-open {
+  z-index: 130;
 }
 
 .nav__lang-toggle {
