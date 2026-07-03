@@ -46,8 +46,11 @@
   min-height: var(--nav-height);
   min-width: 0;
   padding: 0 clamp(0.7rem, 1.55vw, 1.05rem);
-  background: #ffffff;
+  background: #0a0c10;
   overflow: hidden;
+  box-shadow:
+    inset 0 0 0 1px rgba(15, 255, 212, 0.55),
+    0 0 22px rgba(15, 255, 212, 0.18);
 }
 
 .nav__brand-neural {
@@ -68,7 +71,7 @@
   font-synthesis: none;
   letter-spacing: -0.015em;
   text-transform: uppercase;
-  color: #000000;
+  color: #ffffff;
   line-height: 0.87;
   white-space: nowrap;
   text-rendering: geometricPrecision;
@@ -78,7 +81,7 @@
   margin-left: 0.14em;
   font-size: calc(var(--nav-brand-mark) * 0.7);
   letter-spacing: 0;
-  color: #000000;
+  color: #ffffff;
 }
 
 .nav__brand-o {
@@ -100,7 +103,7 @@
   display: block;
   width: 100% !important;
   height: 100% !important;
-  filter: grayscale(1) contrast(1.14) brightness(0.9);
+  filter: grayscale(1) contrast(1.05) brightness(1.15);
 }
 
 .nav__actions {
@@ -579,11 +582,11 @@
   left: var(--hero-brand-left);
   margin: 0;
   pointer-events: none;
-  font-family: var(--font-heading);
+  font-family: "Allura", cursive;
   font-weight: 400;
   font-size: var(--hero-title-size);
-  line-height: 0.88;
-  letter-spacing: -0.025em;
+  line-height: 1.02;
+  letter-spacing: 0.02em;
   color: var(--text-primary);
   text-align: left;
 }
