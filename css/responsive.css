@@ -93,27 +93,29 @@
     grid-column: 2;
     grid-row: 1;
     align-self: stretch;
-    align-items: center;
+    align-items: stretch;
     justify-self: start;
     min-width: 0;
-    padding: 0 0.9rem;
+    padding: 0;
     background: transparent;
   }
 
-  .nav__brain-wrap {
-    display: none;
+  .nav__brand-panel {
+    padding: 0 0.85rem;
   }
 
-  .nav__brand-text {
-    display: flex;
-  }
-
-  .nav__brand-line {
-    font-size: clamp(0.74rem, 2.6vw, 0.88rem);
+  .nav__brand-segment {
+    font-size: clamp(0.74rem, 2.8vw, 0.9rem);
     letter-spacing: 0.1em;
   }
 
-  .nav__brand-line--accent {
+  .nav__brand-o {
+    width: clamp(2rem, 10vw, 2.65rem);
+    height: clamp(2rem, 10vw, 2.65rem);
+    padding: 0.18rem;
+  }
+
+  .nav__brand-segment--accent {
     letter-spacing: 0.16em;
   }
 

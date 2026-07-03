@@ -18,6 +18,8 @@ const SPLINE_SCENE_URL = "./assets/3d/particle-ai-brain.splinecode";
 /** Zoom Spline = cerebro más grande en pantalla (sin solo desplazar el contenedor). */
 const HERO_BRAIN_ZOOM_DESKTOP = 2.28;
 const HERO_BRAIN_ZOOM_MOBILE = 1.55;
+/** Perfil lateral del logo nav al inicio (no de frente). */
+const NAV_BRAIN_BASE_ROT_Y = -Math.PI * 0.5;
 
 const navWrap = document.getElementById("nav-brain-wrap");
 const heroWrap = document.getElementById("hero-brain-wrap");
@@ -302,13 +304,13 @@ if (hasNavBrain) {
 
 function applyNavBrainRotation({ scrollRot, scrollBlend }) {
   if (prefersReducedMotionGlobal) {
-    spinGroup.rotation.y = scrollRot * 0.35;
+    spinGroup.rotation.y = NAV_BRAIN_BASE_ROT_Y + scrollRot * 0.35;
     tiltGroup.rotation.x = 0;
     tiltGroup.rotation.y = 0;
     return;
   }
 
-  spinGroup.rotation.y = scrollRot;
+  spinGroup.rotation.y = NAV_BRAIN_BASE_ROT_Y + scrollRot;
   tiltGroup.rotation.y = currentMouseX * 0.18 * scrollBlend;
   tiltGroup.rotation.x = -currentMouseY * 0.12 * scrollBlend;
 }
