@@ -42,13 +42,13 @@ if (panel && canvas && canHover && !prefersReducedMotionGlobal) {
     if (!this.active) return;
     ctx.beginPath();
     ctx.arc(this.point.x, this.point.y, this.radius, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(156,217,249,${this.active})`;
+    ctx.fillStyle = `rgba(255,255,255,${this.active})`;
     ctx.fill();
   };
 
   function drawLines(p) {
     if (!p.active) return;
-    ctx.strokeStyle = `rgba(156,217,249,${p.active})`;
+    ctx.strokeStyle = `rgba(255,255,255,${p.active})`;
     ctx.lineWidth = 1;
     for (let i = 0; i < p.closest.length; i += 1) {
       const n = p.closest[i];
