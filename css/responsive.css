@@ -332,8 +332,8 @@
   .hero-intro__text {
     width: 100%;
     max-width: 100%;
-    font-size: clamp(0.82rem, 3.4vw, 1.15rem);
-    line-height: 1.72;
+    font-size: clamp(1.65rem, 7.5vw, 2.85rem);
+    line-height: 1.28;
   }
 
   .hero-intro .tech-metrics {

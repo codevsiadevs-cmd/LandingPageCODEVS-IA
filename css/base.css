@@ -47,7 +47,7 @@ html {
   transition: background 0.35s ease;
   overflow-x: clip;
   max-width: 100%;
-  overscroll-behavior-x: none;
+  overscroll-behavior: none;
 }
 
 body {

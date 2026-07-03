@@ -66,7 +66,8 @@ let cachedDocMaxScroll = Math.max(document.documentElement.scrollHeight - window
 function getFooterMaxScroll() {
   const footer = document.getElementById("site-footer");
   if (!footer) return null;
-  return Math.max(0, footer.offsetTop + footer.offsetHeight - window.innerHeight);
+  const footerBottom = footer.getBoundingClientRect().bottom + window.scrollY;
+  return Math.max(0, footerBottom - window.innerHeight);
 }
 
 function recalcSectionRects() {
@@ -89,6 +90,19 @@ function clampScrollToPageEnd() {
   window.scrollTo(0, cachedDocMaxScroll);
 }
 
+function handleWheelScrollBoundary(event) {
+  const maxY = cachedDocMaxScroll;
+  const y = window.scrollY;
+  if (y >= maxY - 1 && event.deltaY > 0) {
+    event.preventDefault();
+    if (y > maxY) window.scrollTo(0, maxY);
+    return;
+  }
+  if (y <= 0 && event.deltaY < 0) {
+    event.preventDefault();
+  }
+}
+
 recalcSectionRects();
 
 if (typeof ResizeObserver !== "undefined") {
@@ -99,6 +113,11 @@ if (typeof ResizeObserver !== "undefined") {
 }
 window.addEventListener("load", recalcSectionRects);
 window.addEventListener("resize", recalcSectionRects, { passive: true });
+window.addEventListener(
+  "wheel",
+  handleWheelScrollBoundary,
+  { passive: false }
+);
 
 /**
  * Posiciona la pildorita .nav-indicator debajo del link activo.

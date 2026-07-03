@@ -706,11 +706,11 @@
   max-width: none;
   width: 100%;
   margin: 0;
-  font-family: "Press Start 2P", monospace;
-  font-size: clamp(1.2rem, 3.4vw, 2.1rem);
+  font-family: "Allura", cursive;
+  font-size: clamp(2.1rem, 6.2vw, 4.25rem);
   font-weight: 400;
-  line-height: 1.7;
-  letter-spacing: 0.02em;
+  line-height: 1.22;
+  letter-spacing: 0.01em;
   color: #ffffff;
   text-align: left;
   opacity: 0;
@@ -1384,13 +1384,11 @@
   padding: 2.5rem clamp(1.25rem, 4vw, 3rem) 1rem;
   margin-bottom: 0;
   opacity: 0;
-  transform: translateY(22px);
-  transition: opacity 0.65s var(--ease-out), transform 0.65s var(--ease-out);
+  transition: opacity 0.65s var(--ease-out);
 }
 
 .footer--visible {
   opacity: 1;
-  transform: translateY(0);
 }
 
 /* Reset instantáneo cuando el footer deja el viewport (sections.js): el
