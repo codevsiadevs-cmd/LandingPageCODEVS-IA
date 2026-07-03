@@ -48,16 +48,18 @@ const translations = {
     "tech.aria": "Stack tecnológico",
     "projects.title": "Proyectos Destacados",
     "projects.1":
-      "Chatbot IA — Asistente conversacional para atención al cliente, soporte y respuestas inteligentes 24/7",
+      "Páginas Web — Sitios corporativos, landings y experiencias digitales de alto impacto con diseño moderno y rendimiento optimizado",
     "projects.2":
-      "E-commerce IA — Comercio digital con recomendaciones personalizadas, búsqueda semántica y checkout optimizado",
+      "Chatbot IA — Asistente conversacional para atención al cliente, soporte y respuestas inteligentes 24/7",
     "projects.3":
-      "API Gateway — Infraestructura escalable para conectar, proteger y orquestar microservicios empresariales",
+      "E-commerce IA — Comercio digital con recomendaciones personalizadas, búsqueda semántica y checkout optimizado",
     "projects.4":
-      "Agentes IA — Sistemas autónomos que planifican, ejecutan y resuelven flujos de trabajo con modelos de lenguaje",
+      "API Gateway — Infraestructura escalable para conectar, proteger y orquestar microservicios empresariales",
     "projects.5":
-      "Automatización de Documentos — Extracción, clasificación y procesamiento inteligente de documentos para equipos operativos",
+      "Agentes IA — Sistemas autónomos que planifican, ejecutan y resuelven flujos de trabajo con modelos de lenguaje",
     "projects.6":
+      "Automatización de Documentos — Extracción, clasificación y procesamiento inteligente de documentos para equipos operativos",
+    "projects.7":
       "Asistentes de Voz — Interfaces de voz naturales para productos, servicios y experiencias conversacionales en tiempo real",
     "process.title": "Cómo Trabajamos",
     "process.1.title": "Descubrimiento",
@@ -147,16 +149,18 @@ const translations = {
     "tech.aria": "Technology stack",
     "projects.title": "Featured Projects",
     "projects.1":
-      "AI Chatbot — Conversational assistant for customer support and intelligent 24/7 responses",
+      "Web Pages — Corporate sites, landings, and high-impact digital experiences with modern design and optimized performance",
     "projects.2":
-      "AI E-commerce — Digital commerce with personalized recommendations, semantic search, and optimized checkout",
+      "AI Chatbot — Conversational assistant for customer support and intelligent 24/7 responses",
     "projects.3":
-      "API Gateway — Scalable infrastructure to connect, secure, and orchestrate enterprise microservices",
+      "AI E-commerce — Digital commerce with personalized recommendations, semantic search, and optimized checkout",
     "projects.4":
-      "AI Agents — Autonomous systems that plan, execute, and solve workflows with language models",
+      "API Gateway — Scalable infrastructure to connect, secure, and orchestrate enterprise microservices",
     "projects.5":
-      "Document Automation — Intelligent extraction, classification, and processing for operations teams",
+      "AI Agents — Autonomous systems that plan, execute, and solve workflows with language models",
     "projects.6":
+      "Document Automation — Intelligent extraction, classification, and processing for operations teams",
+    "projects.7":
       "Voice Assistants — Natural voice interfaces for products, services, and real-time conversational experiences",
     "process.title": "How We Work",
     "process.1.title": "Discovery",
