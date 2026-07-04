@@ -87,6 +87,9 @@ const PRESETS = [
   { id: "jetbrains", label: "JetBrains Mono", category: "mono", detail: "Mono técnica", family: '"JetBrains Mono", monospace', google: "JetBrains+Mono:wght@400;500;600;700", weight: "500", tracking: "-0.02em" },
   { id: "space-mono", label: "Space Mono", category: "mono", detail: "Mono retro", family: '"Space Mono", monospace', google: "Space+Mono:ital,wght@0,400;0,700;1,400", weight: "400" },
   { id: "ibm-plex-mono", label: "IBM Plex Mono", category: "mono", detail: "Mono corporativa", family: '"IBM Plex Mono", monospace', google: "IBM+Plex+Mono:wght@400;500;600;700", weight: "500" },
+  { id: "aline-future", label: "Aline Future", category: "display", detail: "Futurista sci-fi display", family: '"Aline", system-ui, sans-serif', cdn: "https://fonts.cdnfonts.com/css/aline-3", weight: "400", tracking: "0.04em" },
+  { id: "microba-pro", label: "Microba Pro", category: "exotic", detail: "Brush orgánico virus", family: '"Microba Pro", cursive', cdn: "https://fonts.cdnfonts.com/css/microba-pro", weight: "400" },
+  { id: "robonauts", label: "Robonauts", category: "display", detail: "Sci-fi robot futurista", family: '"Robonauts", system-ui, sans-serif', cdn: "https://fonts.cdnfonts.com/css/robonauts", weight: "400", tracking: "0.03em" },
 ];
 
 function loadPresetFont(preset) {
