@@ -41,13 +41,23 @@
   display: inline-flex;
   flex-direction: row;
   align-items: center;
-  gap: 0.02em;
+  gap: 0;
   height: 100%;
   min-height: var(--nav-height);
   min-width: 0;
   padding: 0 clamp(0.7rem, 1.55vw, 1.05rem);
   background: transparent;
   overflow: hidden;
+}
+
+.nav__brand-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.02em;
+}
+
+.nav__brand-group--ia {
+  margin-left: 0.38em;
 }
 
 .nav__brand-neural {
@@ -62,23 +72,32 @@
 .nav__brand-segment {
   position: relative;
   z-index: 1;
-  font-family: "Rozha One", "Cinzel", Georgia, serif;
+  font-family: "Dirtyline36Daysoftype2022", system-ui, sans-serif;
   font-weight: 400;
   font-size: calc(var(--nav-brand-mark) * 0.78);
   font-synthesis: none;
-  letter-spacing: -0.015em;
-  text-transform: uppercase;
+  text-transform: none;
   color: #ffffff;
   line-height: 0.87;
   white-space: nowrap;
-  text-rendering: geometricPrecision;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
 }
 
-.nav__brand-segment--accent {
-  margin-left: 0.14em;
-  font-size: calc(var(--nav-brand-mark) * 0.7);
-  letter-spacing: 0;
-  color: #ffffff;
+.nav__brand-accent {
+  letter-spacing: 0.02em;
+  font-feature-settings: "liga" 1, "clig" 1, "calt" 1;
+}
+
+.nav__brand-plain {
+  letter-spacing: 0.04em;
+  font-feature-settings: normal;
+  margin-left: 0.04em;
+  transform: translateY(0.02em);
+}
+
+.nav__brand-group--ia .nav__brand-plain {
+  margin-left: 0.05em;
 }
 
 .nav__brand-o {
@@ -93,6 +112,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  transform: translateY(-0.26em);
 }
 
 .nav__brand-o canvas,
