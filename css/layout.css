@@ -1201,6 +1201,8 @@
 /* ——— Por qué CODEVS (sticky title + scroll focus list) ——— */
 .why {
   scroll-margin-top: var(--nav-height);
+  background: #ffffff;
+  isolation: isolate;
 }
 
 .why__scroll {
@@ -1245,7 +1247,7 @@
   font-size: clamp(1.85rem, 3.8vw, 2.75rem);
   line-height: 1.12;
   letter-spacing: -0.02em;
-  color: var(--text-primary);
+  color: #000000;
 }
 
 .why__list-viewport {
@@ -1292,12 +1294,12 @@
   font-weight: 400;
   line-height: 1.22;
   letter-spacing: -0.015em;
-  color: rgba(255, 255, 255, 0.28);
+  color: rgba(0, 0, 0, 0.28);
   transition: color 0.15s ease;
 }
 
 .why__list-item.is-focused .why__list-text {
-  color: var(--text-primary);
+  color: #000000;
 }
 
 .why.why--static .why__scroll {
@@ -1339,7 +1341,7 @@
 
 .why.why--static .why__list-text {
   font-weight: 600;
-  color: var(--text-primary);
+  color: #000000;
 }
 
 @media (prefers-reduced-motion: reduce) {
