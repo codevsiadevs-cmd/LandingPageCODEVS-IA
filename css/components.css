@@ -983,6 +983,48 @@ textarea.contact__control:not(:placeholder-shown) ~ .contact__label {
   display: block;
 }
 
+.footer__brand-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  align-self: start;
+  gap: 0.45rem;
+  max-width: 20rem;
+}
+
+.footer__brand {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-self: flex-start;
+  margin: 0;
+  text-decoration: none;
+  color: inherit;
+}
+
+.nav__brand-panel.nav__brand-panel--footer {
+  --nav-brand-mark: clamp(2.35rem, 5.5vw, 3.35rem);
+  display: inline-flex;
+  width: fit-content;
+  height: auto;
+  min-height: 0;
+  padding: 0;
+  line-height: 1;
+  overflow: visible;
+}
+
+.nav__brand-panel--footer .nav__brand-o {
+  margin-bottom: -0.26em;
+}
+
+.footer__tagline {
+  margin: 0;
+  padding: 0;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  max-width: 20rem;
+  line-height: 1.45;
+}
+
 .footer__brand-title {
   font-family: var(--font-heading);
   font-weight: 800;
@@ -994,12 +1036,6 @@ textarea.contact__control:not(:placeholder-shown) ~ .contact__label {
 
 .footer__brand-title span {
   color: var(--accent-primary);
-}
-
-.footer__tagline {
-  color: var(--text-secondary);
-  font-size: 0.9rem;
-  max-width: 20rem;
 }
 
 .footer__col-title {

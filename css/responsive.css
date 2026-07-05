@@ -633,6 +633,12 @@
 @media (max-width: 620px) {
   .footer__top {
     grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .footer__brand-block {
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
   }
 }
 

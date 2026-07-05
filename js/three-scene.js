@@ -22,10 +22,13 @@ const HERO_BRAIN_ZOOM_MOBILE = 1.55;
 const NAV_BRAIN_BASE_ROT_Y = -Math.PI * 0.5;
 
 const navWrap = document.getElementById("nav-brain-wrap");
+const footerWrap = document.getElementById("footer-brain-wrap");
 const heroWrap = document.getElementById("hero-brain-wrap");
 const hasNavBrain = Boolean(navWrap);
+const hasFooterBrain = Boolean(footerWrap);
 const hasHeroBrain = Boolean(heroWrap);
-const hasBrainScene = hasNavBrain || hasHeroBrain;
+const hasBrandBrain = hasNavBrain || hasFooterBrain;
+const hasBrainScene = hasBrandBrain || hasHeroBrain;
 
 /** Tamaño y zoom del hero Spline fijados al valor inicial (no cambian con el scroll). */
 let lockedHeroBrainPx = null;
@@ -63,6 +66,7 @@ function refreshWrapRects() {
 if (hasBrainScene && typeof ResizeObserver !== "undefined") {
   const wrapResizeObserver = new ResizeObserver(refreshWrapRects);
   if (navWrap) wrapResizeObserver.observe(navWrap);
+  if (footerWrap) wrapResizeObserver.observe(footerWrap);
   if (heroWrap) wrapResizeObserver.observe(heroWrap);
 }
 window.addEventListener("resize", refreshWrapRects, { passive: true });
@@ -124,28 +128,41 @@ scene.add(spinGroup);
 spinGroup.add(tiltGroup);
 
 let navRenderer = null;
+let footerRenderer = null;
 
-function createNavRenderer() {
-  if (!navWrap) return null;
+function createBrandRenderer(wrap, onContextRestore) {
+  if (!wrap) return null;
   const targetRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
   targetRenderer.outputColorSpace = THREE.SRGBColorSpace;
   targetRenderer.toneMapping = THREE.ACESFilmicToneMapping;
-  targetRenderer.toneMappingExposure = 0.96;
-  navWrap.appendChild(targetRenderer.domElement);
+  targetRenderer.toneMappingExposure = 1.22;
+  wrap.appendChild(targetRenderer.domElement);
 
   targetRenderer.domElement.addEventListener("webglcontextlost", (event) => {
     event.preventDefault();
   });
   targetRenderer.domElement.addEventListener("webglcontextrestored", () => {
-    updateNavRendererSize();
+    onContextRestore?.();
   });
 
-  navRenderer = targetRenderer;
   return targetRenderer;
 }
 
+function updateBrandRendererSize(renderer, wrap) {
+  if (!renderer || !wrap) return;
+  const size = Math.max(Math.round(wrap.clientWidth), 1);
+  camera.aspect = 1;
+  camera.updateProjectionMatrix();
+  renderer.setSize(size, size, false);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobileBg ? 1 : 2));
+}
+
 if (hasNavBrain) {
-  createNavRenderer();
+  navRenderer = createBrandRenderer(navWrap, updateNavRendererSize);
+}
+
+if (hasFooterBrain) {
+  footerRenderer = createBrandRenderer(footerWrap, updateFooterRendererSize);
 }
 
 const hemi = new THREE.HemisphereLight(0xffffff, 0x0a0a0a, 0.82);
@@ -228,7 +245,7 @@ function applyNavBrainMonochromeMaterials(root) {
 let fallbackMesh = null;
 
 function addFallbackMesh() {
-  if (!hasNavBrain || fallbackMesh) return;
+  if (!hasBrandBrain || fallbackMesh) return;
   const geo = new THREE.IcosahedronGeometry(0.62, 1);
   const mat = new THREE.MeshStandardMaterial({
     color: 0xf2f2f2,
@@ -269,7 +286,7 @@ loader.setDRACOLoader(dracoLoader);
 let glbLoadTriggered = false;
 
 function loadNavBrainModel() {
-  if (!hasNavBrain || glbLoadTriggered) return;
+  if (!hasBrandBrain || glbLoadTriggered) return;
   glbLoadTriggered = true;
 
   loader.load(
@@ -297,7 +314,7 @@ function loadNavBrainModel() {
   );
 }
 
-if (hasNavBrain) {
+if (hasBrandBrain) {
   addFallbackMesh();
   loadNavBrainModel();
 }
@@ -316,13 +333,12 @@ function applyNavBrainRotation({ scrollRot, scrollBlend }) {
 }
 
 function updateNavRendererSize() {
-  if (!navRenderer || !navWrap) return;
   refreshWrapRects();
-  const size = Math.max(Math.round(navWrap.clientWidth), 1);
-  camera.aspect = 1;
-  camera.updateProjectionMatrix();
-  navRenderer.setSize(size, size, false);
-  navRenderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobileBg ? 1 : 2));
+  updateBrandRendererSize(navRenderer, navWrap);
+}
+
+function updateFooterRendererSize() {
+  updateBrandRendererSize(footerRenderer, footerWrap);
 }
 
 /* ——— Hero: Particle AI Brain (Spline) ——— */
@@ -584,6 +600,7 @@ function resizeHeroSpline() {
 
 function resizeBrains() {
   updateNavRendererSize();
+  updateFooterRendererSize();
   resizeHeroSpline();
 }
 
@@ -649,7 +666,7 @@ function animate(now) {
   const scrollRot = docProgress * Math.PI * 2.75;
   const scrollBlend = Math.min(Math.max(latestScrollY / 320, 0), 1);
 
-  if (hasNavBrain || splineTargets.length) {
+  if (hasNavBrain || hasFooterBrain || splineTargets.length) {
     if (!prefersReducedMotionGlobal) {
       currentMouseX += (targetMouseX - currentMouseX) * 0.05;
       currentMouseY += (targetMouseY - currentMouseY) * 0.05;
@@ -662,9 +679,12 @@ function animate(now) {
   const targetGlow = docProgress > 0.5 ? (docProgress - 0.5) * 2 : 0;
   glowLevel += (targetGlow - glowLevel) * 0.06;
 
-  if (hasNavBrain) {
+  if (hasNavBrain || hasFooterBrain) {
     if (navRenderer) {
       navRenderer.toneMappingExposure = 1.22;
+    }
+    if (footerRenderer) {
+      footerRenderer.toneMappingExposure = 1.22;
     }
 
     if (prefersReducedMotionGlobal) {
@@ -684,6 +704,7 @@ function animate(now) {
 
     applyNavBrainRotation({ scrollRot, scrollBlend });
     navRenderer?.render(scene, camera);
+    footerRenderer?.render(scene, camera);
   }
 
   if (!prefersReducedMotionGlobal) {

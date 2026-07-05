@@ -1453,6 +1453,7 @@
   display: grid;
   gap: 1.75rem;
   grid-template-columns: 1.1fr 1fr 1fr 1fr;
+  align-items: start;
   margin-bottom: 1.4rem;
 }
 
@@ -1465,4 +1466,17 @@
   justify-content: space-between;
   color: var(--text-secondary);
   font-size: 0.82rem;
+}
+
+.footer__made {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.footer__made-leaf {
+  width: 1.35rem;
+  height: auto;
+  display: block;
+  flex-shrink: 0;
 }

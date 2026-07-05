@@ -570,8 +570,20 @@
   <footer class="footer" id="site-footer">
     <div class="footer__inner">
       <div class="footer__top">
-        <div>
-          <div class="footer__brand-title">CODEVS <span>IA</span></div>
+        <div class="footer__brand-block">
+          <a href="#inicio" class="footer__brand" aria-label="CODEVS IA — Inicio" data-i18n-aria-label="nav.brand">
+            <span class="nav__brand-panel nav__brand-panel--footer">
+              <span class="nav__brand-group">
+                <span class="nav__brand-segment nav__brand-accent">C</span>
+                <span class="nav__brand-o" id="footer-brain-wrap" aria-hidden="true"></span>
+                <span class="nav__brand-segment nav__brand-plain">devs</span>
+              </span>
+              <span class="nav__brand-group nav__brand-group--ia">
+                <span class="nav__brand-segment nav__brand-accent">I</span>
+                <span class="nav__brand-segment nav__brand-plain">a</span>
+              </span>
+            </span>
+          </a>
           <p class="footer__tagline" data-i18n="footer.tagline">Software a medida y automatización inteligente para equipos que quieren crecer en serio.</p>
         </div>
         <div>
@@ -595,7 +607,19 @@
       </div>
       <div class="footer__bottom">
         <span data-i18n="footer.copyright">© 2026 CODEVS IA. Todos los derechos reservados.</span>
-        <span data-i18n="footer.made">Hecho con ❤️ y mucho ☕</span>
+        <span class="footer__made">
+          <span data-i18n="footer.made">Hecho con ❤️ y mucho ☕</span>
+          <img
+            src="./assets/images/footer-leaf.png"
+            alt=""
+            class="footer__made-leaf"
+            width="24"
+            height="24"
+            loading="lazy"
+            decoding="async"
+            aria-hidden="true"
+          />
+        </span>
       </div>
     </div>
   </footer>
