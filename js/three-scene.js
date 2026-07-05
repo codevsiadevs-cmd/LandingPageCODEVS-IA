@@ -663,19 +663,23 @@ function animate(now) {
   glowLevel += (targetGlow - glowLevel) * 0.06;
 
   if (hasNavBrain) {
+    if (navRenderer) {
+      navRenderer.toneMappingExposure = 1.22;
+    }
+
     if (prefersReducedMotionGlobal) {
-      innerPulseLight.intensity = 0.38;
+      innerPulseLight.intensity = 0.48;
       innerPulseLight.color.set(0xffffff);
-      dir.intensity = 0.72;
-      fill.intensity = 0.34;
-      rim.intensity = 0.14;
+      dir.intensity = 0.94;
+      fill.intensity = 0.46;
+      rim.intensity = 0.24;
     } else {
-      innerPulseLight.intensity = 0.34 + pulse * 0.18 + glowLevel * 0.06;
-      pulseColor.copy(whiteColor).lerp(softGrayColor, pulse * 0.22);
+      innerPulseLight.intensity = 0.48 + pulse * 0.18 + glowLevel * 0.06;
+      pulseColor.copy(whiteColor).lerp(softGrayColor, pulse * 0.08);
       innerPulseLight.color.copy(pulseColor);
-      dir.intensity = 0.78 + glowLevel * 0.1;
-      fill.intensity = 0.38 + glowLevel * 0.08;
-      rim.intensity = 0.16 + pulse * 0.05;
+      dir.intensity = 1.04 + glowLevel * 0.1;
+      fill.intensity = 0.52 + glowLevel * 0.08;
+      rim.intensity = 0.28 + pulse * 0.05;
     }
 
     applyNavBrainRotation({ scrollRot, scrollBlend });
