@@ -59,8 +59,6 @@ const translations = {
       "Agentes IA — Sistemas autónomos que planifican, ejecutan y resuelven flujos de trabajo con modelos de lenguaje",
     "projects.6":
       "Automatización de Documentos — Extracción, clasificación y procesamiento inteligente de documentos para equipos operativos",
-    "projects.7":
-      "Asistentes de Voz — Interfaces de voz naturales para productos, servicios y experiencias conversacionales en tiempo real",
     "process.title": "Cómo Trabajamos",
     "process.1.title": "Descubrimiento",
     "process.1.desc": "Entendemos tu negocio y definimos objetivos claros",
@@ -160,8 +158,6 @@ const translations = {
       "AI Agents — Autonomous systems that plan, execute, and solve workflows with language models",
     "projects.6":
       "Document Automation — Intelligent extraction, classification, and processing for operations teams",
-    "projects.7":
-      "Voice Assistants — Natural voice interfaces for products, services, and real-time conversational experiences",
     "process.title": "How We Work",
     "process.1.title": "Discovery",
     "process.1.desc": "We understand your business and define clear goals",

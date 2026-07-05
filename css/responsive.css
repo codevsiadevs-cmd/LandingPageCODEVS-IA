@@ -309,7 +309,7 @@
 @media (max-width: 768px) {
   .hero {
     --hero-brand-left: clamp(0.15rem, 0.6vw, 0.45rem);
-    --hero-brand-bottom: clamp(0.15rem, 0.6vh, 0.3rem);
+    --hero-brand-bottom: clamp(0rem, 0.15vh, 0.1rem);
     --hero-title-size: clamp(3.5rem, 16.5vw, 6.35rem);
   }
 
@@ -460,8 +460,8 @@
   }
 
   .proceso__title {
-    font-size: clamp(0.82rem, 3.6vw, 1.05rem);
-    line-height: 1.6;
+    font-size: clamp(1.45rem, 6vw, 2rem);
+    line-height: 1.18;
   }
 }
 

@@ -5,17 +5,9 @@ html[data-slide-font] {
 }
 
 html[data-slide-font] :is(
-  .hero__brand,
   .hero__tagline,
-  .hero-intro__text,
   .projects__title,
   .projects__row-title,
-  .proceso__title,
-  .proceso-step-item__num,
-  .proceso-step-item__title,
-  .proceso-step-item__desc,
-  .why__title,
-  .why__list-text,
   .contact__title,
   .tech-metric__value
 ) {
@@ -24,49 +16,70 @@ html[data-slide-font] :is(
 }
 
 html[data-slide-font] :is(
-  .hero__brand,
   .hero__tagline,
-  .hero-intro__text,
   .projects__title,
   .projects__row-title,
-  .proceso__title,
-  .proceso-step-item__num,
-  .proceso-step-item__title,
-  .proceso-step-item__desc,
-  .why__title,
-  .why__list-text,
   .contact__title
 ) {
   font-weight: var(--slide-font-weight, revert);
   letter-spacing: var(--slide-font-tracking, revert);
 }
 
-html[data-slide-font-category="script"] :is(
-  .hero__brand,
+/* Título principal fijo — Dirtyline: mayúscula decorativa + minúscula sans */
+html[data-slide-font] .hero__brand,
+html[data-slide-font] .hero__brand-accent,
+html[data-slide-font] .hero__brand-plain {
+  font-family: "Dirtyline36Daysoftype2022", system-ui, sans-serif !important;
+  font-weight: 400 !important;
+  text-rendering: optimizeLegibility !important;
+}
+
+html[data-slide-font] .hero__brand-accent {
+  letter-spacing: 0.02em !important;
+  font-feature-settings: "liga" 1, "clig" 1, "calt" 1 !important;
+}
+
+html[data-slide-font] .hero__brand-plain {
+  letter-spacing: 0.04em !important;
+  font-feature-settings: normal !important;
+}
+
+/* Párrafo intro fijo — Instrument Serif */
+html[data-slide-font] .hero-intro__text {
+  font-family: "Instrument Serif", Georgia, "Times New Roman", serif !important;
+  font-weight: 400 !important;
+  letter-spacing: -0.01em !important;
+  font-style: normal !important;
+}
+
+/* Cómo Trabajamos + ¿Por qué elegir? — Instrument Serif */
+html[data-slide-font] :is(
+  .proceso__title,
+  .proceso-step-item__num,
   .proceso-step-item__title,
-  .why__list-text,
-  .hero-intro__text
+  .proceso-step-item__desc,
+  .why__title,
+  .why__list-text
+) {
+  font-family: "Instrument Serif", Georgia, "Times New Roman", serif !important;
+  font-weight: 400 !important;
+  font-style: normal !important;
+}
+
+html[data-slide-font-category="script"] :is(
+  .projects__row-title
 ) {
   line-height: 1.12;
 }
 
 html[data-slide-font-category="exotic"] :is(
-  .hero__brand,
-  .proceso-step-item__title,
-  .why__list-text
+  .projects__row-title
 ) {
   line-height: 0.92;
 }
 
-html[data-slide-font="press-start"] .hero__brand {
-  font-size: clamp(2rem, 8vw, 4rem);
-  line-height: 1.35;
-}
-
 html[data-slide-font="press-start"] :is(
   .projects__title,
-  .proceso__title,
-  .why__title,
   .contact__title
 ) {
   font-size: clamp(1.15rem, 3.2vw, 1.85rem);
@@ -74,20 +87,13 @@ html[data-slide-font="press-start"] :is(
 }
 
 html[data-slide-font="press-start"] :is(
-  .hero-intro__text,
-  .projects__row-title,
-  .proceso-step-item__title,
-  .why__list-text,
-  .proceso-step-item__desc
+  .projects__row-title
 ) {
   font-size: clamp(0.72rem, 2vw, 0.95rem);
   line-height: 1.55;
 }
 
-html[data-slide-font="press-start"] :is(
-  .proceso-step-item__num,
-  .tech-metric__value
-) {
+html[data-slide-font="press-start"] .tech-metric__value {
   font-size: clamp(1.35rem, 4vw, 2.1rem);
   line-height: 1.3;
 }

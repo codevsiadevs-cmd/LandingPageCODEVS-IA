@@ -396,7 +396,7 @@
   pointer-events: none;
   --hero-brand-left: clamp(0.2rem, 0.85vw, 0.65rem);
   --hero-title-size: clamp(5rem, 17vw, 11.5rem);
-  --hero-brand-top: calc(50% - clamp(0.35rem, 1.1vh, 0.75rem) + 1cm);
+  --hero-brand-top: calc(50% - clamp(0.35rem, 1.1vh, 0.75rem) + 1.65cm);
 }
 
 .hero__bg-dots {
@@ -579,21 +579,49 @@
   left: var(--hero-brand-left);
   margin: 0;
   pointer-events: none;
-  font-family: "Allura", cursive;
-  font-weight: 400;
+  font-family: "Dirtyline36Daysoftype2022", system-ui, sans-serif;
   font-size: var(--hero-title-size);
-  line-height: 1.02;
-  letter-spacing: 0.02em;
+  line-height: 0.9;
   color: var(--text-primary);
   text-align: left;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
 }
 
 .hero__brand-line {
   display: block;
+  white-space: nowrap;
+}
+
+.hero__brand-accent,
+.hero__brand-plain {
+  display: inline-block;
+  vertical-align: baseline;
+  font-family: inherit;
+  text-transform: none;
+}
+
+.hero__brand-accent {
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  font-feature-settings: "liga" 1, "clig" 1, "calt" 1;
+  text-rendering: optimizeLegibility;
+}
+
+.hero__brand-plain {
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  font-feature-settings: normal;
+  margin-left: 0.06em;
+  transform: translateY(0.02em);
 }
 
 .hero__brand-line--ia {
   color: var(--text-primary);
+}
+
+.hero__brand-line--ia .hero__brand-plain {
+  margin-left: 0.05em;
 }
 
 .hero__tagline {
@@ -703,11 +731,11 @@
   max-width: none;
   width: 100%;
   margin: 0;
-  font-family: "Allura", cursive;
+  font-family: "Instrument Serif", Georgia, "Times New Roman", serif;
   font-size: clamp(2.1rem, 6.2vw, 4.25rem);
   font-weight: 400;
-  line-height: 1.22;
-  letter-spacing: 0.01em;
+  line-height: 1.28;
+  letter-spacing: -0.01em;
   color: #ffffff;
   text-align: left;
   opacity: 0;
@@ -1005,11 +1033,11 @@
 }
 
 .proceso__title {
-  font-family: "Press Start 2P", monospace;
+  font-family: "Instrument Serif", Georgia, "Times New Roman", serif;
   font-weight: 400;
-  font-size: clamp(1.05rem, 2.6vw, 1.55rem);
-  letter-spacing: 0.04em;
-  line-height: 1.55;
+  font-size: clamp(1.75rem, 4vw, 2.75rem);
+  letter-spacing: -0.02em;
+  line-height: 1.15;
   color: #000000;
   text-align: center;
   margin: 0;
@@ -1068,11 +1096,11 @@
 }
 
 .proceso-step-item__num {
-  font-family: "Press Start 2P", monospace;
-  font-size: clamp(2rem, 5.5vw, 3.25rem);
+  font-family: "Instrument Serif", Georgia, "Times New Roman", serif;
+  font-size: clamp(2.25rem, 5.5vw, 3.5rem);
   font-weight: 400;
-  line-height: 1.2;
-  letter-spacing: 0.04em;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
   color: #000000;
 }
 
@@ -1083,21 +1111,21 @@
 
 .proceso-step-item__title {
   margin: 0 0 0.65rem;
-  font-family: "Press Start 2P", monospace;
-  font-size: clamp(0.95rem, 2.4vw, 1.35rem);
+  font-family: "Instrument Serif", Georgia, "Times New Roman", serif;
+  font-size: clamp(1.35rem, 3vw, 2rem);
   font-weight: 400;
-  line-height: 1.55;
-  letter-spacing: 0.03em;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
   color: #000000;
 }
 
 .proceso-step-item__desc {
   margin: 0;
-  font-family: "Press Start 2P", monospace;
-  font-size: clamp(0.58rem, 1.25vw, 0.72rem);
+  font-family: "Instrument Serif", Georgia, "Times New Roman", serif;
+  font-size: clamp(1rem, 1.8vw, 1.2rem);
   font-weight: 400;
-  line-height: 1.75;
-  letter-spacing: 0.02em;
+  line-height: 1.45;
+  letter-spacing: -0.01em;
   color: #000000;
   max-width: 28rem;
 }
@@ -1192,11 +1220,11 @@
 
 .why__title {
   margin: 0;
-  font-family: var(--font-heading);
-  font-weight: 700;
+  font-family: "Instrument Serif", Georgia, "Times New Roman", serif;
+  font-weight: 400;
   font-size: clamp(1.85rem, 3.8vw, 2.75rem);
-  line-height: 1.1;
-  letter-spacing: -0.03em;
+  line-height: 1.12;
+  letter-spacing: -0.02em;
   color: var(--text-primary);
 }
 
@@ -1239,17 +1267,16 @@
 
 .why__list-text {
   margin: 0;
-  font-family: var(--font-heading);
+  font-family: "Instrument Serif", Georgia, "Times New Roman", serif;
   font-size: clamp(1.35rem, 2.8vw, 2.35rem);
-  font-weight: 500;
-  line-height: 1.18;
-  letter-spacing: -0.025em;
+  font-weight: 400;
+  line-height: 1.22;
+  letter-spacing: -0.015em;
   color: rgba(255, 255, 255, 0.28);
   transition: color 0.15s ease;
 }
 
 .why__list-item.is-focused .why__list-text {
-  font-weight: 700;
   color: var(--text-primary);
 }
 
