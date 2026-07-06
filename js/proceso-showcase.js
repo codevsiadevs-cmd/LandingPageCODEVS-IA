@@ -87,11 +87,8 @@ function initProcesoShowcase() {
   function updateFromScroll() {
     const { progress, pinned } = getPinMetrics();
     const index = progress * (STEP_COUNT - 1);
-    const exitProgress = Math.min(Math.max((progress - 0.68) / 0.32, 0), 1);
 
     section.classList.toggle("proceso--pinned", pinned);
-    section.classList.toggle("proceso--exiting", exitProgress > 0.12);
-    section.style.setProperty("--proceso-exit", String(exitProgress));
 
     applyTimeline(index);
 
