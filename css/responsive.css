@@ -658,21 +658,30 @@
     margin-right: auto;
     height: 100%;
     overflow: hidden;
+    display: flex;
+    justify-content: center;
   }
 
   .why__list-track {
     align-items: center;
     width: 100%;
+    max-width: 100%;
+    margin-inline: auto;
   }
 
   .why__list-item {
     justify-content: center;
+    align-items: center;
     width: 100%;
+    max-width: 100%;
   }
 
   .why__list-text {
-    font-size: clamp(1.2rem, 5.2vw, 2rem);
+    font-size: clamp(1.35rem, 6vw, 2.35rem);
     text-align: center;
+    width: 100%;
+    max-width: 100%;
+    white-space: normal;
   }
 }
 
@@ -709,15 +718,31 @@
     margin-right: auto;
     height: 100%;
     overflow: hidden;
+    display: flex;
+    justify-content: center;
   }
 
   .why__list-text {
-    font-size: clamp(1.15rem, 5.5vw, 1.9rem);
+    font-size: clamp(1.3rem, 6.5vw, 2.2rem);
     text-align: center;
+    width: 100%;
+    max-width: 100%;
+    white-space: normal;
   }
 
   .why__list-track {
     gap: 1.25rem;
+    align-items: center;
+    width: 100%;
+    max-width: 100%;
+    margin-inline: auto;
+  }
+
+  .why__list-item {
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 100%;
   }
 }
 
