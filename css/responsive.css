@@ -497,11 +497,12 @@
 @media (max-width: 768px) {
   .proceso {
     --proceso-mobile-track-offset: 1.75rem;
-    height: calc(var(--proceso-steps) * 90vh);
+    height: calc(var(--proceso-steps) * 100svh);
   }
 
   .proceso__pin {
-    height: 90vh;
+    height: 100svh;
+    min-height: 100svh;
   }
 
   .proceso__slider {
@@ -575,6 +576,36 @@
 }
 
 @media (max-width: 900px) {
+  body[data-section="proceso"],
+  body[data-section="nosotros"] {
+    background: #ffffff;
+  }
+
+  body[data-section="proceso"] .bg-nebula,
+  body[data-section="nosotros"] .bg-nebula {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .proceso,
+  .proceso__pin,
+  .proceso__slider,
+  .why,
+  .why__scroll,
+  .why__pin,
+  .why__slider {
+    background: #ffffff;
+  }
+
+  .proceso {
+    height: calc(var(--proceso-steps) * 100svh);
+  }
+
+  .proceso__pin {
+    height: 100svh;
+    min-height: 100svh;
+  }
+
   .why__slider {
     grid-template-columns: 1fr;
     grid-template-rows: auto 1fr;
@@ -593,10 +624,16 @@
     grid-column: 1;
     grid-row: 2;
     padding-right: 0;
+    padding-top: clamp(2rem, 8vh, 4rem);
   }
 
   .why__scroll {
-    height: calc(var(--why-steps) * 88vh);
+    height: calc(var(--why-steps) * 100svh);
+  }
+
+  .why__pin {
+    height: 100svh;
+    min-height: 100svh;
   }
 
   .why__stage {
@@ -619,11 +656,12 @@
   }
 
   .why__scroll {
-    height: calc(var(--why-steps) * 90vh);
+    height: calc(var(--why-steps) * 100svh);
   }
 
   .why__pin {
-    height: 90vh;
+    height: 100svh;
+    min-height: 100svh;
   }
 
   .why__slider {

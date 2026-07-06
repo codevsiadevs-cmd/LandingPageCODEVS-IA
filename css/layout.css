@@ -1268,6 +1268,7 @@
   justify-content: flex-end;
   width: 100%;
   min-height: clamp(20rem, 48vh, 32rem);
+  padding-top: clamp(3rem, 11vh, 5.5rem);
   padding-right: clamp(2.5rem, 9vw, 6.5rem);
 }
 
