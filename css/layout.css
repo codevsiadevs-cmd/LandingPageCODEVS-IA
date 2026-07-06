@@ -1232,7 +1232,10 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   grid-template-rows: 1fr;
-  align-items: center;
+  align-items: start;
+  --why-row-offset: calc(
+    (100% - 1.12 * clamp(1.85rem, 3.8vw, 2.75rem)) / 2
+  );
   gap: clamp(1.5rem, 4vw, 3rem);
   padding: calc(var(--nav-height) + 1.5rem) clamp(1.25rem, 6vw, 5rem) 2.5rem;
   background: #ffffff;
@@ -1246,15 +1249,17 @@
 .why__title {
   grid-column: 1;
   grid-row: 1;
-  align-self: center;
-  margin: 0;
-  max-width: min(100%, 22rem);
+  align-self: start;
+  margin: var(--why-row-offset) 0 0;
+  padding-left: clamp(2rem, 5vw, 4rem);
+  max-width: none;
   font-family: "Instrument Serif", Georgia, "Times New Roman", serif;
   font-weight: 400;
   font-size: clamp(1.85rem, 3.8vw, 2.75rem);
   line-height: 1.12;
   letter-spacing: -0.02em;
   text-align: left;
+  white-space: nowrap;
   color: #000000;
 }
 
@@ -1265,20 +1270,27 @@
   align-self: start;
   display: flex;
   align-items: flex-start;
-  justify-content: flex-end;
+  justify-content: center;
   width: 100%;
   min-height: clamp(20rem, 48vh, 32rem);
-  padding-top: clamp(3rem, 11vh, 5.5rem);
-  padding-right: clamp(2.5rem, 9vw, 6.5rem);
+  margin-top: var(--why-row-offset);
+  padding-top: 0;
+  padding-right: clamp(1.5rem, 5vw, 3rem);
+  padding-left: clamp(1.5rem, 4vw, 3rem);
+  overflow-x: visible;
 }
 
 .why__list-viewport {
   position: relative;
   z-index: 1;
-  width: clamp(18rem, 36vw, 32rem);
+  width: fit-content;
+  max-width: 100%;
+  margin-left: 0;
+  margin-right: 0;
   height: 100%;
   max-height: clamp(20rem, 48vh, 32rem);
-  overflow: hidden;
+  overflow-x: visible;
+  overflow-y: hidden;
 }
 
 .why__list-track {
@@ -1289,14 +1301,16 @@
   flex-direction: column;
   align-items: flex-end;
   gap: clamp(1.75rem, 4vh, 3.25rem);
-  width: 100%;
+  width: max-content;
+  margin-left: 0;
+  margin-right: 0;
   will-change: transform;
 }
 
 .why__list-item {
   position: relative;
   flex: 0 0 auto;
-  width: 100%;
+  width: max-content;
   display: flex;
   justify-content: flex-end;
   align-items: flex-start;
@@ -1315,13 +1329,13 @@
 
 .why__list-text {
   margin: 0;
-  max-width: 100%;
   font-family: "Instrument Serif", Georgia, "Times New Roman", serif;
-  font-size: clamp(1.35rem, 2.8vw, 2.35rem);
+  font-size: clamp(1.2rem, 2.2vw, 2.1rem);
   font-weight: 400;
   line-height: 1.22;
   letter-spacing: -0.015em;
   text-align: right;
+  white-space: nowrap;
   color: rgba(0, 0, 0, 0.28);
   transition: color 0.15s ease;
 }
