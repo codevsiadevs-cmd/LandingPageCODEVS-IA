@@ -32,18 +32,18 @@ function initWhyShowcase() {
     const gap = Number.parseFloat(getComputedStyle(track).rowGap || getComputedStyle(track).gap) || 0;
     const itemSpan = itemPx + gap;
     const viewportPx = viewport.clientHeight;
-    const topOffset = 0;
-    const edgeSlidePx = viewportPx - itemPx - gap;
+    const centerOffset = (viewportPx - itemPx) / 2;
+    const edgeSlidePx = centerOffset - gap;
     const slidePx = edgeSlidePx > 20 ? edgeSlidePx : Math.max(viewportPx * 0.14, 16);
 
     section.style.setProperty("--why-item-h", `${itemPx}px`);
     section.style.setProperty("--why-viewport-h", `${viewportPx}px`);
 
-    return { itemPx, itemSpan, viewportPx, slidePx, topOffset };
+    return { itemPx, itemSpan, viewportPx, slidePx, centerOffset };
   }
 
-  function getCardTop(i, index, topOffset, itemSpan, slidePx) {
-    return topOffset + (i - index) * (itemSpan + slidePx);
+  function getCardTop(i, index, centerOffset, itemSpan, slidePx) {
+    return centerOffset + (i - index) * (itemSpan + slidePx);
   }
 
   function getVisibleRatio(cardTop, itemPx, viewportPx) {
@@ -63,16 +63,16 @@ function initWhyShowcase() {
   }
 
   function applyTimeline(index) {
-    const { itemPx, itemSpan, viewportPx, slidePx, topOffset } = measure();
+    const { itemPx, itemSpan, viewportPx, slidePx, centerOffset } = measure();
     const mobileOffset = getMobileTrackOffset();
     const firstItemBoost = mobileOffset > 0 ? mobileOffset * Math.max(0, 1 - index / 0.85) : 0;
 
-    track.style.transform = `translate3d(0, ${topOffset - index * itemSpan + firstItemBoost}px, 0)`;
+    track.style.transform = `translate3d(0, ${centerOffset - index * itemSpan + firstItemBoost}px, 0)`;
 
     items.forEach((item, i) => {
       const delta = i - index;
       const y = delta * slidePx;
-      const cardTop = getCardTop(i, index, topOffset, itemSpan, slidePx) + firstItemBoost;
+      const cardTop = getCardTop(i, index, centerOffset, itemSpan, slidePx) + firstItemBoost;
       const visibleRatio = getVisibleRatio(cardTop, itemPx, viewportPx);
 
       item.classList.toggle("is-active", Math.abs(delta) < 0.45);

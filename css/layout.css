@@ -1232,7 +1232,7 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   grid-template-rows: 1fr;
-  align-items: start;
+  align-items: stretch;
   --why-row-offset: calc(
     (100% - 1.12 * clamp(1.85rem, 3.8vw, 2.75rem)) / 2
   );
@@ -1265,19 +1265,19 @@
 
 .why__stage {
   position: relative;
+  z-index: 3;
   grid-column: 2;
   grid-row: 1;
-  align-self: start;
+  align-self: center;
   display: flex;
-  align-items: flex-start;
+  align-items: flex-end;
   justify-content: center;
   width: 100%;
-  min-height: clamp(20rem, 48vh, 32rem);
-  margin-top: var(--why-row-offset);
-  padding-top: 0;
+  height: 100vh;
+  margin-top: calc(-1 * (var(--nav-height) + 1.5rem));
+  margin-bottom: -2.5rem;
+  padding: 0;
   padding-right: clamp(1.5rem, 5vw, 3rem);
-  padding-left: clamp(1.5rem, 4vw, 3rem);
-  overflow-x: visible;
 }
 
 .why__list-viewport {
@@ -1285,12 +1285,8 @@
   z-index: 1;
   width: fit-content;
   max-width: 100%;
-  margin-left: 0;
-  margin-right: 0;
   height: 100%;
-  max-height: clamp(20rem, 48vh, 32rem);
-  overflow-x: visible;
-  overflow-y: hidden;
+  overflow: hidden;
 }
 
 .why__list-track {
@@ -1300,7 +1296,7 @@
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: clamp(1.75rem, 4vh, 3.25rem);
+  gap: clamp(1.75rem, 4vw, 3.25rem);
   width: max-content;
   margin-left: 0;
   margin-right: 0;

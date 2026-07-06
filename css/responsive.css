@@ -609,7 +609,7 @@
   .why__slider {
     grid-template-columns: 1fr;
     grid-template-rows: auto 1fr;
-    align-items: start;
+    align-items: stretch;
   }
 
   .why__title {
@@ -627,10 +627,12 @@
   .why__stage {
     grid-column: 1;
     grid-row: 2;
-    margin-top: 0;
+    align-self: center;
+    height: 100vh;
+    margin-top: calc(-1 * (var(--nav-height) + 1.5rem));
+    margin-bottom: -2.5rem;
     padding-right: 0;
     padding-left: clamp(0.5rem, 2vw, 1rem);
-    padding-top: clamp(0.75rem, 2vh, 1.25rem);
   }
 
   .why__scroll {
@@ -642,20 +644,13 @@
     min-height: 100svh;
   }
 
-  .why__stage {
-    min-height: clamp(16rem, 40vh, 24rem);
-    padding-right: 0;
-    overflow-x: visible;
-  }
-
   .why__list-viewport {
     width: fit-content;
     max-width: 100%;
     margin-left: 0;
     margin-right: auto;
-    max-height: clamp(16rem, 40vh, 24rem);
-    overflow-x: visible;
-    overflow-y: hidden;
+    height: 100%;
+    overflow: hidden;
   }
 
   .why__list-text {
@@ -682,10 +677,11 @@
   }
 
   .why__stage {
-    min-height: clamp(14rem, 36vh, 20rem);
+    height: 100svh;
+    margin-top: calc(-1 * (var(--nav-height) + 1.15rem));
+    margin-bottom: -2.5rem;
     padding-right: 0;
     padding-left: clamp(0.5rem, 2vw, 1rem);
-    overflow-x: visible;
   }
 
   .why__list-viewport {
@@ -693,9 +689,8 @@
     max-width: 100%;
     margin-left: 0;
     margin-right: auto;
-    max-height: clamp(14rem, 36vh, 20rem);
-    overflow-x: visible;
-    overflow-y: hidden;
+    height: 100%;
+    overflow: hidden;
   }
 
   .why__list-text {
