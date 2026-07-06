@@ -617,11 +617,15 @@
     grid-column: 1;
     grid-row: 1;
     align-self: start;
+    justify-self: center;
+    width: 100%;
     margin-top: 0;
-    padding-left: clamp(1rem, 4vw, 2rem);
+    padding-left: 0;
+    padding-inline: clamp(1rem, 4vw, 2rem);
     max-width: none;
     font-size: clamp(1.2rem, 5.2vw, 2.35rem);
     line-height: 1.18;
+    text-align: center;
     white-space: nowrap;
   }
 
@@ -629,10 +633,12 @@
     grid-column: 1;
     grid-row: 2;
     align-self: center;
+    align-items: center;
+    justify-content: center;
     height: 100vh;
     margin-top: calc(-1 * (var(--nav-height) + 1.5rem));
     margin-bottom: -2.5rem;
-    padding-right: 0;
+    padding-right: clamp(0.5rem, 2vw, 1rem);
     padding-left: clamp(0.5rem, 2vw, 1rem);
   }
 
@@ -646,16 +652,27 @@
   }
 
   .why__list-viewport {
-    width: fit-content;
+    width: 100%;
     max-width: 100%;
-    margin-left: 0;
+    margin-left: auto;
     margin-right: auto;
     height: 100%;
     overflow: hidden;
   }
 
+  .why__list-track {
+    align-items: center;
+    width: 100%;
+  }
+
+  .why__list-item {
+    justify-content: center;
+    width: 100%;
+  }
+
   .why__list-text {
-    font-size: clamp(0.82rem, 2.85vw, 1.45rem);
+    font-size: clamp(1.2rem, 5.2vw, 2rem);
+    text-align: center;
   }
 }
 
@@ -681,21 +698,22 @@
     height: 100svh;
     margin-top: calc(-1 * (var(--nav-height) + 1.15rem));
     margin-bottom: -2.5rem;
-    padding-right: 0;
+    padding-right: clamp(0.5rem, 2vw, 1rem);
     padding-left: clamp(0.5rem, 2vw, 1rem);
   }
 
   .why__list-viewport {
-    width: fit-content;
+    width: 100%;
     max-width: 100%;
-    margin-left: 0;
+    margin-left: auto;
     margin-right: auto;
     height: 100%;
     overflow: hidden;
   }
 
   .why__list-text {
-    font-size: clamp(0.78rem, 2.65vw, 1.3rem);
+    font-size: clamp(1.15rem, 5.5vw, 1.9rem);
+    text-align: center;
   }
 
   .why__list-track {
