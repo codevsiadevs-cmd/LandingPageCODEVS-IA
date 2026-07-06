@@ -576,25 +576,26 @@
 }
 
 @media (max-width: 900px) {
-  body[data-section="proceso"],
-  body[data-section="nosotros"] {
+  body[data-section="proceso"] {
     background: #ffffff;
   }
 
-  body[data-section="proceso"] .bg-nebula,
-  body[data-section="nosotros"] .bg-nebula {
+  body[data-section="proceso"] .bg-nebula {
     opacity: 0;
     visibility: hidden;
   }
 
   .proceso,
   .proceso__pin,
-  .proceso__slider,
+  .proceso__slider {
+    background: #ffffff;
+  }
+
   .why,
   .why__scroll,
   .why__pin,
   .why__slider {
-    background: #ffffff;
+    background: transparent;
   }
 
   .proceso {

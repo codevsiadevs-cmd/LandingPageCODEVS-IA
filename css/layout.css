@@ -1207,7 +1207,7 @@
   scroll-margin-top: var(--nav-height);
   position: relative;
   isolation: isolate;
-  background: #ffffff;
+  background: transparent;
 }
 
 .why__scroll {
@@ -1238,12 +1238,12 @@
   );
   gap: clamp(1.5rem, 4vw, 3rem);
   padding: calc(var(--nav-height) + 1.5rem) clamp(1.25rem, 6vw, 5rem) 2.5rem;
-  background: #ffffff;
+  background: transparent;
   pointer-events: auto;
 }
 
 .why--pinned .why__slider {
-  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.06);
+  box-shadow: none;
 }
 
 .why__title {
@@ -1260,7 +1260,7 @@
   letter-spacing: -0.02em;
   text-align: left;
   white-space: nowrap;
-  color: #000000;
+  color: #ffffff;
 }
 
 .why__stage {
@@ -1332,12 +1332,12 @@
   letter-spacing: -0.015em;
   text-align: right;
   white-space: nowrap;
-  color: rgba(0, 0, 0, 0.28);
+  color: rgba(255, 255, 255, 0.28);
   transition: color 0.15s ease;
 }
 
 .why__list-item.is-active .why__list-text {
-  color: #000000;
+  color: #ffffff;
 }
 
 .why.why--static .why__scroll {
@@ -1373,7 +1373,7 @@
 }
 
 .why.why--static .why__list-text {
-  color: #000000;
+  color: #ffffff;
 }
 
 @media (prefers-reduced-motion: reduce) {
