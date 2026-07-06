@@ -168,7 +168,7 @@
           <div class="nav__lang-list" data-lang-list role="listbox" aria-label="Idiomas" data-i18n-aria-label="nav.langListAria"></div>
         </div>
       </div>
-      <a href="#contacto" class="nav__contact" aria-label="Contacto" data-i18n-aria-label="nav.contact">
+      <a href="#contacto" class="nav__contact" aria-label="Contacto" data-i18n-aria-label="nav.contact" hidden>
         <span data-i18n="nav.contact">Contacto</span>
         <span class="nav__contact-arrow" aria-hidden="true">↗</span>
       </a>
@@ -392,35 +392,97 @@
       </div>
     </section>
 
-    <section class="why" id="nosotros" aria-labelledby="why-heading">
+    <section class="why" id="nosotros" aria-labelledby="why-heading" data-active="0">
       <div class="why__scroll" data-why-steps="5">
         <div class="why__pin">
-          <div class="why__stage">
-            <div class="why__layout">
-              <aside class="why__aside">
-                <h2 id="why-heading" class="why__title" data-i18n="why.title">¿Por qué elegir CODEVS IA?</h2>
-              </aside>
+          <canvas class="why__canvas" id="why-canvas" aria-hidden="true"></canvas>
+          <div class="why__aurora" aria-hidden="true"></div>
+          <div class="why__grid-noise" aria-hidden="true"></div>
 
-              <div class="why__list-viewport" id="why-viewport" aria-live="polite">
-                <ul class="why__list-track" id="why-track">
-                  <li class="why__list-item" data-why-item>
-                    <p class="why__list-text" data-i18n="why.1">Equipo senior con experiencia en productos reales</p>
-                  </li>
-                  <li class="why__list-item" data-why-item>
-                    <p class="why__list-text" data-i18n="why.2">IA integrada desde el inicio, no como add-on</p>
-                  </li>
-                  <li class="why__list-item" data-why-item>
-                    <p class="why__list-text" data-i18n="why.3">Comunicación transparente y entregas puntuales</p>
-                  </li>
-                  <li class="why__list-item" data-why-item>
-                    <p class="why__list-text" data-i18n="why.4">Código limpio, documentado y escalable</p>
-                  </li>
-                  <li class="why__list-item" data-why-item>
-                    <p class="why__list-text" data-i18n="why.5">Soporte post-lanzamiento incluido</p>
-                  </li>
-                </ul>
-              </div>
+          <div class="why__inner">
+        <header class="why__header">
+          <h2 id="why-heading" class="why__title" data-i18n="why.title">¿Por qué elegir CODEVS IA?</h2>
+        </header>
+
+        <div class="why__stage">
+          <div class="why__progress-col" aria-hidden="true">
+            <div class="why__progress-track">
+              <div class="why__progress-fill" id="why-progress-fill"></div>
+              <div class="why__progress-node is-active" data-node="0"></div>
+              <div class="why__progress-node" data-node="1"></div>
+              <div class="why__progress-node" data-node="2"></div>
+              <div class="why__progress-node" data-node="3"></div>
+              <div class="why__progress-node" data-node="4"></div>
             </div>
+          </div>
+
+          <div class="why__viewport" id="why-viewport">
+          <div class="why__rail" id="why-rail" role="list" aria-live="polite" aria-label="Razones para elegir CODEVS IA">
+            <article class="why__card is-active" role="listitem" data-why-card="0" tabindex="0">
+              <div class="why__card-shine" aria-hidden="true"></div>
+              <span class="why__card-index" aria-hidden="true">01</span>
+              <div class="why__card-icon" aria-hidden="true">
+                <svg viewBox="0 0 48 48" fill="none"><circle cx="24" cy="24" r="20" stroke="currentColor" stroke-width="1.5" opacity=".35"/><path d="M16 28c2.5-6 6-9 8-9s5.5 3 8 9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="24" cy="17" r="3" fill="currentColor"/></svg>
+              </div>
+              <p class="why__card-text" data-i18n="why.1">Equipo senior con experiencia en productos reales</p>
+              <span class="why__card-tag" data-i18n="why.tag.1">Senior team</span>
+            </article>
+
+            <article class="why__card" role="listitem" data-why-card="1" tabindex="-1">
+              <div class="why__card-shine" aria-hidden="true"></div>
+              <span class="why__card-index" aria-hidden="true">02</span>
+              <div class="why__card-icon" aria-hidden="true">
+                <svg viewBox="0 0 48 48" fill="none"><path d="M12 32V16l12-6 12 6v16l-12 6-12-6Z" stroke="currentColor" stroke-width="1.5"/><path d="M24 10v28M12 16l12 6 12-6" stroke="currentColor" stroke-width="1.5" opacity=".5"/><circle cx="24" cy="24" r="4" fill="currentColor"/></svg>
+              </div>
+              <p class="why__card-text" data-i18n="why.2">IA integrada desde el inicio, no como add-on</p>
+              <span class="why__card-tag" data-i18n="why.tag.2">AI-native</span>
+            </article>
+
+            <article class="why__card" role="listitem" data-why-card="2" tabindex="-1">
+              <div class="why__card-shine" aria-hidden="true"></div>
+              <span class="why__card-index" aria-hidden="true">03</span>
+              <div class="why__card-icon" aria-hidden="true">
+                <svg viewBox="0 0 48 48" fill="none"><path d="M8 24h32M24 8v32" stroke="currentColor" stroke-width="1.5" opacity=".25"/><rect x="10" y="14" width="28" height="20" rx="4" stroke="currentColor" stroke-width="1.5"/><path d="M16 22h16M16 28h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              </div>
+              <p class="why__card-text" data-i18n="why.3">Comunicación transparente y entregas puntuales</p>
+              <span class="why__card-tag" data-i18n="why.tag.3">Transparent</span>
+            </article>
+
+            <article class="why__card" role="listitem" data-why-card="3" tabindex="-1">
+              <div class="why__card-shine" aria-hidden="true"></div>
+              <span class="why__card-index" aria-hidden="true">04</span>
+              <div class="why__card-icon" aria-hidden="true">
+                <svg viewBox="0 0 48 48" fill="none"><path d="M14 12h20v24H14z" stroke="currentColor" stroke-width="1.5"/><path d="M18 18h12M18 24h8M18 30h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M30 8l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <p class="why__card-text" data-i18n="why.4">Código limpio, documentado y escalable</p>
+              <span class="why__card-tag" data-i18n="why.tag.4">Clean code</span>
+            </article>
+
+            <article class="why__card" role="listitem" data-why-card="4" tabindex="-1">
+              <div class="why__card-shine" aria-hidden="true"></div>
+              <span class="why__card-index" aria-hidden="true">05</span>
+              <div class="why__card-icon" aria-hidden="true">
+                <svg viewBox="0 0 48 48" fill="none"><path d="M24 8v6M24 34v6M8 24h6M34 24h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity=".4"/><circle cx="24" cy="24" r="10" stroke="currentColor" stroke-width="1.5"/><path d="M20 24l3 3 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </div>
+              <p class="why__card-text" data-i18n="why.5">Soporte post-lanzamiento incluido</p>
+              <span class="why__card-tag" data-i18n="why.tag.5">Support</span>
+            </article>
+          </div>
+          </div>
+        </div>
+
+        <nav class="why__dots" aria-label="Navegación de tarjetas">
+          <button type="button" class="why__dot is-active" data-goto="0" aria-label="Razón 1" aria-current="true"></button>
+          <button type="button" class="why__dot" data-goto="1" aria-label="Razón 2"></button>
+          <button type="button" class="why__dot" data-goto="2" aria-label="Razón 3"></button>
+          <button type="button" class="why__dot" data-goto="3" aria-label="Razón 4"></button>
+          <button type="button" class="why__dot" data-goto="4" aria-label="Razón 5"></button>
+        </nav>
+
+        <p class="why__hint">
+          <span class="why__hint-mobile" data-i18n="why.hint.mobile">Sigue bajando para explorar ↓</span>
+          <span class="why__hint-desktop" data-i18n="why.hint.desktop">Scroll o flechas ↑↓ para explorar</span>
+        </p>
           </div>
         </div>
       </div>
