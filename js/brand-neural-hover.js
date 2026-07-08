@@ -13,6 +13,7 @@ export function initBrandNeuralHover(panel, canvas, options = {}) {
     gridDiv = 6,
     linkCount = 4,
     wander = 10,
+    colorRgb = "255,255,255",
   } = options;
 
   const ctx = canvas.getContext("2d");
@@ -45,13 +46,13 @@ export function initBrandNeuralHover(panel, canvas, options = {}) {
     if (!this.active) return;
     ctx.beginPath();
     ctx.arc(this.point.x, this.point.y, this.radius, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(255,255,255,${this.active})`;
+    ctx.fillStyle = `rgba(${colorRgb},${this.active})`;
     ctx.fill();
   };
 
   function drawLines(p) {
     if (!p.active) return;
-    ctx.strokeStyle = `rgba(255,255,255,${p.active})`;
+    ctx.strokeStyle = `rgba(${colorRgb},${p.active})`;
     ctx.lineWidth = 1;
     for (let i = 0; i < p.closest.length; i += 1) {
       const n = p.closest[i];

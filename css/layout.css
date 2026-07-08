@@ -1044,9 +1044,19 @@
   justify-content: center;
   gap: clamp(1.5rem, 3.5vw, 2.5rem);
   padding: calc(var(--nav-height) + 1.5rem) clamp(1.25rem, 6vw, 5rem) 2.5rem;
-  background: #ffffff;
+  background: transparent;
   pointer-events: auto;
   z-index: 1;
+  overflow: hidden;
+}
+
+.section-neural-canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
 }
 
 .proceso--pinned .proceso__slider {
@@ -1241,6 +1251,7 @@
   padding: calc(var(--nav-height) + 1.5rem) clamp(1.25rem, 6vw, 5rem) 2.5rem;
   background: transparent;
   pointer-events: auto;
+  overflow: hidden;
 }
 
 .why--pinned .why__slider {
@@ -1248,6 +1259,8 @@
 }
 
 .why__title {
+  position: relative;
+  z-index: 2;
   grid-column: 1;
   grid-row: 1;
   align-self: start;
@@ -1266,7 +1279,7 @@
 
 .why__stage {
   position: relative;
-  z-index: 3;
+  z-index: 2;
   grid-column: 2;
   grid-row: 1;
   align-self: center;

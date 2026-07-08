@@ -580,6 +580,10 @@
     background: #ffffff;
   }
 
+  body[data-section="nosotros"] {
+    background: #000000;
+  }
+
   body[data-section="proceso"] .bg-nebula {
     opacity: 0;
     visibility: hidden;
