@@ -18,18 +18,22 @@ const sectionNeuralTargets = [
 ];
 
 function initSectionNeural() {
-  for (const { panel, canvas, hoverClass, gridDiv, colorRgb } of sectionNeuralTargets) {
+  for (const { panel, canvas, hoverClass, colorRgb } of sectionNeuralTargets) {
     if (!panel || !canvas) continue;
 
     initBrandNeuralHover(panel, canvas, {
       hoverClass,
-      gridDiv,
-      linkCount: 3,
-      wander: 8,
+      enableTouch: true,
+      gridDiv: 12,
+      linkCount: 4,
+      wander: 0,
       colorRgb,
-      reachScale: 0.1,
-      nodeRadiusMin: 0.7,
-      nodeRadiusMax: 1.3,
+      reachScale: 0.18,
+      nodeRadiusMin: 0.8,
+      nodeRadiusMax: 1.4,
+      meshLinks: true,
+      baseLinkAlpha: 0.18,
+      baseNodeAlpha: 0.2,
     });
   }
 }

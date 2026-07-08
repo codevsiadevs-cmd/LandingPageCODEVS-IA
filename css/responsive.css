@@ -508,6 +508,7 @@
   .proceso__slider {
     padding-inline: 1.15rem;
     gap: 1.15rem;
+    touch-action: pan-y;
   }
 
   .proceso__stage {
@@ -613,56 +614,40 @@
     z-index: 3;
   }
 
-  .why.why--pinned .why__pin::before,
-  body[data-section="nosotros"] .why__pin::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    background-color: #000000;
-    pointer-events: none;
-  }
-
-  .proceso {
-    height: calc(var(--proceso-steps) * 100svh);
-  }
-
-  .proceso__pin {
-    height: 100svh;
-    min-height: 100svh;
-  }
-
   .why__slider {
-    grid-template-columns: 1fr;
-    grid-template-rows: auto 1fr;
+    display: flex;
+    flex-direction: column;
+    gap: clamp(1.15rem, 3vh, 1.75rem);
     align-items: stretch;
+    justify-content: flex-start;
+    touch-action: pan-y;
   }
 
   .why__title {
-    grid-column: 1;
-    grid-row: 1;
-    align-self: start;
-    justify-self: center;
+    position: relative;
+    z-index: 3;
+    flex-shrink: 0;
     width: 100%;
-    margin-top: 0;
-    padding-left: 0;
+    margin: 0;
+    padding: 0;
     padding-inline: clamp(1rem, 4vw, 2rem);
     max-width: none;
     font-size: clamp(1.2rem, 5.2vw, 2.35rem);
     line-height: 1.18;
     text-align: center;
-    white-space: nowrap;
+    white-space: normal;
   }
 
   .why__stage {
-    grid-column: 1;
-    grid-row: 2;
-    align-self: center;
+    position: relative;
+    z-index: 2;
+    flex: 1;
+    min-height: clamp(18rem, 52vh, 28rem);
+    height: auto;
+    margin-top: 0;
+    margin-bottom: 0;
     align-items: center;
     justify-content: center;
-    height: 100vh;
-    margin-top: calc(-1 * (var(--nav-height) + 1.5rem));
-    margin-bottom: -2.5rem;
     padding-right: clamp(0.5rem, 2vw, 1rem);
     padding-left: clamp(0.5rem, 2vw, 1rem);
   }
@@ -672,6 +657,15 @@
   }
 
   .why__pin {
+    height: 100svh;
+    min-height: 100svh;
+  }
+
+  .proceso {
+    height: calc(var(--proceso-steps) * 100svh);
+  }
+
+  .proceso__pin {
     height: 100svh;
     min-height: 100svh;
   }
@@ -726,12 +720,17 @@
 
   .why__slider {
     padding-inline: 1.15rem;
+    gap: 1.15rem;
+  }
+
+  .why__title {
+    z-index: 3;
   }
 
   .why__stage {
-    height: 100svh;
-    margin-top: calc(-1 * (var(--nav-height) + 1.15rem));
-    margin-bottom: -2.5rem;
+    min-height: clamp(16rem, 46vh, 26rem);
+    margin-top: 0;
+    margin-bottom: 0;
     padding-right: clamp(0.5rem, 2vw, 1rem);
     padding-left: clamp(0.5rem, 2vw, 1rem);
   }

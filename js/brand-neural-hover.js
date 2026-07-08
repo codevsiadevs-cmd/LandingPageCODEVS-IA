@@ -6,7 +6,7 @@ import { prefersReducedMotionGlobal } from "./scroll.js";
 const canHover = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 
 export function initBrandNeuralHover(panel, canvas, options = {}) {
-  if (!panel || !canvas || !canHover || prefersReducedMotionGlobal) return;
+  if (!panel || !canvas || prefersReducedMotionGlobal) return;
 
   const {
     hoverClass = "brand-neural-panel--hover",
@@ -17,7 +17,13 @@ export function initBrandNeuralHover(panel, canvas, options = {}) {
     reachScale = 1,
     nodeRadiusMin = 1.2,
     nodeRadiusMax = 2.4,
+    enableTouch = false,
+    meshLinks = false,
+    baseLinkAlpha = 0,
+    baseNodeAlpha = 0,
   } = options;
+
+  if (!canHover && !enableTouch) return;
 
   const ctx = canvas.getContext("2d");
   let width = 0;
@@ -53,6 +59,37 @@ export function initBrandNeuralHover(panel, canvas, options = {}) {
     ctx.fill();
   };
 
+  function drawConnectedMesh() {
+    const baseLine = baseLinkAlpha * hoverBlend;
+    const baseNode = baseNodeAlpha * hoverBlend;
+
+    for (let i = 0; i < points.length; i += 1) {
+      const p = points[i];
+      for (let j = 0; j < p.closest.length; j += 1) {
+        const n = p.closest[j];
+        const hotspot = Math.min(p.active, n.active);
+        const alpha = Math.max(baseLine, hotspot);
+        if (alpha < 0.02) continue;
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y);
+        ctx.lineTo(n.x, n.y);
+        ctx.strokeStyle = `rgba(${colorRgb},${alpha})`;
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+    }
+
+    for (let i = 0; i < points.length; i += 1) {
+      const p = points[i];
+      const alpha = Math.max(baseNode, p.circle.active);
+      if (alpha < 0.02) continue;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.circle.radius, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(${colorRgb},${alpha})`;
+      ctx.fill();
+    }
+  }
+
   function drawLines(p) {
     if (!p.active) return;
     ctx.strokeStyle = `rgba(${colorRgb},${p.active})`;
@@ -83,8 +120,8 @@ export function initBrandNeuralHover(panel, canvas, options = {}) {
 
     for (let x = 0; x < width; x += stepX) {
       for (let y = 0; y < height; y += stepY) {
-        const px = x + Math.random() * stepX;
-        const py = y + Math.random() * stepY;
+        const px = wander > 0 ? x + Math.random() * stepX : x + stepX * 0.5;
+        const py = wander > 0 ? y + Math.random() * stepY : y + stepY * 0.5;
         const point = {
           x: px,
           originX: px,
@@ -117,6 +154,8 @@ export function initBrandNeuralHover(panel, canvas, options = {}) {
   }
 
   function animatePoint(point, rev) {
+    if (wander <= 0) return;
+
     const fromX = point.x;
     const fromY = point.y;
     const toX = point.originX - wander + Math.random() * wander * 2;
@@ -195,8 +234,15 @@ export function initBrandNeuralHover(panel, canvas, options = {}) {
 
       p.active = active * hoverBlend;
       p.circle.active = circleActive * hoverBlend;
-      drawLines(p);
-      p.circle.draw();
+    }
+
+    if (meshLinks && baseLinkAlpha > 0) {
+      drawConnectedMesh();
+    } else {
+      for (let i = 0; i < points.length; i += 1) {
+        drawLines(points[i]);
+        points[i].circle.draw();
+      }
     }
   }
 
@@ -221,21 +267,59 @@ export function initBrandNeuralHover(panel, canvas, options = {}) {
     if (!rafId) rafId = requestAnimationFrame(tick);
   }
 
-  panel.addEventListener("pointerenter", (event) => {
+  function activateFromEvent(event) {
     rebuildScene();
     setTargetFromEvent(event);
     animating = true;
     panel.classList.add(hoverClass);
     startLoop();
-  });
+  }
 
-  panel.addEventListener("pointermove", setTargetFromEvent);
-
-  panel.addEventListener("pointerleave", () => {
+  function deactivate() {
     animating = false;
     panel.classList.remove(hoverClass);
     startLoop();
-  });
+  }
+
+  if (canHover) {
+    panel.addEventListener("pointerenter", activateFromEvent);
+    panel.addEventListener("pointermove", setTargetFromEvent);
+    panel.addEventListener("pointerleave", deactivate);
+  }
+
+  if (enableTouch) {
+    panel.addEventListener(
+      "pointerdown",
+      (event) => {
+        if (canHover && event.pointerType === "mouse") return;
+        activateFromEvent(event);
+        if (typeof panel.setPointerCapture === "function") {
+          panel.setPointerCapture(event.pointerId);
+        }
+      },
+      { passive: true }
+    );
+
+    panel.addEventListener(
+      "pointermove",
+      (event) => {
+        if (!animating) return;
+        setTargetFromEvent(event);
+      },
+      { passive: true }
+    );
+
+    const endTouch = (event) => {
+      if (canHover && event.pointerType === "mouse") return;
+      deactivate();
+      if (typeof panel.releasePointerCapture === "function" && panel.hasPointerCapture?.(event.pointerId)) {
+        panel.releasePointerCapture(event.pointerId);
+      }
+    };
+
+    panel.addEventListener("pointerup", endTouch, { passive: true });
+    panel.addEventListener("pointercancel", endTouch, { passive: true });
+  }
 
   window.addEventListener("resize", rebuildScene);
 
