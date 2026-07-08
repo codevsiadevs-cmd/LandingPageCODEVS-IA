@@ -589,6 +589,12 @@
     visibility: hidden;
   }
 
+  body[data-section="nosotros"] .bg-nebula,
+  body[data-section="nosotros"] #bg-vignette {
+    opacity: 0;
+    visibility: hidden;
+  }
+
   .proceso,
   .proceso__pin,
   .proceso__slider {
@@ -598,8 +604,23 @@
   .why,
   .why__scroll,
   .why__pin,
-  .why__slider {
-    background: #000000;
+  .why__slider,
+  .why__stage {
+    background-color: #000000;
+  }
+
+  .why {
+    z-index: 3;
+  }
+
+  .why.why--pinned .why__pin::before,
+  body[data-section="nosotros"] .why__pin::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background-color: #000000;
+    pointer-events: none;
   }
 
   .proceso {
