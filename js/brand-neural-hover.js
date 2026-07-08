@@ -14,6 +14,9 @@ export function initBrandNeuralHover(panel, canvas, options = {}) {
     linkCount = 4,
     wander = 10,
     colorRgb = "255,255,255",
+    reachScale = 1,
+    nodeRadiusMin = 1.2,
+    nodeRadiusMax = 2.4,
   } = options;
 
   const ctx = canvas.getContext("2d");
@@ -67,9 +70,9 @@ export function initBrandNeuralHover(panel, canvas, options = {}) {
     const base = Math.min(width, height);
     const unit = base * base;
     return {
-      near: unit * 0.35,
-      mid: unit * 1.4,
-      far: unit * 3.2,
+      near: unit * 0.35 * reachScale,
+      mid: unit * 1.4 * reachScale,
+      far: unit * 3.2 * reachScale,
     };
   }
 
@@ -90,7 +93,10 @@ export function initBrandNeuralHover(panel, canvas, options = {}) {
           closest: [],
           active: 0,
         };
-        point.circle = new Circle(point, 1.2 + Math.random() * 1.2);
+        point.circle = new Circle(
+          point,
+          nodeRadiusMin + Math.random() * (nodeRadiusMax - nodeRadiusMin)
+        );
         points.push(point);
       }
     }
