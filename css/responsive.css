@@ -595,7 +595,7 @@
   .why__scroll,
   .why__pin,
   .why__slider {
-    background: transparent;
+    background: #000000;
   }
 
   .proceso {

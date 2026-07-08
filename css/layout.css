@@ -1207,13 +1207,14 @@
   scroll-margin-top: var(--nav-height);
   position: relative;
   isolation: isolate;
-  background: transparent;
+  background: #000000;
 }
 
 .why__scroll {
   --why-steps: 5;
   position: relative;
   height: calc(var(--why-steps) * 100vh);
+  background: #000000;
 }
 
 .why__pin {
