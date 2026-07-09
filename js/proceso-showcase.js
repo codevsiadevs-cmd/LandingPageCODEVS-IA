@@ -1,114 +1,114 @@
 import { prefersReducedMotionGlobal } from "./scroll.js";
 
 const STEP_COUNT = 6;
+const MOBILE_MQ = window.matchMedia("(max-width: 900px)");
+
+function clamp01(x) {
+  return Math.max(0, Math.min(1, x));
+}
+
+function ease(t) {
+  return t * t * (3 - 2 * t);
+}
+
+function getShowcaseFrame(progress) {
+  const maxFrame = STEP_COUNT - 1;
+  if (!MOBILE_MQ.matches) {
+    return progress * maxFrame;
+  }
+
+  const step0Hold = 0.1;
+  if (progress <= step0Hold) {
+    return 0;
+  }
+
+  const adjusted = (progress - step0Hold) / (1 - step0Hold);
+  const leadEnd = 0.72;
+  if (adjusted <= leadEnd) {
+    return (adjusted / leadEnd) * (maxFrame - 0.35);
+  }
+
+  const tail = (adjusted - leadEnd) / (1 - leadEnd);
+  return maxFrame - 0.35 + tail * 0.35;
+}
 
 function initProcesoShowcase() {
   const section = document.getElementById("proceso");
-  const viewport = document.getElementById("proceso-steps-viewport");
-  const track = document.getElementById("proceso-steps-track");
+  const showcase = section?.querySelector("[data-proceso-showcase]");
+  const panels = showcase ? [...showcase.querySelectorAll("[data-proceso-panel]")] : [];
+  const counter = showcase?.querySelector("[data-proceso-counter]");
 
-  if (!section || !viewport || !track) return;
+  if (!section || !showcase || panels.length !== STEP_COUNT) return;
 
-  const steps = [...track.querySelectorAll(".proceso-step-item")];
-  if (steps.length !== STEP_COUNT) return;
-
-  let activeIndex = 0;
-  let lastIndex = 0;
-
-  function getPinMetrics() {
-    const rect = section.getBoundingClientRect();
+  function paint() {
     const vh = window.innerHeight;
-    const scrollRange = Math.max(section.offsetHeight - vh, 1);
-    const scrolled = Math.min(Math.max(-rect.top, 0), scrollRange);
-    const progress = scrolled / scrollRange;
-    const pinned = rect.top <= 1 && rect.bottom > vh + 1;
+    const rect = showcase.getBoundingClientRect();
+    const total = rect.height - vh;
+    const progress = clamp01(total > 0 ? -rect.top / total : 0);
+    const frame = getShowcaseFrame(progress);
 
-    return { progress, pinned };
-  }
+    section.classList.toggle("proceso--pinned", rect.top <= 1 && rect.bottom > vh + 1);
 
-  function measure() {
-    const stepPx = steps[0].getBoundingClientRect().width;
-    const gap = Number.parseFloat(getComputedStyle(track).columnGap || getComputedStyle(track).gap) || 0;
-    const stepSpan = stepPx + gap;
-    const viewportPx = viewport.clientWidth;
-    const centerOffset = (viewportPx - stepPx) / 2;
-    const edgeSlidePx = centerOffset - gap;
-    const slidePx = edgeSlidePx > 20 ? edgeSlidePx : Math.max(viewportPx * 0.14, 16);
+    if (counter) {
+      counter.textContent = String(
+        Math.max(1, Math.min(STEP_COUNT, Math.round(frame) + 1))
+      ).padStart(2, "0");
+    }
 
-    section.style.setProperty("--proceso-step-w", `${stepPx}px`);
-    section.style.setProperty("--proceso-viewport-w", `${viewportPx}px`);
+    const txMul = MOBILE_MQ.matches ? 22 : 46;
+    const tyMul = MOBILE_MQ.matches ? 24 : 38;
+    const rotMul = MOBILE_MQ.matches ? 8 : 16;
 
-    return { stepPx, stepSpan, viewportPx, slidePx, centerOffset };
-  }
+    panels.forEach((panel, i) => {
+      const d = i - frame;
+      const ad = Math.min(Math.abs(d), 1.4);
+      const dir = i % 2 === 0 ? 1 : -1;
+      const t = ease(clamp01(ad / 1.4));
 
-  function getCardLeft(i, index, centerOffset, stepSpan, slidePx) {
-    return centerOffset + (i - index) * (stepSpan + slidePx);
-  }
+      let tx = d * txMul * dir;
+      let ty = d * -tyMul * dir;
+      let rot = d * rotMul * dir;
 
-  function getVisibleRatio(cardLeft, stepPx, viewportPx) {
-    const cardRight = cardLeft + stepPx;
-    const hiddenLeft = Math.max(0, -cardLeft);
-    const hiddenRight = Math.max(0, cardRight - viewportPx);
-    const visiblePx = Math.max(0, stepPx - hiddenLeft - hiddenRight);
-    return stepPx > 0 ? visiblePx / stepPx : 0;
-  }
+      if (MOBILE_MQ.matches && Math.abs(d) < 0.65) {
+        const legibility = Math.abs(d) / 0.65;
+        tx *= legibility;
+        ty *= legibility;
+        rot *= legibility;
+      }
 
-  function getMobileTrackOffset() {
-    const raw = getComputedStyle(section).getPropertyValue("--proceso-mobile-track-offset").trim();
-    if (!raw) return 0;
-    const value = Number.parseFloat(raw);
-    if (Number.isNaN(value)) return 0;
-    return raw.endsWith("rem") ? value * Number.parseFloat(getComputedStyle(document.documentElement).fontSize) : value;
-  }
+      const scale = 1 - t * (MOBILE_MQ.matches ? 0.26 : 0.34);
+      const blur = t * 9;
+      const op = clamp01(1 - t * 1.15);
+      const z = 600 - Math.round(t * 100);
 
-  function applyTimeline(index) {
-    const { stepPx, stepSpan, viewportPx, slidePx, centerOffset } = measure();
-    const mobileOffset = getMobileTrackOffset();
-    const firstStepBoost = mobileOffset > 0 ? mobileOffset * Math.max(0, 1 - index / 0.85) : 0;
-
-    track.style.transform = `translate3d(${centerOffset - index * stepSpan + firstStepBoost}px, 0, 0)`;
-
-    steps.forEach((step, i) => {
-      const delta = i - index;
-      const x = delta * slidePx;
-      const cardLeft = getCardLeft(i, index, centerOffset, stepSpan, slidePx) + firstStepBoost;
-      const visibleRatio = getVisibleRatio(cardLeft, stepPx, viewportPx);
-
-      step.classList.toggle("is-active", Math.abs(delta) < 0.45);
-      step.classList.toggle("is-near", Math.abs(delta) >= 0.45 && Math.abs(delta) < 1.35);
-      step.style.transform = `translate3d(${x}px, 0, 0)`;
-      step.style.opacity = visibleRatio < 0.04 ? "0" : "";
+      panel.style.transform =
+        `translate(-50%,-50%) translate(${tx}vw,${ty}vh) rotate(${rot}deg) scale(${scale})`;
+      panel.style.opacity = String(op);
+      panel.style.filter = `blur(${blur}px)`;
+      panel.style.zIndex = String(z);
     });
 
-    section.dataset.scrollDir = index >= lastIndex ? "down" : "up";
-    lastIndex = index;
-  }
-
-  function updateFromScroll() {
-    const { progress, pinned } = getPinMetrics();
-    const index = progress * (STEP_COUNT - 1);
-
-    section.classList.toggle("proceso--pinned", pinned);
-
-    applyTimeline(index);
-
-    const nextActive = Math.round(index);
-    if (nextActive !== activeIndex) {
-      activeIndex = nextActive;
-      section.dataset.activeStep = String(activeIndex);
+    const activeStep = Math.round(frame);
+    if (section.dataset.activeStep !== String(activeStep)) {
+      section.dataset.activeStep = String(activeStep);
     }
   }
 
   if (prefersReducedMotionGlobal) {
-    applyTimeline(0);
+    section.classList.add("proceso--static");
+    if (counter) counter.textContent = "01";
+    panels.forEach((panel) => {
+      panel.style.transform = "";
+      panel.style.opacity = "";
+      panel.style.filter = "";
+      panel.style.zIndex = "";
+    });
     return;
   }
 
-  applyTimeline(0);
-  updateFromScroll();
-
-  window.addEventListener("scroll", updateFromScroll, { passive: true });
-  window.addEventListener("resize", updateFromScroll, { passive: true });
+  paint();
+  window.addEventListener("scroll", paint, { passive: true });
+  window.addEventListener("resize", paint, { passive: true });
 }
 
 if (document.readyState === "loading") {

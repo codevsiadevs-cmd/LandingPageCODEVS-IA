@@ -333,62 +333,59 @@
     </section>
 
     <section class="proceso" id="proceso" aria-labelledby="proceso-heading">
-      <div class="proceso__pin">
-        <div class="proceso__slider">
-          <canvas class="section-neural-canvas" id="proceso-neural-canvas" aria-hidden="true"></canvas>
-          <h2 id="proceso-heading" class="proceso__title" data-i18n="process.title">Cómo Trabajamos</h2>
+      <div class="proceso__showcase" data-proceso-showcase data-proceso-steps="6">
+        <div class="proceso__pin">
+          <div class="proceso__slider" aria-live="polite">
+            <canvas class="section-neural-canvas" id="proceso-neural-canvas" aria-hidden="true"></canvas>
 
-          <div class="proceso__stage">
-            <div class="proceso__steps-viewport" id="proceso-steps-viewport">
-              <ol class="proceso__steps-track" id="proceso-steps-track">
-                <li class="proceso-step-item">
-                  <span class="proceso-step-item__num">1</span>
-                  <div class="proceso-step-item__body">
-                    <h3 class="proceso-step-item__title" data-i18n="process.1.title">Descubrimiento</h3>
-                    <p class="proceso-step-item__desc" data-i18n="process.1.desc">Entendemos tu negocio y definimos objetivos claros</p>
-                  </div>
-                </li>
-                <li class="proceso-step-item">
-                  <span class="proceso-step-item__num">2</span>
-                  <div class="proceso-step-item__body">
-                    <h3 class="proceso-step-item__title" data-i18n="process.2.title">Diseño</h3>
-                    <p class="proceso-step-item__desc" data-i18n="process.2.desc">Arquitectura técnica y prototipo de experiencia</p>
-                  </div>
-                </li>
-                <li class="proceso-step-item">
-                  <span class="proceso-step-item__num">3</span>
-                  <div class="proceso-step-item__body">
-                    <h3 class="proceso-step-item__title" data-i18n="process.3.title">Desarrollo</h3>
-                    <p class="proceso-step-item__desc" data-i18n="process.3.desc">Código limpio, tests y entregas incrementales</p>
-                  </div>
-                </li>
-                <li class="proceso-step-item">
-                  <span class="proceso-step-item__num">4</span>
-                  <div class="proceso-step-item__body">
-                    <h3 class="proceso-step-item__title" data-i18n="process.4.title">QA &amp; Pruebas</h3>
-                    <p class="proceso-step-item__desc" data-i18n="process.4.desc">Validación rigurosa antes de cada release</p>
-                  </div>
-                </li>
-                <li class="proceso-step-item">
-                  <span class="proceso-step-item__num">5</span>
-                  <div class="proceso-step-item__body">
-                    <h3 class="proceso-step-item__title" data-i18n="process.5.title">Deploy</h3>
-                    <p class="proceso-step-item__desc" data-i18n="process.5.desc">Lanzamiento seguro con monitoreo en tiempo real</p>
-                  </div>
-                </li>
-                <li class="proceso-step-item">
-                  <span class="proceso-step-item__num">6</span>
-                  <div class="proceso-step-item__body">
-                    <h3 class="proceso-step-item__title" data-i18n="process.6.title">Soporte</h3>
-                    <p class="proceso-step-item__desc" data-i18n="process.6.desc">Acompañamiento continuo post-lanzamiento</p>
-                  </div>
-                </li>
-              </ol>
+            <div class="proceso__meta">
+              <p class="proceso__badge">
+                <span class="proceso__badge-dot" aria-hidden="true"></span>
+                <span data-i18n="process.punch.badge">Cómo trabajamos</span>
+              </p>
+              <p class="proceso__counter">
+                <span data-proceso-counter>01</span>
+                <span class="proceso__counter-total" aria-hidden="true"> / 06</span>
+              </p>
+            </div>
+
+            <h2 id="proceso-heading" class="visually-hidden" data-i18n="process.title">Cómo Trabajamos</h2>
+
+            <div class="proceso__panels">
+              <article class="proceso__panel" data-proceso-panel>
+                <p class="proceso__panel-label" data-i18n="process.step.1">PASO 01</p>
+                <h3 class="proceso__panel-title" data-i18n="process.1.title">Descubrimiento</h3>
+                <p class="proceso__panel-desc" data-i18n="process.1.desc">Entendemos tu negocio y definimos objetivos claros</p>
+              </article>
+              <article class="proceso__panel" data-proceso-panel>
+                <p class="proceso__panel-label" data-i18n="process.step.2">PASO 02</p>
+                <h3 class="proceso__panel-title" data-i18n="process.2.title">Diseño</h3>
+                <p class="proceso__panel-desc" data-i18n="process.2.desc">Arquitectura técnica y prototipo de experiencia</p>
+              </article>
+              <article class="proceso__panel" data-proceso-panel>
+                <p class="proceso__panel-label" data-i18n="process.step.3">PASO 03</p>
+                <h3 class="proceso__panel-title" data-i18n="process.3.title">Desarrollo</h3>
+                <p class="proceso__panel-desc" data-i18n="process.3.desc">Código limpio, tests y entregas incrementales</p>
+              </article>
+              <article class="proceso__panel" data-proceso-panel>
+                <p class="proceso__panel-label" data-i18n="process.step.4">PASO 04</p>
+                <h3 class="proceso__panel-title" data-i18n="process.4.title">QA &amp; Pruebas</h3>
+                <p class="proceso__panel-desc" data-i18n="process.4.desc">Validación rigurosa antes de cada release</p>
+              </article>
+              <article class="proceso__panel" data-proceso-panel>
+                <p class="proceso__panel-label" data-i18n="process.step.5">PASO 05</p>
+                <h3 class="proceso__panel-title" data-i18n="process.5.title">Deploy</h3>
+                <p class="proceso__panel-desc" data-i18n="process.5.desc">Lanzamiento seguro con monitoreo en tiempo real</p>
+              </article>
+              <article class="proceso__panel" data-proceso-panel>
+                <p class="proceso__panel-label" data-i18n="process.step.6">PASO 06</p>
+                <h3 class="proceso__panel-title" data-i18n="process.6.title">Soporte</h3>
+                <p class="proceso__panel-desc" data-i18n="process.6.desc">Acompañamiento continuo post-lanzamiento</p>
+              </article>
             </div>
 
             <div class="proceso__brain-anchor" id="proceso-brain-anchor"></div>
           </div>
-
         </div>
       </div>
     </section>

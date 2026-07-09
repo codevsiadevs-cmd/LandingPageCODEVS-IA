@@ -54,10 +54,7 @@ html[data-slide-font] .hero-intro__text {
 
 /* Cómo Trabajamos + ¿Por qué elegir? — Instrument Serif */
 html[data-slide-font] :is(
-  .proceso__title,
-  .proceso-step-item__num,
-  .proceso-step-item__title,
-  .proceso-step-item__desc,
+  .proceso__panel-title,
   .why__transition-headline,
   .why__panel-title
 ) {

@@ -488,16 +488,8 @@
     font-size: 1.1rem;
   }
 
-  .proceso__title {
-    font-size: clamp(1.75rem, 7vw, 2.35rem);
-    line-height: 1.18;
-  }
-}
-
-@media (max-width: 768px) {
-  .proceso {
-    --proceso-mobile-track-offset: 1.75rem;
-    height: calc(var(--proceso-steps) * 100svh);
+  .proceso__showcase {
+    height: calc((var(--proceso-steps) - 1) * 80svh + 115svh);
   }
 
   .proceso__pin {
@@ -505,37 +497,70 @@
     min-height: 100svh;
   }
 
+  .proceso__meta {
+    top: calc(var(--nav-height) + 1rem);
+    left: clamp(1rem, 4vw, 1.5rem);
+    right: clamp(1rem, 4vw, 1.5rem);
+  }
+
+  .proceso__badge {
+    font-size: 0.625rem;
+    letter-spacing: 0.18em;
+  }
+
+  .proceso__counter {
+    font-size: 0.75rem;
+  }
+
+  .proceso__panel {
+    width: calc(100vw - 2.5rem);
+    max-width: 100%;
+    padding-inline: 0.35rem;
+    box-sizing: border-box;
+  }
+
+  .proceso__panel-label {
+    font-size: 0.75rem;
+    margin-bottom: 1rem;
+    padding-left: 0;
+  }
+
+  .proceso__panel-title {
+    padding-left: 0;
+    max-width: 100%;
+    width: 100%;
+    box-sizing: border-box;
+    font-size: min(4.2vw, 1.28rem);
+    line-height: 1.1;
+    letter-spacing: -0.035em;
+    margin-bottom: 1rem;
+    overflow-wrap: anywhere;
+  }
+
+  .proceso__panel-desc {
+    padding-left: 0;
+    max-width: 100%;
+    font-size: clamp(0.95rem, 3.8vw, 1.15rem);
+  }
+}
+
+@media (max-width: 768px) {
   .proceso__slider {
     padding-inline: 1.15rem;
-    gap: 1.15rem;
-    touch-action: pan-y;
   }
 
-  .proceso__stage {
-    min-height: clamp(20rem, 46vh, 28rem);
+  .proceso__meta {
+    left: 1.15rem;
+    right: 1.15rem;
   }
 
-  .proceso__steps-track {
-    gap: 1.25rem;
+  .proceso__panel-title {
+    font-size: min(3.95vw, 1.18rem);
+    line-height: 1.12;
   }
 
-  .proceso-step-item {
-    flex: 0 0 clamp(19rem, 82vw, 24rem);
-    width: clamp(19rem, 82vw, 24rem);
-  }
-
-  .proceso-step-item__num {
-    font-size: clamp(1.85rem, 8vw, 2.5rem);
-  }
-
-  .proceso-step-item__title {
-    font-size: clamp(1.3rem, 5.5vw, 1.75rem);
-    line-height: 1.22;
-  }
-
-  .proceso-step-item__desc {
-    font-size: clamp(1.05rem, 4.2vw, 1.2rem);
-    line-height: 1.45;
+  .proceso__panel-desc {
+    font-size: clamp(0.9rem, 4vw, 1.05rem);
   }
 
   .proceso__brain-anchor {
@@ -617,8 +642,8 @@
     z-index: 3;
   }
 
-  .proceso {
-    height: calc(var(--proceso-steps) * 100svh);
+  .proceso__showcase {
+    height: calc((var(--proceso-steps) - 1) * 80svh + 115svh);
   }
 
   .proceso__pin {
