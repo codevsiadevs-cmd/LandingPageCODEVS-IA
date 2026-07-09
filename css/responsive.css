@@ -636,7 +636,7 @@
   }
 
   .why__showcase {
-    height: calc((var(--why-steps) - 1) * 80svh + 100svh);
+    height: calc((var(--why-steps) - 1) * 80svh + 115svh);
   }
 
   .why__pin {
@@ -660,17 +660,24 @@
   }
 
   .why__panel {
-    width: min(94vw, 100%);
-  }
-
-  .why__panel-title {
-    font-size: clamp(1.85rem, 8.5vw, 3.25rem);
-    max-width: none;
+    width: calc(100vw - 2.5rem);
+    max-width: 100%;
+    padding-inline: 0.35rem;
+    box-sizing: border-box;
   }
 
   .why__panel-label {
     font-size: 0.75rem;
     margin-bottom: 1rem;
+    padding-left: 0;
+  }
+
+  .why__panel-title {
+    padding-left: 0;
+    max-width: 100%;
+    font-size: clamp(1.2rem, 5.6vw, 1.95rem);
+    line-height: 1.06;
+    letter-spacing: -0.025em;
   }
 
   .why__transition-headline {
@@ -690,7 +697,8 @@
   }
 
   .why__panel-title {
-    font-size: clamp(1.65rem, 9vw, 2.75rem);
+    font-size: clamp(1.1rem, 5.2vw, 1.8rem);
+    line-height: 1.08;
   }
 }
 

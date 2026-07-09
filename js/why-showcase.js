@@ -1,7 +1,13 @@
 import { prefersReducedMotionGlobal } from "./scroll.js";
 
-const ZOOM_DEPTH = 3.4;
+const DESKTOP_ZOOM_DEPTH = 3.4;
+const MOBILE_ZOOM_DEPTH = 2.75;
+const MOBILE_ZOOM_MQ = window.matchMedia("(max-width: 900px)");
 const STEP_COUNT = 5;
+
+function getZoomDepth() {
+  return MOBILE_ZOOM_MQ.matches ? MOBILE_ZOOM_DEPTH : DESKTOP_ZOOM_DEPTH;
+}
 
 function clamp01(x) {
   return Math.max(0, Math.min(1, x));
@@ -9,6 +15,26 @@ function clamp01(x) {
 
 function smoothstep(t) {
   return t * t * (3 - 2 * t);
+}
+
+function getShowcaseFrame(progress) {
+  const maxFrame = STEP_COUNT - 1;
+  if (!MOBILE_ZOOM_MQ.matches) {
+    return progress * maxFrame;
+  }
+
+  const leadEnd = 0.7;
+  if (progress <= leadEnd) {
+    return (progress / leadEnd) * (maxFrame - 0.35);
+  }
+
+  const tail = (progress - leadEnd) / (1 - leadEnd);
+  return maxFrame - 0.35 + tail * 0.35;
+}
+
+function getPanelBlur(absDelta) {
+  const blurScale = MOBILE_ZOOM_MQ.matches ? 5 : 8;
+  return Math.min(16, absDelta * blurScale);
 }
 
 function initWhyShowcase() {
@@ -49,7 +75,7 @@ function initWhyShowcase() {
     const rect = showcase.getBoundingClientRect();
     const total = rect.height - vh;
     const progress = clamp01(total > 0 ? -rect.top / total : 0);
-    const frame = progress * (STEP_COUNT - 1);
+    const frame = getShowcaseFrame(progress);
 
     section.classList.toggle("why--pinned", rect.top <= 1 && rect.bottom > vh + 1);
 
@@ -62,9 +88,9 @@ function initWhyShowcase() {
     panels.forEach((panel, i) => {
       const delta = i - frame;
       const absDelta = Math.abs(delta);
-      const scale = Math.pow(ZOOM_DEPTH, -delta);
+      const scale = Math.pow(getZoomDepth(), -delta);
       const opacity = delta >= 0 ? clamp01(1 - delta * 0.7) : clamp01(1 + delta * 3);
-      const blur = Math.min(16, absDelta * 8);
+      const blur = getPanelBlur(absDelta);
       const z = 1000 - Math.round(absDelta * 12);
 
       panel.style.transform = `translate(-50%, -50%) scale(${scale})`;
@@ -76,14 +102,6 @@ function initWhyShowcase() {
     const activeItem = Math.round(frame);
     if (section.dataset.activeItem !== String(activeItem)) {
       section.dataset.activeItem = String(activeItem);
-    }
-
-    if (slider) {
-      const exitStart = 0.84;
-      const exitFade = progress > exitStart
-        ? clamp01(1 - (progress - exitStart) / (1 - exitStart))
-        : 1;
-      slider.style.opacity = String(exitFade);
     }
   }
 
