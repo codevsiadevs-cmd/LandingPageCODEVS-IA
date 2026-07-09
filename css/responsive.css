@@ -602,63 +602,19 @@
     background: #ffffff;
   }
 
-  .why,
-  .why__scroll,
+  .why__transition,
+  .why__transition-pin {
+    background: #ffffff;
+  }
+
+  .why__showcase,
   .why__pin,
-  .why__slider,
-  .why__stage {
-    background-color: #000000;
+  .why__slider {
+    background: #000000;
   }
 
   .why {
     z-index: 3;
-  }
-
-  .why__slider {
-    display: flex;
-    flex-direction: column;
-    gap: clamp(1.15rem, 3vh, 1.75rem);
-    align-items: stretch;
-    justify-content: flex-start;
-    touch-action: pan-y;
-  }
-
-  .why__title {
-    position: relative;
-    z-index: 3;
-    flex-shrink: 0;
-    width: 100%;
-    margin: 0;
-    padding: 0;
-    padding-inline: clamp(1rem, 4vw, 2rem);
-    max-width: none;
-    font-size: clamp(1.2rem, 5.2vw, 2.35rem);
-    line-height: 1.18;
-    text-align: center;
-    white-space: normal;
-  }
-
-  .why__stage {
-    position: relative;
-    z-index: 2;
-    flex: 1;
-    min-height: clamp(18rem, 52vh, 28rem);
-    height: auto;
-    margin-top: 0;
-    margin-bottom: 0;
-    align-items: center;
-    justify-content: center;
-    padding-right: clamp(0.5rem, 2vw, 1rem);
-    padding-left: clamp(0.5rem, 2vw, 1rem);
-  }
-
-  .why__scroll {
-    height: calc(var(--why-steps) * 100svh);
-  }
-
-  .why__pin {
-    height: 100svh;
-    min-height: 100svh;
   }
 
   .proceso {
@@ -670,47 +626,17 @@
     min-height: 100svh;
   }
 
-  .why__list-viewport {
-    width: 100%;
-    max-width: 100%;
-    margin-left: auto;
-    margin-right: auto;
-    height: 100%;
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
+  .why__transition {
+    height: 180svh;
   }
 
-  .why__list-track {
-    align-items: center;
-    width: 100%;
-    max-width: 100%;
-    margin-inline: auto;
+  .why__transition-pin {
+    height: 100svh;
+    min-height: 100svh;
   }
 
-  .why__list-item {
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    max-width: 100%;
-  }
-
-  .why__list-text {
-    font-size: clamp(1.35rem, 6vw, 2.35rem);
-    text-align: center;
-    width: 100%;
-    max-width: 100%;
-    white-space: normal;
-  }
-}
-
-@media (max-width: 768px) {
-  .why {
-    --why-mobile-track-offset: 1.75rem;
-  }
-
-  .why__scroll {
-    height: calc(var(--why-steps) * 100svh);
+  .why__showcase {
+    height: calc((var(--why-steps) - 1) * 80svh + 100svh);
   }
 
   .why__pin {
@@ -718,55 +644,53 @@
     min-height: 100svh;
   }
 
+  .why__meta {
+    top: calc(var(--nav-height) + 1rem);
+    left: clamp(1rem, 4vw, 1.5rem);
+    right: clamp(1rem, 4vw, 1.5rem);
+  }
+
+  .why__badge {
+    font-size: 0.625rem;
+    letter-spacing: 0.18em;
+  }
+
+  .why__counter {
+    font-size: 0.75rem;
+  }
+
+  .why__panel {
+    width: min(94vw, 100%);
+  }
+
+  .why__panel-title {
+    font-size: clamp(1.85rem, 8.5vw, 3.25rem);
+    max-width: none;
+  }
+
+  .why__panel-label {
+    font-size: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .why__transition-headline {
+    font-size: clamp(1.45rem, 5.8vw, 2.65rem);
+    line-height: 1.08;
+  }
+}
+
+@media (max-width: 768px) {
   .why__slider {
     padding-inline: 1.15rem;
-    gap: 1.15rem;
   }
 
-  .why__title {
-    z-index: 3;
+  .why__meta {
+    left: 1.15rem;
+    right: 1.15rem;
   }
 
-  .why__stage {
-    min-height: clamp(16rem, 46vh, 26rem);
-    margin-top: 0;
-    margin-bottom: 0;
-    padding-right: clamp(0.5rem, 2vw, 1rem);
-    padding-left: clamp(0.5rem, 2vw, 1rem);
-  }
-
-  .why__list-viewport {
-    width: 100%;
-    max-width: 100%;
-    margin-left: auto;
-    margin-right: auto;
-    height: 100%;
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
-  }
-
-  .why__list-text {
-    font-size: clamp(1.3rem, 6.5vw, 2.2rem);
-    text-align: center;
-    width: 100%;
-    max-width: 100%;
-    white-space: normal;
-  }
-
-  .why__list-track {
-    gap: 1.25rem;
-    align-items: center;
-    width: 100%;
-    max-width: 100%;
-    margin-inline: auto;
-  }
-
-  .why__list-item {
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    max-width: 100%;
+  .why__panel-title {
+    font-size: clamp(1.65rem, 9vw, 2.75rem);
   }
 }
 

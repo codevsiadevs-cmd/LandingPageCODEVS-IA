@@ -58,8 +58,8 @@ html[data-slide-font] :is(
   .proceso-step-item__num,
   .proceso-step-item__title,
   .proceso-step-item__desc,
-  .why__title,
-  .why__list-text
+  .why__transition-headline,
+  .why__panel-title
 ) {
   font-family: "Instrument Serif", Georgia, "Times New Roman", serif !important;
   font-weight: 400 !important;

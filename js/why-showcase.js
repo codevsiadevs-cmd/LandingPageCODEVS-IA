@@ -1,115 +1,111 @@
 import { prefersReducedMotionGlobal } from "./scroll.js";
 
+const ZOOM_DEPTH = 3.4;
 const STEP_COUNT = 5;
+
+function clamp01(x) {
+  return Math.max(0, Math.min(1, x));
+}
+
+function smoothstep(t) {
+  return t * t * (3 - 2 * t);
+}
 
 function initWhyShowcase() {
   const section = document.getElementById("nosotros");
-  const scrollWrap = section?.querySelector(".why__scroll");
-  const viewport = document.getElementById("why-viewport");
-  const track = document.getElementById("why-track");
+  if (!section) return;
 
-  if (!section || !scrollWrap || !viewport || !track) return;
+  const transitionEl = section.querySelector("[data-why-transition]");
+  const iris = section.querySelector("[data-why-iris]");
+  const transitionCopy = section.querySelector(".why__transition-copy");
+  const transitionPin = section.querySelector(".why__transition-pin");
+  const showcase = section.querySelector("[data-why-showcase]");
+  const slider = showcase?.querySelector(".why__slider");
+  const panels = showcase ? [...showcase.querySelectorAll("[data-why-panel]")] : [];
+  const counter = showcase?.querySelector("[data-why-counter]");
 
-  const items = [...track.querySelectorAll("[data-why-item]")];
-  if (items.length !== STEP_COUNT) return;
+  if (!showcase || panels.length !== STEP_COUNT) return;
 
-  let activeIndex = 0;
-  let lastIndex = 0;
-
-  function getPinMetrics() {
-    const rect = scrollWrap.getBoundingClientRect();
+  function paint() {
     const vh = window.innerHeight;
-    const scrollRange = Math.max(scrollWrap.offsetHeight - vh, 1);
-    const scrolled = Math.min(Math.max(-rect.top, 0), scrollRange);
-    const progress = scrolled / scrollRange;
-    const pinned = rect.top <= 1 && rect.bottom > vh + 1;
 
-    return { progress, pinned };
-  }
+    if (transitionEl && iris) {
+      const tr = transitionEl.getBoundingClientRect();
+      const ttotal = tr.height - vh;
+      const tp = clamp01(ttotal > 0 ? -tr.top / ttotal : 0);
+      const irisProgress = smoothstep(tp);
+      iris.style.transform = `scale(${irisProgress})`;
 
-  function measure() {
-    const itemPx = items[0].getBoundingClientRect().height;
-    const gap = Number.parseFloat(getComputedStyle(track).rowGap || getComputedStyle(track).gap) || 0;
-    const itemSpan = itemPx + gap;
-    const viewportPx = viewport.clientHeight;
-    const centerOffset = (viewportPx - itemPx) / 2;
-    const edgeSlidePx = centerOffset - gap;
-    const slidePx = edgeSlidePx > 20 ? edgeSlidePx : Math.max(viewportPx * 0.14, 16);
+      if (transitionCopy) {
+        const headlineFade = tp <= 0.42 ? 1 : clamp01(1 - (tp - 0.42) / 0.38);
+        transitionCopy.style.opacity = String(headlineFade);
+      }
 
-    section.style.setProperty("--why-item-h", `${itemPx}px`);
-    section.style.setProperty("--why-viewport-h", `${viewportPx}px`);
+      if (transitionPin) {
+        transitionPin.style.setProperty("--why-entry-fade", String(Math.min(tp * 2.2, 1)));
+      }
+    }
 
-    return { itemPx, itemSpan, viewportPx, slidePx, centerOffset };
-  }
+    const rect = showcase.getBoundingClientRect();
+    const total = rect.height - vh;
+    const progress = clamp01(total > 0 ? -rect.top / total : 0);
+    const frame = progress * (STEP_COUNT - 1);
 
-  function getCardTop(i, index, centerOffset, itemSpan, slidePx) {
-    return centerOffset + (i - index) * (itemSpan + slidePx);
-  }
+    section.classList.toggle("why--pinned", rect.top <= 1 && rect.bottom > vh + 1);
 
-  function getVisibleRatio(cardTop, itemPx, viewportPx) {
-    const cardBottom = cardTop + itemPx;
-    const hiddenTop = Math.max(0, -cardTop);
-    const hiddenBottom = Math.max(0, cardBottom - viewportPx);
-    const visiblePx = Math.max(0, itemPx - hiddenTop - hiddenBottom);
-    return itemPx > 0 ? visiblePx / itemPx : 0;
-  }
+    if (counter) {
+      counter.textContent = String(
+        Math.max(1, Math.min(STEP_COUNT, Math.round(frame) + 1))
+      ).padStart(2, "0");
+    }
 
-  function getMobileTrackOffset() {
-    const raw = getComputedStyle(section).getPropertyValue("--why-mobile-track-offset").trim();
-    if (!raw) return 0;
-    const value = Number.parseFloat(raw);
-    if (Number.isNaN(value)) return 0;
-    return raw.endsWith("rem") ? value * Number.parseFloat(getComputedStyle(document.documentElement).fontSize) : value;
-  }
+    panels.forEach((panel, i) => {
+      const delta = i - frame;
+      const absDelta = Math.abs(delta);
+      const scale = Math.pow(ZOOM_DEPTH, -delta);
+      const opacity = delta >= 0 ? clamp01(1 - delta * 0.7) : clamp01(1 + delta * 3);
+      const blur = Math.min(16, absDelta * 8);
+      const z = 1000 - Math.round(absDelta * 12);
 
-  function applyTimeline(index) {
-    const { itemPx, itemSpan, viewportPx, slidePx, centerOffset } = measure();
-    const mobileOffset = getMobileTrackOffset();
-    const firstItemBoost = mobileOffset > 0 ? mobileOffset * Math.max(0, 1 - index / 0.85) : 0;
-
-    track.style.transform = `translate3d(0, ${centerOffset - index * itemSpan + firstItemBoost}px, 0)`;
-
-    items.forEach((item, i) => {
-      const delta = i - index;
-      const y = delta * slidePx;
-      const cardTop = getCardTop(i, index, centerOffset, itemSpan, slidePx) + firstItemBoost;
-      const visibleRatio = getVisibleRatio(cardTop, itemPx, viewportPx);
-
-      item.classList.toggle("is-active", Math.abs(delta) < 0.45);
-      item.classList.toggle("is-near", Math.abs(delta) >= 0.45 && Math.abs(delta) < 1.35);
-      item.style.transform = `translate3d(0, ${y}px, 0)`;
-      item.style.opacity = visibleRatio < 0.04 ? "0" : "";
+      panel.style.transform = `translate(-50%, -50%) scale(${scale})`;
+      panel.style.opacity = String(opacity);
+      panel.style.filter = `blur(${blur}px)`;
+      panel.style.zIndex = String(z);
     });
 
-    section.dataset.scrollDir = index >= lastIndex ? "down" : "up";
-    lastIndex = index;
-  }
+    const activeItem = Math.round(frame);
+    if (section.dataset.activeItem !== String(activeItem)) {
+      section.dataset.activeItem = String(activeItem);
+    }
 
-  function updateFromScroll() {
-    const { progress, pinned } = getPinMetrics();
-    const index = progress * (STEP_COUNT - 1);
-
-    section.classList.toggle("why--pinned", pinned);
-    applyTimeline(index);
-
-    const nextActive = Math.round(index);
-    if (nextActive !== activeIndex) {
-      activeIndex = nextActive;
-      section.dataset.activeItem = String(activeIndex);
+    if (slider) {
+      const exitStart = 0.84;
+      const exitFade = progress > exitStart
+        ? clamp01(1 - (progress - exitStart) / (1 - exitStart))
+        : 1;
+      slider.style.opacity = String(exitFade);
     }
   }
 
   if (prefersReducedMotionGlobal) {
     section.classList.add("why--static");
-    applyTimeline(0);
+    if (iris) iris.style.transform = "scale(1)";
+    if (transitionCopy) transitionCopy.style.opacity = "1";
+    if (transitionPin) transitionPin.style.setProperty("--why-entry-fade", "0");
+    if (slider) slider.style.opacity = "1";
+    if (counter) counter.textContent = "01";
+    panels.forEach((panel) => {
+      panel.style.transform = "";
+      panel.style.opacity = "";
+      panel.style.filter = "";
+      panel.style.zIndex = "";
+    });
     return;
   }
 
-  applyTimeline(0);
-  updateFromScroll();
-
-  window.addEventListener("scroll", updateFromScroll, { passive: true });
-  window.addEventListener("resize", updateFromScroll, { passive: true });
+  paint();
+  window.addEventListener("scroll", paint, { passive: true });
+  window.addEventListener("resize", paint, { passive: true });
 }
 
 if (document.readyState === "loading") {
