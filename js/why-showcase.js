@@ -103,6 +103,17 @@ function initWhyShowcase() {
     if (section.dataset.activeItem !== String(activeItem)) {
       section.dataset.activeItem = String(activeItem);
     }
+
+    const onLastSlide = frame >= STEP_COUNT - 1.02;
+    const exitStart = MOBILE_ZOOM_MQ.matches ? 0.87 : 0.93;
+    const exitFade = onLastSlide && progress > exitStart
+      ? smoothstep((progress - exitStart) / (1 - exitStart))
+      : 0;
+    const fadeValue = String(exitFade);
+
+    section.classList.toggle("why--exiting", exitFade > 0.01);
+    section.style.setProperty("--why-exit-fade", fadeValue);
+    document.documentElement.style.setProperty("--why-exit-fade", fadeValue);
   }
 
   if (prefersReducedMotionGlobal) {
@@ -111,6 +122,9 @@ function initWhyShowcase() {
     if (transitionCopy) transitionCopy.style.opacity = "1";
     if (transitionPin) transitionPin.style.setProperty("--why-entry-fade", "0");
     if (slider) slider.style.opacity = "1";
+    section.classList.remove("why--exiting");
+    section.style.setProperty("--why-exit-fade", "0");
+    document.documentElement.style.setProperty("--why-exit-fade", "0");
     if (counter) counter.textContent = "01";
     panels.forEach((panel) => {
       panel.style.transform = "";

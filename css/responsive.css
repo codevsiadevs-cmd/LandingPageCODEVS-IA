@@ -638,6 +638,21 @@
     background: #000000;
   }
 
+  .why--exiting .why__showcase,
+  .why--exiting .why__pin {
+    background: transparent;
+  }
+
+  .why--exiting .why__slider {
+    background: linear-gradient(
+      180deg,
+      #000000 0%,
+      #000000 82%,
+      rgba(0, 0, 0, calc(1 - var(--why-exit-fade, 0) * 0.88)) 94%,
+      rgba(0, 0, 0, calc(1 - var(--why-exit-fade, 0))) 100%
+    );
+  }
+
   .why {
     z-index: 3;
   }
