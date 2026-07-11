@@ -699,7 +699,20 @@ function animate(now) {
 
     applyNavBrainRotation({ scrollRot, scrollBlend });
     navRenderer?.render(scene, camera);
-    footerRenderer?.render(scene, camera);
+
+    /* Footer: cerebro estático (sin scroll ni mouse). */
+    if (footerRenderer) {
+      const spinY = spinGroup.rotation.y;
+      const tiltX = tiltGroup.rotation.x;
+      const tiltY = tiltGroup.rotation.y;
+      spinGroup.rotation.y = NAV_BRAIN_BASE_ROT_Y;
+      tiltGroup.rotation.x = 0;
+      tiltGroup.rotation.y = 0;
+      footerRenderer.render(scene, camera);
+      spinGroup.rotation.y = spinY;
+      tiltGroup.rotation.x = tiltX;
+      tiltGroup.rotation.y = tiltY;
+    }
   }
 
   if (!prefersReducedMotionGlobal) {

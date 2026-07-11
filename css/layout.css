@@ -1904,10 +1904,3 @@ main > section:not(.hero) {
   align-items: center;
   gap: 0.45rem;
 }
-
-.footer__made-leaf {
-  width: 1.35rem;
-  height: auto;
-  display: block;
-  flex-shrink: 0;
-}
