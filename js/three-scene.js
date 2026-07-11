@@ -107,7 +107,7 @@ function syncHeroBrainWithScroll() {
 
   heroWrap.style.removeProperty("opacity");
 
-  /* Interacción al inicio (desktop y móvil); en móvil el cerebro sigue detrás del texto. */
+  /* Interacción al inicio; el cerebro permanece detrás del texto (desktop y móvil). */
   const interactive = latestScrollY < vh * 0.72;
   heroWrap.classList.toggle("hero__canvas-wrap--interactive", interactive);
 }

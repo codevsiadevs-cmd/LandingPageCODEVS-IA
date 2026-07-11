@@ -384,7 +384,6 @@
     height: min(580px, 97vw);
     transform: translate(-50%, -50%);
     opacity: 1;
-    /* Detrás del contenido (main z-index 5), pero interactivo vía pass-through */
     z-index: 3;
     mask-image: radial-gradient(
       ellipse 72% 68% at 50% 50%,
@@ -412,15 +411,6 @@
     pointer-events: auto;
     touch-action: pan-y;
     cursor: grab;
-  }
-
-  /* El hero deja pasar el toque al cerebro; el resto de secciones sí capturan. */
-  main {
-    pointer-events: none;
-  }
-
-  main > section:not(.hero) {
-    pointer-events: auto;
   }
   .hero__keyword {
     font-size: clamp(0.95rem, 4.2vw, 1.25rem);

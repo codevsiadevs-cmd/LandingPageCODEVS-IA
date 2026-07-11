@@ -447,9 +447,9 @@
 }
 
 .hero__canvas-wrap {
-  /* Fijo en viewport: no se mueve con el scroll */
+  /* Fijo detrás del contenido (main z-index 5); interactivo vía pass-through */
   position: fixed;
-  z-index: 4;
+  z-index: 3;
   left: var(--brain-scroll-x, 73%);
   right: auto;
   top: var(--brain-scroll-y, 50vh);
@@ -475,13 +475,13 @@
   );
 }
 
-/* Al inicio, por encima de main para poder interactuar */
+/* Sigue detrás del texto; el canvas recibe eventos con pass-through del hero */
 .hero__canvas-wrap.hero__canvas-wrap--interactive {
-  z-index: 6;
+  z-index: 3;
 }
 
 .hero__canvas-wrap.hero__canvas-wrap--proceso {
-  z-index: 4;
+  z-index: 3;
   width: min(1320px, 72vw);
   height: min(1320px, 72vw);
   --brain-scale: 1;
@@ -502,6 +502,15 @@
 .hero__canvas-wrap--interactive canvas,
 .hero__canvas-wrap--interactive spline-viewer,
 .hero__canvas-wrap--interactive .hero__brain-canvas {
+  pointer-events: auto;
+}
+
+/* El hero deja pasar el clic/toque al cerebro; el resto de secciones capturan. */
+main {
+  pointer-events: none;
+}
+
+main > section:not(.hero) {
   pointer-events: auto;
 }
 
