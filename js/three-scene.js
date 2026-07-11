@@ -71,6 +71,10 @@ if (hasBrainScene && typeof ResizeObserver !== "undefined") {
 }
 window.addEventListener("resize", refreshWrapRects, { passive: true });
 
+const techSectionEl = document.getElementById("tecnologias");
+const whySectionEl = document.getElementById("nosotros");
+const contactSectionEl = document.getElementById("contacto");
+
 function syncHeroBrainWithScroll() {
   if (!heroWrap) return;
   const isMobile = window.matchMedia("(max-width: 768px)").matches;
@@ -79,9 +83,28 @@ function syncHeroBrainWithScroll() {
   heroWrap.classList.remove("hero__canvas-wrap--proceso");
   wasInProcesoBrain = false;
 
-  /* Posición fija: el cerebro no sube ni baja con el scroll. */
-  heroWrap.style.setProperty("--brain-scroll-x", isMobile ? "50%" : "73%");
+  /* Y fijo en el centro vertical del viewport. */
   heroWrap.style.setProperty("--brain-scroll-y", isMobile ? "56vh" : "50vh");
+
+  if (isMobile) {
+    heroWrap.style.setProperty("--brain-scroll-x", "50%");
+  } else {
+    /* X: desde el stack hasta salir del slider de Por qué CODEVS IA. */
+    const stackStart = techSectionEl
+      ? Math.max(techSectionEl.getBoundingClientRect().top + latestScrollY, 0)
+      : vh;
+    const centerDoneAt = contactSectionEl
+      ? Math.max(contactSectionEl.getBoundingClientRect().top + latestScrollY - vh * 0.15, stackStart + 1)
+      : whySectionEl
+        ? Math.max(whySectionEl.getBoundingClientRect().bottom + latestScrollY - vh, stackStart + 1)
+        : Math.max(document.documentElement.scrollHeight - vh, stackStart + 1);
+    const range = Math.max(centerDoneAt - stackStart, 1);
+    const raw = Math.min(Math.max((latestScrollY - stackStart) / range, 0), 1);
+    const eased = raw * raw * (3 - 2 * raw);
+    const xPercent = raw >= 0.98 ? 50 : 73 + (50 - 73) * eased;
+    heroWrap.style.setProperty("--brain-scroll-x", `${xPercent}%`);
+  }
+
   heroWrap.style.removeProperty("opacity");
 
   /* Interacción solo al inicio (hero); luego el contenido queda por encima. */
