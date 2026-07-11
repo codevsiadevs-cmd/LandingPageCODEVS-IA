@@ -582,8 +582,7 @@
   }
 
   .proceso__nav--next {
-    /* Sobre el borde derecho de la tarjeta activa (peek a la derecha) */
-    right: calc(100vw - var(--proceso-card-width));
+    right: 0;
   }
 }
 
