@@ -1037,7 +1037,7 @@ main > section:not(.hero) {
 .proceso {
   --proceso-card-w: clamp(15.5rem, 26vw, 21.5rem);
   --proceso-card-h: calc(var(--proceso-card-w) * 0.63);
-  --proceso-steps: 7;
+  --proceso-steps: 6;
   scroll-margin-top: calc(var(--nav-height) + 1rem);
   position: relative;
   height: calc((var(--proceso-steps) - 1) * 75vh + 100vh);
@@ -1126,8 +1126,8 @@ main > section:not(.hero) {
 
 .proceso__cards {
   position: relative;
-  height: min(78%, 34rem);
-  min-height: 22rem;
+  height: min(92%, 44rem);
+  min-height: 28rem;
   width: 100%;
   overflow: visible;
 }
@@ -1136,12 +1136,12 @@ main > section:not(.hero) {
   position: absolute;
   inset: 0;
   perspective: 1400px;
-  perspective-origin: 55% 45%;
+  perspective-origin: 50% 50%;
   outline: none;
   touch-action: pan-y;
   user-select: none;
   -webkit-user-select: none;
-  overflow: visible;
+  overflow: hidden;
 }
 
 .proceso__watermark {
@@ -1161,20 +1161,13 @@ main > section:not(.hero) {
 .proceso__stack {
   position: absolute;
   inset: 0;
+  transform: translateX(-10%);
   transform-style: preserve-3d;
   display: grid;
   place-items: center;
 }
 
 .proceso__card {
-  --slot-x: 0px;
-  --slot-y: 0px;
-  --slot-z: 0px;
-  --slot-rx: 0deg;
-  --slot-ry: 0deg;
-  --slot-rz: 0deg;
-  --slot-opacity: 1;
-  --slot-scale: 1;
   position: absolute;
   width: var(--proceso-card-w);
   height: var(--proceso-card-h);
@@ -1182,16 +1175,8 @@ main > section:not(.hero) {
   border: none;
   background: transparent;
   transform-style: preserve-3d;
-  transform:
-    translate3d(var(--slot-x), var(--slot-y), var(--slot-z))
-    rotateX(var(--slot-rx))
-    rotateY(var(--slot-ry))
-    rotateZ(var(--slot-rz))
-    scale(var(--slot-scale));
-  opacity: var(--slot-opacity);
-  transition:
-    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1),
-    opacity 0.45s ease;
+  transform-origin: center center;
+  will-change: transform, opacity;
   cursor: pointer;
   z-index: 1;
 }
@@ -1382,91 +1367,6 @@ main > section:not(.hero) {
   filter: blur(12px);
   pointer-events: none;
   opacity: 0.85;
-}
-
-/* Slots verticales: entran arriba, frente al centro, salen abajo */
-.proceso__card[data-slot="0"] {
-  --slot-x: 4%;
-  --slot-y: 0%;
-  --slot-z: 80px;
-  --slot-rx: 6deg;
-  --slot-ry: -12deg;
-  --slot-rz: 1deg;
-  --slot-scale: 1.06;
-  --slot-opacity: 1;
-  z-index: 8;
-}
-
-.proceso__card[data-slot="1"] {
-  --slot-x: 8%;
-  --slot-y: 28%;
-  --slot-z: -20px;
-  --slot-rx: 28deg;
-  --slot-ry: -8deg;
-  --slot-rz: 3deg;
-  --slot-scale: 0.94;
-  --slot-opacity: 0.88;
-  z-index: 5;
-}
-
-.proceso__card[data-slot="2"] {
-  --slot-x: 10%;
-  --slot-y: 48%;
-  --slot-z: -90px;
-  --slot-rx: 56deg;
-  --slot-ry: -4deg;
-  --slot-rz: 2deg;
-  --slot-scale: 0.86;
-  --slot-opacity: 0.62;
-  z-index: 3;
-}
-
-.proceso__card[data-slot="3"] {
-  --slot-x: 6%;
-  --slot-y: 64%;
-  --slot-z: -160px;
-  --slot-rx: 72deg;
-  --slot-ry: 0deg;
-  --slot-rz: 0deg;
-  --slot-scale: 0.78;
-  --slot-opacity: 0.28;
-  z-index: 1;
-}
-
-.proceso__card[data-slot="4"] {
-  --slot-x: -2%;
-  --slot-y: -64%;
-  --slot-z: -180px;
-  --slot-rx: -55deg;
-  --slot-ry: 8deg;
-  --slot-rz: -4deg;
-  --slot-scale: 0.76;
-  --slot-opacity: 0.22;
-  z-index: 1;
-}
-
-.proceso__card[data-slot="5"] {
-  --slot-x: -4%;
-  --slot-y: -46%;
-  --slot-z: -110px;
-  --slot-rx: -42deg;
-  --slot-ry: 14deg;
-  --slot-rz: -6deg;
-  --slot-scale: 0.84;
-  --slot-opacity: 0.55;
-  z-index: 2;
-}
-
-.proceso__card[data-slot="6"] {
-  --slot-x: -2%;
-  --slot-y: -26%;
-  --slot-z: -40px;
-  --slot-rx: -18deg;
-  --slot-ry: 16deg;
-  --slot-rz: -4deg;
-  --slot-scale: 0.93;
-  --slot-opacity: 0.82;
-  z-index: 4;
 }
 
 .proceso__nav {

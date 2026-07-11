@@ -1,10 +1,12 @@
 /**
- * Stack 3D de Cómo Trabajamos impulsado por scroll vertical.
- * Las tarjetas pasan una a una: entran arriba, frente al centro, salen abajo.
+ * Stack vertical de Cómo Trabajamos impulsado por scroll.
+ * Las tarjetas se extienden arriba/abajo y avanzan una a una al scrollear.
  */
 import { prefersReducedMotionGlobal } from "./scroll.js";
 
-const SLOT_COUNT = 7;
+function clamp(value, min, max) {
+  return Math.min(max, Math.max(min, value));
+}
 
 function initProcesoCards() {
   const root = document.getElementById("proceso");
@@ -29,6 +31,7 @@ function initProcesoCards() {
   let lastAnnounced = -1;
   let scrollingProgrammatically = false;
   let scrollUnlockTimer = 0;
+  let raf = 0;
 
   function keepVideoPlaying() {
     if (!mainVideo) return;
@@ -87,31 +90,67 @@ function initProcesoCards() {
     }, 140);
   }
 
-  function applySlots() {
-    cards.forEach((card, index) => {
-      const slot = (index - activeIndex + total) % total;
-      const boundedSlot = Math.min(slot, SLOT_COUNT - 1);
-      card.dataset.slot = String(boundedSlot);
-      card.classList.toggle("is-front", index === activeIndex);
-      card.setAttribute("aria-hidden", index === activeIndex ? "false" : "true");
-      card.tabIndex = index === activeIndex ? 0 : -1;
-    });
-    syncLead();
-    announce();
-    keepVideoPlaying();
-  }
-
   function getScrollMetrics() {
     const rect = root.getBoundingClientRect();
     const totalScroll = Math.max(root.offsetHeight - window.innerHeight, 1);
-    const scrolled = Math.min(Math.max(-rect.top, 0), totalScroll);
+    const scrolled = clamp(-rect.top, 0, totalScroll);
     return { totalScroll, scrolled, progress: scrolled / totalScroll };
   }
 
-  function indexFromScroll() {
+  function getLayoutMetrics() {
+    const isMobile = window.matchMedia("(max-width: 768px)").matches;
+    const cardH = cards[0]?.offsetHeight || 180;
+    return {
+      /* Separación vertical amplia entre tarjetas */
+      spacing: cardH * (isMobile ? 1.05 : 1.2),
+      tilt: isMobile ? 10 : 14,
+      depth: isMobile ? 28 : 36,
+    };
+  }
+
+  function paint() {
     const { progress } = getScrollMetrics();
-    if (total <= 1) return 0;
-    return Math.min(total - 1, Math.max(0, Math.round(progress * (total - 1))));
+    const floatIndex = progress * Math.max(total - 1, 0);
+    const { spacing, tilt, depth } = getLayoutMetrics();
+
+    cards.forEach((card, index) => {
+      const offset = index - floatIndex;
+      const abs = Math.abs(offset);
+      const y = offset * spacing;
+      const rx = clamp(offset * tilt, -42, 42);
+      const z = -abs * depth;
+      const scale = clamp(1.05 - abs * 0.07, 0.78, 1.08);
+      const x = offset * (abs < 0.15 ? 0 : 6);
+
+      card.style.transform =
+        `translate3d(${x}px, ${y}px, ${z}px) rotateX(${rx}deg) rotateY(${-8}deg) scale(${scale})`;
+      card.style.zIndex = String(Math.round(80 - abs * 10));
+      card.style.opacity = String(abs > 3.5 ? 0 : abs > 2.7 ? 1 - (abs - 2.7) / 0.8 : 1);
+      card.classList.toggle("is-front", Math.round(floatIndex) === index);
+      card.setAttribute(
+        "aria-hidden",
+        Math.round(floatIndex) === index ? "false" : "true"
+      );
+    });
+
+    const nextActive = clamp(Math.round(floatIndex), 0, total - 1);
+    if (nextActive !== activeIndex) {
+      activeIndex = nextActive;
+      cards.forEach((card, index) => {
+        card.tabIndex = index === activeIndex ? 0 : -1;
+      });
+      syncLead();
+      announce();
+      keepVideoPlaying();
+    }
+  }
+
+  function requestPaint() {
+    if (raf) return;
+    raf = window.requestAnimationFrame(() => {
+      raf = 0;
+      paint();
+    });
   }
 
   function scrollToIndex(index, smooth = true) {
@@ -128,26 +167,12 @@ function initProcesoCards() {
     });
     scrollUnlockTimer = window.setTimeout(() => {
       scrollingProgrammatically = false;
-    }, smooth ? 700 : 80);
+      requestPaint();
+    }, smooth ? 750 : 80);
   }
 
-  function goTo(nextIndex, { syncScroll = true } = {}) {
-    const wrapped = ((nextIndex % total) + total) % total;
-    if (wrapped === activeIndex) {
-      if (syncScroll) scrollToIndex(wrapped, true);
-      return;
-    }
-    activeIndex = wrapped;
-    applySlots();
-    if (syncScroll) scrollToIndex(activeIndex, true);
-  }
-
-  function syncFromScroll() {
-    if (scrollingProgrammatically) return;
-    const nextIndex = indexFromScroll();
-    if (nextIndex === activeIndex) return;
-    activeIndex = nextIndex;
-    applySlots();
+  function goTo(nextIndex) {
+    scrollToIndex(((nextIndex % total) + total) % total, true);
   }
 
   prevBtn.addEventListener("click", () => goTo(activeIndex - 1));
@@ -170,11 +195,16 @@ function initProcesoCards() {
     }
   });
 
-  window.addEventListener("scroll", syncFromScroll, { passive: true });
-  window.addEventListener("resize", syncFromScroll, { passive: true });
+  window.addEventListener(
+    "scroll",
+    () => {
+      requestPaint();
+    },
+    { passive: true }
+  );
+  window.addEventListener("resize", requestPaint, { passive: true });
 
-  activeIndex = indexFromScroll();
-  applySlots();
+  paint();
   keepVideoPlaying();
 }
 

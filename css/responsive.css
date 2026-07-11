@@ -551,8 +551,8 @@
   }
 
   .proceso__viewport {
-    perspective: 1000px;
-    perspective-origin: 50% 45%;
+    perspective: 1200px;
+    perspective-origin: 50% 50%;
   }
 
   .proceso__watermark {
@@ -560,29 +560,8 @@
     left: 50%;
   }
 
-  .proceso__card[data-slot="0"] {
-    --slot-x: 0%;
-    --slot-y: 2%;
-    --slot-rx: 4deg;
-    --slot-ry: -6deg;
-    --slot-scale: 1.02;
-  }
-
-  .proceso__card[data-slot="1"] {
-    --slot-x: 4%;
-    --slot-y: 30%;
-  }
-
-  .proceso__card[data-slot="2"] {
-    --slot-y: 50%;
-  }
-
-  .proceso__card[data-slot="5"] {
-    --slot-y: -48%;
-  }
-
-  .proceso__card[data-slot="6"] {
-    --slot-y: -28%;
+  .proceso__stack {
+    transform: translateX(-4%);
   }
 
   .proceso__nav {
