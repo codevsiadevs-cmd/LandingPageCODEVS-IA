@@ -107,8 +107,8 @@ function syncHeroBrainWithScroll() {
 
   heroWrap.style.removeProperty("opacity");
 
-  /* Interacción solo al inicio (hero); luego el contenido queda por encima. */
-  const interactive = latestScrollY < vh * 0.72;
+  /* Interacción al inicio solo en desktop; en móvil queda detrás del contenido. */
+  const interactive = !isMobile && latestScrollY < vh * 0.72;
   heroWrap.classList.toggle("hero__canvas-wrap--interactive", interactive);
 }
 
