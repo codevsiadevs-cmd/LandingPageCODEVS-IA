@@ -1033,16 +1033,29 @@ main > section:not(.hero) {
   pointer-events: none;
 }
 
-/* ——— Proceso (stack 3D de tarjetas) ——— */
+/* ——— Proceso (stack 3D scroll vertical) ——— */
 .proceso {
   --proceso-card-w: clamp(15.5rem, 26vw, 21.5rem);
   --proceso-card-h: calc(var(--proceso-card-w) * 0.63);
+  --proceso-steps: 7;
   scroll-margin-top: calc(var(--nav-height) + 1rem);
   position: relative;
-  padding: clamp(2.5rem, 6vw, 4.5rem) 0 clamp(3rem, 7vw, 5rem);
-  overflow: hidden;
+  height: calc((var(--proceso-steps) - 1) * 75vh + 100vh);
+  padding: 0;
+  overflow: visible;
   background: #000000;
   color: #ffffff;
+}
+
+.proceso__pin {
+  position: sticky;
+  top: var(--nav-height);
+  z-index: 1;
+  height: calc(100svh - var(--nav-height));
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  background: #000000;
 }
 
 .proceso__scene {
@@ -1053,9 +1066,11 @@ main > section:not(.hero) {
   gap: clamp(1.5rem, 4vw, 3.5rem);
   align-items: center;
   max-width: 88rem;
+  width: 100%;
   margin: 0 auto;
   padding: 0 clamp(1.25rem, 4vw, 3rem);
-  min-height: min(78vh, 42rem);
+  min-height: 0;
+  height: 100%;
 }
 
 .proceso__copy {
@@ -1111,8 +1126,8 @@ main > section:not(.hero) {
 
 .proceso__cards {
   position: relative;
-  height: min(72vh, 36rem);
-  min-height: 26rem;
+  height: min(78%, 34rem);
+  min-height: 22rem;
   width: 100%;
   overflow: visible;
 }
@@ -1369,89 +1384,89 @@ main > section:not(.hero) {
   opacity: 0.85;
 }
 
-/* Slots del stack (inspirados en la composición wavebank) */
+/* Slots verticales: entran arriba, frente al centro, salen abajo */
 .proceso__card[data-slot="0"] {
   --slot-x: 4%;
-  --slot-y: -38%;
-  --slot-z: -180px;
-  --slot-rx: 58deg;
-  --slot-ry: -28deg;
-  --slot-rz: 10deg;
-  --slot-scale: 0.86;
-  --slot-opacity: 0.78;
-  z-index: 2;
-}
-
-.proceso__card[data-slot="1"] {
-  --slot-x: -10%;
-  --slot-y: -16%;
-  --slot-z: -90px;
-  --slot-rx: -18deg;
-  --slot-ry: 32deg;
-  --slot-rz: -8deg;
-  --slot-scale: 0.92;
-  --slot-opacity: 0.88;
-  z-index: 3;
-}
-
-.proceso__card[data-slot="2"] {
-  --slot-x: 6%;
-  --slot-y: 2%;
-  --slot-z: 60px;
-  --slot-rx: 8deg;
-  --slot-ry: -14deg;
-  --slot-rz: 2deg;
-  --slot-scale: 1.05;
+  --slot-y: 0%;
+  --slot-z: 80px;
+  --slot-rx: 6deg;
+  --slot-ry: -12deg;
+  --slot-rz: 1deg;
+  --slot-scale: 1.06;
   --slot-opacity: 1;
   z-index: 8;
 }
 
+.proceso__card[data-slot="1"] {
+  --slot-x: 8%;
+  --slot-y: 28%;
+  --slot-z: -20px;
+  --slot-rx: 28deg;
+  --slot-ry: -8deg;
+  --slot-rz: 3deg;
+  --slot-scale: 0.94;
+  --slot-opacity: 0.88;
+  z-index: 5;
+}
+
+.proceso__card[data-slot="2"] {
+  --slot-x: 10%;
+  --slot-y: 48%;
+  --slot-z: -90px;
+  --slot-rx: 56deg;
+  --slot-ry: -4deg;
+  --slot-rz: 2deg;
+  --slot-scale: 0.86;
+  --slot-opacity: 0.62;
+  z-index: 3;
+}
+
 .proceso__card[data-slot="3"] {
-  --slot-x: 14%;
-  --slot-y: 22%;
-  --slot-z: -40px;
+  --slot-x: 6%;
+  --slot-y: 64%;
+  --slot-z: -160px;
   --slot-rx: 72deg;
-  --slot-ry: 8deg;
-  --slot-rz: -4deg;
-  --slot-scale: 0.9;
-  --slot-opacity: 0.82;
-  z-index: 4;
+  --slot-ry: 0deg;
+  --slot-rz: 0deg;
+  --slot-scale: 0.78;
+  --slot-opacity: 0.28;
+  z-index: 1;
 }
 
 .proceso__card[data-slot="4"] {
-  --slot-x: -8%;
-  --slot-y: 34%;
-  --slot-z: -120px;
-  --slot-rx: -28deg;
-  --slot-ry: 18deg;
-  --slot-rz: 6deg;
-  --slot-scale: 0.88;
-  --slot-opacity: 0.75;
-  z-index: 2;
+  --slot-x: -2%;
+  --slot-y: -64%;
+  --slot-z: -180px;
+  --slot-rx: -55deg;
+  --slot-ry: 8deg;
+  --slot-rz: -4deg;
+  --slot-scale: 0.76;
+  --slot-opacity: 0.22;
+  z-index: 1;
 }
 
 .proceso__card[data-slot="5"] {
-  --slot-x: 18%;
-  --slot-y: -8%;
-  --slot-z: -220px;
-  --slot-rx: 24deg;
-  --slot-ry: -40deg;
-  --slot-rz: 14deg;
-  --slot-scale: 0.8;
+  --slot-x: -4%;
+  --slot-y: -46%;
+  --slot-z: -110px;
+  --slot-rx: -42deg;
+  --slot-ry: 14deg;
+  --slot-rz: -6deg;
+  --slot-scale: 0.84;
   --slot-opacity: 0.55;
-  z-index: 1;
+  z-index: 2;
 }
 
 .proceso__card[data-slot="6"] {
-  --slot-x: -16%;
-  --slot-y: 10%;
-  --slot-z: -260px;
-  --slot-rx: 12deg;
-  --slot-ry: 48deg;
-  --slot-rz: -12deg;
-  --slot-scale: 0.78;
-  --slot-opacity: 0.45;
-  z-index: 1;
+  --slot-x: -2%;
+  --slot-y: -26%;
+  --slot-z: -40px;
+  --slot-rx: -18deg;
+  --slot-ry: 16deg;
+  --slot-rz: -4deg;
+  --slot-scale: 0.93;
+  --slot-opacity: 0.82;
+  z-index: 4;
 }
 
 .proceso__nav {

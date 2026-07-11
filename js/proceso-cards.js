@@ -1,6 +1,6 @@
 /**
- * Stack 3D de Cómo Trabajamos.
- * Las tarjetas rotan entre slots con perspectiva; la frontal es la activa.
+ * Stack 3D de Cómo Trabajamos impulsado por scroll vertical.
+ * Las tarjetas pasan una a una: entran arriba, frente al centro, salen abajo.
  */
 import { prefersReducedMotionGlobal } from "./scroll.js";
 
@@ -22,9 +22,13 @@ function initProcesoCards() {
   const total = cards.length;
   if (total === 0) return;
 
+  root.style.setProperty("--proceso-steps", String(total));
+
   const mainVideo = stack.querySelector(".proceso__card-video");
-  let activeIndex = Math.min(1, total - 1);
-  let animating = false;
+  let activeIndex = 0;
+  let lastAnnounced = -1;
+  let scrollingProgrammatically = false;
+  let scrollUnlockTimer = 0;
 
   function keepVideoPlaying() {
     if (!mainVideo) return;
@@ -56,6 +60,8 @@ function initProcesoCards() {
   }
 
   function announce() {
+    if (lastAnnounced === activeIndex) return;
+    lastAnnounced = activeIndex;
     const card = cards[activeIndex];
     if (!card || !liveEl) return;
     const title = cardLabel(card);
@@ -69,6 +75,7 @@ function initProcesoCards() {
     const card = cards[activeIndex];
     if (!card) return;
     const next = cardDesc(card) || cardLabel(card);
+    if (leadEl.textContent === next) return;
     if (prefersReducedMotionGlobal) {
       leadEl.textContent = next;
       return;
@@ -77,7 +84,7 @@ function initProcesoCards() {
     window.setTimeout(() => {
       leadEl.textContent = next;
       leadEl.style.opacity = "1";
-    }, 160);
+    }, 140);
   }
 
   function applySlots() {
@@ -94,26 +101,57 @@ function initProcesoCards() {
     keepVideoPlaying();
   }
 
-  function goTo(nextIndex) {
-    if (animating || total < 2) return;
-    activeIndex = ((nextIndex % total) + total) % total;
-    animating = true;
+  function getScrollMetrics() {
+    const rect = root.getBoundingClientRect();
+    const totalScroll = Math.max(root.offsetHeight - window.innerHeight, 1);
+    const scrolled = Math.min(Math.max(-rect.top, 0), totalScroll);
+    return { totalScroll, scrolled, progress: scrolled / totalScroll };
+  }
+
+  function indexFromScroll() {
+    const { progress } = getScrollMetrics();
+    if (total <= 1) return 0;
+    return Math.min(total - 1, Math.max(0, Math.round(progress * (total - 1))));
+  }
+
+  function scrollToIndex(index, smooth = true) {
+    if (total <= 1) return;
+    const targetIndex = ((index % total) + total) % total;
+    const docTop = root.getBoundingClientRect().top + window.scrollY;
+    const totalScroll = Math.max(root.offsetHeight - window.innerHeight, 1);
+    const top = docTop + (targetIndex / (total - 1)) * totalScroll;
+    scrollingProgrammatically = true;
+    window.clearTimeout(scrollUnlockTimer);
+    window.scrollTo({
+      top,
+      behavior: smooth && !prefersReducedMotionGlobal ? "smooth" : "auto",
+    });
+    scrollUnlockTimer = window.setTimeout(() => {
+      scrollingProgrammatically = false;
+    }, smooth ? 700 : 80);
+  }
+
+  function goTo(nextIndex, { syncScroll = true } = {}) {
+    const wrapped = ((nextIndex % total) + total) % total;
+    if (wrapped === activeIndex) {
+      if (syncScroll) scrollToIndex(wrapped, true);
+      return;
+    }
+    activeIndex = wrapped;
     applySlots();
-    window.setTimeout(() => {
-      animating = false;
-    }, prefersReducedMotionGlobal ? 0 : 520);
+    if (syncScroll) scrollToIndex(activeIndex, true);
   }
 
-  function next() {
-    goTo(activeIndex + 1);
+  function syncFromScroll() {
+    if (scrollingProgrammatically) return;
+    const nextIndex = indexFromScroll();
+    if (nextIndex === activeIndex) return;
+    activeIndex = nextIndex;
+    applySlots();
   }
 
-  function prev() {
-    goTo(activeIndex - 1);
-  }
-
-  prevBtn.addEventListener("click", prev);
-  nextBtn.addEventListener("click", next);
+  prevBtn.addEventListener("click", () => goTo(activeIndex - 1));
+  nextBtn.addEventListener("click", () => goTo(activeIndex + 1));
 
   cards.forEach((card, index) => {
     card.addEventListener("click", () => {
@@ -125,56 +163,17 @@ function initProcesoCards() {
   viewport.addEventListener("keydown", (event) => {
     if (event.key === "ArrowRight" || event.key === "ArrowDown") {
       event.preventDefault();
-      next();
+      goTo(activeIndex + 1);
     } else if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
       event.preventDefault();
-      prev();
+      goTo(activeIndex - 1);
     }
   });
 
-  let pointerId = null;
-  let startX = 0;
-  let startY = 0;
-  let axisLock = null;
+  window.addEventListener("scroll", syncFromScroll, { passive: true });
+  window.addEventListener("resize", syncFromScroll, { passive: true });
 
-  viewport.addEventListener("pointerdown", (event) => {
-    if (event.button != null && event.button !== 0) return;
-    if (event.target.closest(".proceso__nav")) return;
-    pointerId = event.pointerId;
-    startX = event.clientX;
-    startY = event.clientY;
-    axisLock = null;
-    try {
-      viewport.setPointerCapture(pointerId);
-    } catch {
-      /* ignore */
-    }
-  });
-
-  viewport.addEventListener("pointermove", (event) => {
-    if (pointerId == null || event.pointerId !== pointerId) return;
-    const dx = event.clientX - startX;
-    const dy = event.clientY - startY;
-    if (!axisLock) {
-      if (Math.abs(dx) < 8 && Math.abs(dy) < 8) return;
-      axisLock = Math.abs(dx) >= Math.abs(dy) ? "x" : "y";
-    }
-  });
-
-  function endPointer(event) {
-    if (pointerId == null || event.pointerId !== pointerId) return;
-    const dx = event.clientX - startX;
-    if (axisLock === "x" && Math.abs(dx) > 42) {
-      if (dx < 0) next();
-      else prev();
-    }
-    pointerId = null;
-    axisLock = null;
-  }
-
-  viewport.addEventListener("pointerup", endPointer);
-  viewport.addEventListener("pointercancel", endPointer);
-
+  activeIndex = indexFromScroll();
   applySlots();
   keepVideoPlaying();
 }
