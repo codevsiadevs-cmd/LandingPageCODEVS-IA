@@ -1,7 +1,7 @@
 /**
- * Carrusel horizontal infinito de pasos (1–6) en Cómo Trabajamos.
- * Clones a ambos lados para wrap natural 1↔6 en ambas direcciones.
- * Touch: swipe horizontal mueve el carrusel; vertical deja scrollear la página.
+ * Carrusel infinito de Cómo Trabajamos (1–6).
+ * Usa translate3d (sin scroll-snap ni scrollLeft) para swipe limpio
+ * izquierda/derecha, sin pelear con el scroll vertical de la página.
  */
 import { prefersReducedMotionGlobal } from "./scroll.js";
 
@@ -27,45 +27,49 @@ function initProcesoCards() {
     return clone;
   }
 
-  // Clones al final: … 1 2 3 4 5 6 | 1' 2' 3' 4' 5' 6'
   originals.forEach((card) => track.appendChild(makeClone(card)));
 
-  // Clones al inicio: 1" 2" 3" 4" 5" 6" | 1 2 3 4 5 6 | …
   const prependFragment = document.createDocumentFragment();
   originals.forEach((card) => prependFragment.appendChild(makeClone(card)));
   track.insertBefore(prependFragment, track.firstChild);
 
-  // Índices de scroll: [0..total-1]=clones prev, [total..2total-1]=reales, [2total..]=clones next
   const realOffset = total;
-
-  const AXIS_THRESHOLD = 10;
+  const AXIS_THRESHOLD = 8;
+  const TRANSITION_MS = prefersReducedMotionGlobal ? 0 : 480;
 
   let slideIndex = 0;
-  let scrollLock = false;
+  let positionIndex = realOffset;
+  let step = 0;
+  let offsetX = 0;
+  let animating = false;
   let isPointerDown = false;
   let isDragging = false;
   let axisLock = null;
   let dragPointerId = null;
   let dragStartX = 0;
   let dragStartY = 0;
-  let dragStartScroll = 0;
+  let dragOriginOffset = 0;
   let dragDeltaX = 0;
+  let settleTimer = 0;
 
-  function getSlideWidth() {
+  function measureStep() {
     if (originals.length > 1) {
       const a = originals[0].getBoundingClientRect();
       const b = originals[1].getBoundingClientRect();
-      const step = b.left - a.left;
-      if (step > 0) return step;
+      const next = b.left - a.left;
+      if (next > 0) {
+        step = next;
+        return step;
+      }
     }
     const width = originals[0].getBoundingClientRect().width;
-    return width > 0 ? width : viewport.clientWidth;
+    step = width > 0 ? width : viewport.clientWidth;
+    return step;
   }
 
-  function logicalFromScrollIndex(scrollIndex) {
-    if (scrollIndex < total) return ((scrollIndex % total) + total) % total;
-    if (scrollIndex >= 2 * total) return ((scrollIndex - 2 * total) % total + total) % total;
-    return scrollIndex - realOffset;
+  function logicalFromPosition(index) {
+    const wrapped = ((index % total) + total) % total;
+    return wrapped;
   }
 
   function announce() {
@@ -77,102 +81,101 @@ function initProcesoCards() {
       : `Paso ${slideIndex + 1} de ${total}`;
   }
 
-  function normalizeLoop() {
-    const width = getSlideWidth();
-    if (width <= 0) return;
+  function applyTransform(animate) {
+    if (animate && TRANSITION_MS > 0) {
+      track.classList.remove("proceso__track--dragging");
+      track.style.transitionDuration = `${TRANSITION_MS}ms`;
+    } else {
+      track.classList.add("proceso__track--dragging");
+      track.style.transitionDuration = "0ms";
+    }
+    track.style.transform = `translate3d(${-offsetX}px, 0, 0)`;
+  }
 
-    const rawIndex = Math.round(viewport.scrollLeft / width);
+  function normalizePosition(animate = false) {
+    if (step <= 0) measureStep();
+    if (step <= 0) return;
 
-    if (rawIndex < total) {
-      viewport.style.scrollBehavior = "auto";
-      viewport.scrollLeft = (rawIndex + total) * width;
-      slideIndex = logicalFromScrollIndex(rawIndex + total);
-      viewport.style.scrollBehavior = "";
-      announce();
-      return;
+    if (positionIndex < total) {
+      positionIndex += total;
+      offsetX = positionIndex * step;
+      applyTransform(false);
+      if (animate) {
+        // force reflow then continue if needed
+        void track.offsetWidth;
+      }
+    } else if (positionIndex >= 2 * total) {
+      positionIndex -= total;
+      offsetX = positionIndex * step;
+      applyTransform(false);
+      if (animate) void track.offsetWidth;
     }
 
-    if (rawIndex >= 2 * total) {
-      viewport.style.scrollBehavior = "auto";
-      viewport.scrollLeft = (rawIndex - total) * width;
-      slideIndex = logicalFromScrollIndex(rawIndex - total);
-      viewport.style.scrollBehavior = "";
-      announce();
-      return;
-    }
-
-    slideIndex = logicalFromScrollIndex(rawIndex);
+    slideIndex = logicalFromPosition(positionIndex);
     announce();
   }
 
-  function animateToScrollIndex(scrollIndex, instant = false) {
-    const width = getSlideWidth();
-    if (width <= 0) return;
+  function goToPosition(index, animate = true) {
+    if (step <= 0) measureStep();
+    if (step <= 0) return;
 
-    slideIndex = logicalFromScrollIndex(scrollIndex);
-    scrollLock = true;
-    viewport.style.scrollBehavior =
-      instant || prefersReducedMotionGlobal ? "auto" : "smooth";
-    viewport.scrollLeft = scrollIndex * width;
+    positionIndex = index;
+    offsetX = positionIndex * step;
+    slideIndex = logicalFromPosition(positionIndex);
     announce();
+    applyTransform(animate && !prefersReducedMotionGlobal);
 
-    window.setTimeout(
-      () => {
-        viewport.style.scrollBehavior = "auto";
-        normalizeLoop();
-        viewport.style.scrollBehavior = "";
-        scrollLock = false;
-      },
-      instant || prefersReducedMotionGlobal ? 32 : 720
-    );
-  }
-
-  function scrollToLogical(logicalIndex, instant = false) {
-    const safe = ((logicalIndex % total) + total) % total;
-    animateToScrollIndex(realOffset + safe, instant);
-  }
-
-  function currentScrollIndex() {
-    const width = getSlideWidth();
-    if (width <= 0) return realOffset + slideIndex;
-    return Math.round(viewport.scrollLeft / width);
-  }
-
-  function snapAfterDrag() {
-    const width = getSlideWidth();
-    if (width <= 0) return;
-
-    const scrollPos = viewport.scrollLeft;
-    const raw = scrollPos / width;
-    const nearest = Math.round(raw);
-    const threshold = 0.18;
-
-    // Empuje claro hacia un lado: ir al slide en esa dirección
-    let target = nearest;
-    if (dragDeltaX < -width * threshold) {
-      target = Math.ceil(raw - 0.001);
-    } else if (dragDeltaX > width * threshold) {
-      target = Math.floor(raw + 0.001);
+    window.clearTimeout(settleTimer);
+    if (!animate || prefersReducedMotionGlobal || TRANSITION_MS === 0) {
+      normalizePosition(false);
+      animating = false;
+      return;
     }
 
-    animateToScrollIndex(target, false);
+    animating = true;
+    settleTimer = window.setTimeout(() => {
+      normalizePosition(false);
+      animating = false;
+    }, TRANSITION_MS + 32);
+  }
+
+  function goToLogical(logical, animate = true) {
+    const safe = ((logical % total) + total) % total;
+    goToPosition(realOffset + safe, animate);
   }
 
   function stepNext() {
-    if (scrollLock || isDragging) return;
-    animateToScrollIndex(currentScrollIndex() + 1, false);
+    if (animating || isDragging) return;
+    goToPosition(positionIndex + 1, true);
   }
 
   function stepPrev() {
-    if (scrollLock || isDragging) return;
-    animateToScrollIndex(currentScrollIndex() - 1, false);
+    if (animating || isDragging) return;
+    goToPosition(positionIndex - 1, true);
+  }
+
+  function snapFromDrag() {
+    if (step <= 0) measureStep();
+    if (step <= 0) return;
+
+    const raw = offsetX / step;
+    let target = Math.round(raw);
+    const pulled = -dragDeltaX / step;
+
+    if (Math.abs(pulled) > 0.18) {
+      target = pulled > 0 ? Math.ceil(raw - 0.001) : Math.floor(raw + 0.001);
+    }
+
+    goToPosition(target, true);
   }
 
   function beginHorizontalDrag(pointerId) {
     isDragging = true;
+    animating = false;
+    window.clearTimeout(settleTimer);
+    track.classList.add("proceso__track--dragging");
+    track.style.transitionDuration = "0ms";
     viewport.classList.add("proceso__viewport--dragging");
-    viewport.style.scrollSnapType = "none";
-    viewport.style.scrollBehavior = "auto";
     try {
       viewport.setPointerCapture(pointerId);
     } catch {
@@ -187,14 +190,12 @@ function initProcesoCards() {
     dragPointerId = null;
     dragDeltaX = 0;
     viewport.classList.remove("proceso__viewport--dragging");
-    viewport.style.scrollSnapType = "";
-    viewport.style.scrollBehavior = "";
   }
 
   function endDrag(pointerId) {
     if (!isPointerDown && !isDragging) return;
 
-    const didHorizontalDrag = isDragging && axisLock === "x";
+    const didHorizontal = isDragging && axisLock === "x";
     const delta = dragDeltaX;
 
     if (pointerId != null && viewport.hasPointerCapture?.(pointerId)) {
@@ -207,19 +208,28 @@ function initProcesoCards() {
 
     resetPointerState();
 
-    if (didHorizontalDrag && Math.abs(delta) > 6) {
+    if (didHorizontal) {
       dragDeltaX = delta;
-      snapAfterDrag();
+      if (Math.abs(delta) > 4) snapFromDrag();
+      else goToPosition(positionIndex, true);
       dragDeltaX = 0;
-    } else if (didHorizontalDrag) {
-      normalizeLoop();
     }
   }
 
   viewport.addEventListener("pointerdown", (event) => {
-    if (scrollLock) return;
     if (event.pointerType === "mouse" && event.button !== 0) return;
     if (event.target.closest(".proceso__nav")) return;
+
+    // Cancelar animación a medias y anclar al offset actual
+    window.clearTimeout(settleTimer);
+    animating = false;
+    track.classList.add("proceso__track--dragging");
+    track.style.transitionDuration = "0ms";
+    if (step > 0) {
+      positionIndex = Math.round(offsetX / step);
+      offsetX = positionIndex * step;
+      applyTransform(false);
+    }
 
     isPointerDown = true;
     isDragging = false;
@@ -227,7 +237,7 @@ function initProcesoCards() {
     dragPointerId = event.pointerId;
     dragStartX = event.clientX;
     dragStartY = event.clientY;
-    dragStartScroll = viewport.scrollLeft;
+    dragOriginOffset = offsetX;
     dragDeltaX = 0;
   });
 
@@ -255,7 +265,8 @@ function initProcesoCards() {
       if (axisLock !== "x") return;
 
       dragDeltaX = dx;
-      viewport.scrollLeft = dragStartScroll - dx;
+      offsetX = dragOriginOffset - dx;
+      applyTransform(false);
       if (event.cancelable) event.preventDefault();
     },
     { passive: false }
@@ -293,25 +304,18 @@ function initProcesoCards() {
     }
   });
 
-  viewport.addEventListener(
-    "scroll",
-    () => {
-      if (scrollLock || isDragging) return;
-      normalizeLoop();
-    },
-    { passive: true }
-  );
+  function refreshLayout() {
+    measureStep();
+    offsetX = (realOffset + slideIndex) * step;
+    positionIndex = realOffset + slideIndex;
+    applyTransform(false);
+  }
 
-  window.addEventListener(
-    "resize",
-    () => scrollToLogical(slideIndex, true),
-    { passive: true }
-  );
+  window.addEventListener("resize", refreshLayout, { passive: true });
 
-  scrollToLogical(0, true);
-  window.addEventListener("load", () => scrollToLogical(slideIndex, true), {
-    once: true,
-  });
+  measureStep();
+  goToLogical(0, false);
+  window.addEventListener("load", refreshLayout, { once: true });
 }
 
 if (document.readyState === "loading") {

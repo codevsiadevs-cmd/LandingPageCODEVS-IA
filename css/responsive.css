@@ -512,16 +512,12 @@
   }
 
   .proceso__viewport {
-    /* pan-y: scroll de página; el JS captura solo el swipe horizontal */
+    /* pan-y: scroll de página; el JS mueve el track en horizontal */
     touch-action: pan-y;
   }
 
   .proceso__track {
     gap: var(--proceso-card-gap);
-  }
-
-  .proceso__card {
-    scroll-snap-align: start;
   }
 
   .proceso__card-index {

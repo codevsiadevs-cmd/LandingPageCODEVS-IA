@@ -1068,13 +1068,7 @@
   inset: 0;
   width: 100%;
   height: 100%;
-  overflow-x: auto;
-  overflow-y: hidden;
-  scroll-snap-type: x mandatory;
-  scroll-behavior: smooth;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  -webkit-overflow-scrolling: touch;
+  overflow: hidden;
   outline: none;
   touch-action: pan-y;
   user-select: none;
@@ -1095,10 +1089,6 @@
   pointer-events: none;
 }
 
-.proceso__viewport::-webkit-scrollbar {
-  display: none;
-}
-
 .proceso__controls {
   position: absolute;
   inset: 0;
@@ -1110,6 +1100,14 @@
   display: flex;
   height: 100%;
   width: max-content;
+  will-change: transform;
+  transition-property: transform;
+  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  transition-duration: 480ms;
+}
+
+.proceso__track.proceso__track--dragging {
+  transition-duration: 0ms !important;
 }
 
 .proceso__card {
@@ -1118,8 +1116,6 @@
   width: var(--proceso-card-width);
   height: 100%;
   overflow: hidden;
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
 }
 
 .proceso__card-index {
