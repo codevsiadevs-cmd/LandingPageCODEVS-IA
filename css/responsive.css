@@ -488,89 +488,42 @@
     font-size: 1.1rem;
   }
 
-  .proceso__showcase {
-    height: calc((var(--proceso-steps) - 1) * 80svh + 115svh);
+  .proceso {
+    --proceso-card-width: 85vw;
+    --proceso-cards-height: min(58vh, 26rem);
+    padding-top: 1.5rem;
   }
 
-  .proceso__pin {
-    height: 100svh;
-    min-height: 100svh;
-  }
-
-  .proceso__meta {
-    top: calc(var(--nav-height) + 1rem);
-    left: clamp(1rem, 4vw, 1.5rem);
-    right: clamp(1rem, 4vw, 1.5rem);
-  }
-
-  .proceso__badge {
-    font-size: 0.625rem;
-    letter-spacing: 0.18em;
-  }
-
-  .proceso__counter {
-    font-size: 0.75rem;
-  }
-
-  .proceso__panel {
-    width: calc(100vw - 2.5rem);
-    max-width: 100%;
-    padding-inline: 0.35rem;
-    box-sizing: border-box;
-  }
-
-  .proceso__panel-label {
-    font-size: 0.75rem;
+  .proceso__heading-wrap {
     margin-bottom: 1rem;
-    padding-left: 0;
+    text-align: left;
+    padding: 0 1.15rem;
   }
 
-  .proceso__panel-title {
-    padding-left: 0;
-    max-width: 100%;
-    width: 100%;
-    box-sizing: border-box;
-    font-size: min(4.2vw, 1.28rem);
-    line-height: 1.1;
-    letter-spacing: -0.035em;
-    margin-bottom: 1rem;
-    overflow-wrap: anywhere;
+  .proceso__title {
+    font-size: clamp(1.65rem, 7vw, 2rem);
+    text-align: left;
   }
 
-  .proceso__panel-desc {
-    padding-left: 0;
-    max-width: 100%;
-    font-size: clamp(0.95rem, 3.8vw, 1.15rem);
+  .proceso__card-index {
+    font-size: clamp(2.75rem, 14vw, 4rem);
+  }
+
+  .proceso__card-caption {
+    width: min(92%, 20rem);
+    max-width: min(92%, 20rem);
+  }
+
+  .proceso__nav {
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 1rem;
   }
 }
 
 @media (max-width: 768px) {
-  .proceso__slider {
-    padding-inline: 1.15rem;
-  }
-
-  .proceso__meta {
-    left: 1.15rem;
-    right: 1.15rem;
-  }
-
-  .proceso__panel-title {
-    font-size: min(3.95vw, 1.18rem);
-    line-height: 1.12;
-  }
-
-  .proceso__panel-desc {
-    font-size: clamp(0.9rem, 4vw, 1.05rem);
-  }
-
-  .proceso__brain-anchor {
-    width: clamp(6rem, 30vw, 8rem);
-    height: clamp(6rem, 30vw, 8rem);
-  }
-
-  .hero__canvas-wrap.hero__canvas-wrap--proceso {
-    width: clamp(6rem, 30vw, 8rem);
-    height: clamp(6rem, 30vw, 8rem);
+  .proceso {
+    --proceso-card-width: 88vw;
   }
 }
 
@@ -603,7 +556,7 @@
 
 @media (max-width: 900px) {
   body[data-section="proceso"] {
-    background: #ffffff;
+    background: #000000;
   }
 
   body[data-section="nosotros"] {
@@ -621,10 +574,8 @@
     visibility: hidden;
   }
 
-  .proceso,
-  .proceso__pin,
-  .proceso__slider {
-    background: #ffffff;
+  .proceso {
+    background: #000000;
   }
 
   .why__transition,
@@ -655,15 +606,6 @@
 
   .why {
     z-index: 3;
-  }
-
-  .proceso__showcase {
-    height: calc((var(--proceso-steps) - 1) * 80svh + 115svh);
-  }
-
-  .proceso__pin {
-    height: 100svh;
-    min-height: 100svh;
   }
 
   .why__transition {

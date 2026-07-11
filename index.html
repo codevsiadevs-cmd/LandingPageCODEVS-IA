@@ -333,60 +333,144 @@
     </section>
 
     <section class="proceso" id="proceso" aria-labelledby="proceso-heading">
-      <div class="proceso__showcase" data-proceso-showcase data-proceso-steps="6">
-        <div class="proceso__pin">
-          <div class="proceso__slider" aria-live="polite">
-            <canvas class="section-neural-canvas" id="proceso-neural-canvas" aria-hidden="true"></canvas>
+      <div class="proceso__heading-wrap">
+        <h2 class="proceso__title" id="proceso-heading" data-i18n="process.title">Cómo Trabajamos</h2>
+      </div>
 
-            <div class="proceso__meta">
-              <p class="proceso__badge">
-                <span class="proceso__badge-dot" aria-hidden="true"></span>
-                <span data-i18n="process.punch.badge">Cómo trabajamos</span>
-              </p>
-              <p class="proceso__counter">
-                <span data-proceso-counter>01</span>
-                <span class="proceso__counter-total" aria-hidden="true"> / 06</span>
-              </p>
-            </div>
+      <div
+        class="proceso__cards"
+        id="proceso-cards"
+        role="region"
+        aria-roledescription="carrusel"
+        aria-label="Pasos de cómo trabajamos"
+        data-i18n-aria-label="process.carouselAria"
+      >
+        <div class="proceso__viewport" id="proceso-viewport" tabindex="0">
+          <div class="proceso__track" id="proceso-track">
+            <article class="proceso__card" data-proceso-card>
+              <span class="proceso__card-index" aria-hidden="true">1</span>
+              <div
+                class="proceso__card-media"
+                style="background-image: url('./assets/gifs/web-pages-ia.gif');"
+              ></div>
+              <div class="proceso__card-caption">
+                <div class="proceso__card-caption-inner">
+                  <h3 class="proceso__card-title" data-i18n="process.1.title">Descubrimiento</h3>
+                  <p class="proceso__card-desc" data-i18n="process.1.desc">
+                    Entendemos tu negocio y definimos objetivos claros
+                  </p>
+                </div>
+                <span class="proceso__card-arrow" aria-hidden="true">↗</span>
+              </div>
+            </article>
 
-            <h2 id="proceso-heading" class="visually-hidden" data-i18n="process.title">Cómo Trabajamos</h2>
+            <article class="proceso__card" data-proceso-card>
+              <span class="proceso__card-index" aria-hidden="true">2</span>
+              <div
+                class="proceso__card-media"
+                style="background-image: url('./assets/gifs/chatboyia.gif');"
+              ></div>
+              <div class="proceso__card-caption">
+                <div class="proceso__card-caption-inner">
+                  <h3 class="proceso__card-title" data-i18n="process.2.title">Diseño</h3>
+                  <p class="proceso__card-desc" data-i18n="process.2.desc">
+                    Arquitectura técnica y prototipo de experiencia
+                  </p>
+                </div>
+                <span class="proceso__card-arrow" aria-hidden="true">↗</span>
+              </div>
+            </article>
 
-            <div class="proceso__panels">
-              <article class="proceso__panel" data-proceso-panel>
-                <p class="proceso__panel-label" data-i18n="process.step.1">PASO 01</p>
-                <h3 class="proceso__panel-title" data-i18n="process.1.title">Descubrimiento</h3>
-                <p class="proceso__panel-desc" data-i18n="process.1.desc">Entendemos tu negocio y definimos objetivos claros</p>
-              </article>
-              <article class="proceso__panel" data-proceso-panel>
-                <p class="proceso__panel-label" data-i18n="process.step.2">PASO 02</p>
-                <h3 class="proceso__panel-title" data-i18n="process.2.title">Diseño</h3>
-                <p class="proceso__panel-desc" data-i18n="process.2.desc">Arquitectura técnica y prototipo de experiencia</p>
-              </article>
-              <article class="proceso__panel" data-proceso-panel>
-                <p class="proceso__panel-label" data-i18n="process.step.3">PASO 03</p>
-                <h3 class="proceso__panel-title" data-i18n="process.3.title">Desarrollo</h3>
-                <p class="proceso__panel-desc" data-i18n="process.3.desc">Código limpio, tests y entregas incrementales</p>
-              </article>
-              <article class="proceso__panel" data-proceso-panel>
-                <p class="proceso__panel-label" data-i18n="process.step.4">PASO 04</p>
-                <h3 class="proceso__panel-title" data-i18n="process.4.title">QA &amp; Pruebas</h3>
-                <p class="proceso__panel-desc" data-i18n="process.4.desc">Validación rigurosa antes de cada release</p>
-              </article>
-              <article class="proceso__panel" data-proceso-panel>
-                <p class="proceso__panel-label" data-i18n="process.step.5">PASO 05</p>
-                <h3 class="proceso__panel-title" data-i18n="process.5.title">Deploy</h3>
-                <p class="proceso__panel-desc" data-i18n="process.5.desc">Lanzamiento seguro con monitoreo en tiempo real</p>
-              </article>
-              <article class="proceso__panel" data-proceso-panel>
-                <p class="proceso__panel-label" data-i18n="process.step.6">PASO 06</p>
-                <h3 class="proceso__panel-title" data-i18n="process.6.title">Soporte</h3>
-                <p class="proceso__panel-desc" data-i18n="process.6.desc">Acompañamiento continuo post-lanzamiento</p>
-              </article>
-            </div>
+            <article class="proceso__card" data-proceso-card>
+              <span class="proceso__card-index" aria-hidden="true">3</span>
+              <div
+                class="proceso__card-media"
+                style="background-image: url('./assets/gifs/ecommerce-ia.gif');"
+              ></div>
+              <div class="proceso__card-caption">
+                <div class="proceso__card-caption-inner">
+                  <h3 class="proceso__card-title" data-i18n="process.3.title">Desarrollo</h3>
+                  <p class="proceso__card-desc" data-i18n="process.3.desc">
+                    Código limpio, tests y entregas incrementales
+                  </p>
+                </div>
+                <span class="proceso__card-arrow" aria-hidden="true">↗</span>
+              </div>
+            </article>
 
-            <div class="proceso__brain-anchor" id="proceso-brain-anchor"></div>
+            <article class="proceso__card" data-proceso-card>
+              <span class="proceso__card-index" aria-hidden="true">4</span>
+              <div
+                class="proceso__card-media"
+                style="background-image: url('./assets/gifs/api-gateway.gif');"
+              ></div>
+              <div class="proceso__card-caption">
+                <div class="proceso__card-caption-inner">
+                  <h3 class="proceso__card-title" data-i18n="process.4.title">QA &amp; Pruebas</h3>
+                  <p class="proceso__card-desc" data-i18n="process.4.desc">
+                    Validación rigurosa antes de cada release
+                  </p>
+                </div>
+                <span class="proceso__card-arrow" aria-hidden="true">↗</span>
+              </div>
+            </article>
+
+            <article class="proceso__card" data-proceso-card>
+              <span class="proceso__card-index" aria-hidden="true">5</span>
+              <div
+                class="proceso__card-media"
+                style="background-image: url('./assets/gifs/agentes-ia.gif');"
+              ></div>
+              <div class="proceso__card-caption">
+                <div class="proceso__card-caption-inner">
+                  <h3 class="proceso__card-title" data-i18n="process.5.title">Deploy</h3>
+                  <p class="proceso__card-desc" data-i18n="process.5.desc">
+                    Lanzamiento seguro con monitoreo en tiempo real
+                  </p>
+                </div>
+                <span class="proceso__card-arrow" aria-hidden="true">↗</span>
+              </div>
+            </article>
+
+            <article class="proceso__card" data-proceso-card>
+              <span class="proceso__card-index" aria-hidden="true">6</span>
+              <div
+                class="proceso__card-media"
+                style="background-image: url('./assets/gifs/automatizacion-documentos.gif');"
+              ></div>
+              <div class="proceso__card-caption">
+                <div class="proceso__card-caption-inner">
+                  <h3 class="proceso__card-title" data-i18n="process.6.title">Soporte</h3>
+                  <p class="proceso__card-desc" data-i18n="process.6.desc">
+                    Acompañamiento continuo post-lanzamiento
+                  </p>
+                </div>
+                <span class="proceso__card-arrow" aria-hidden="true">↗</span>
+              </div>
+            </article>
           </div>
         </div>
+
+        <div class="proceso__controls" aria-hidden="false">
+          <button
+            type="button"
+            class="proceso__nav proceso__nav--prev"
+            aria-label="Paso anterior"
+            data-i18n-aria-label="process.prev"
+          >
+            <span aria-hidden="true">←</span>
+          </button>
+          <button
+            type="button"
+            class="proceso__nav proceso__nav--next"
+            aria-label="Paso siguiente"
+            data-i18n-aria-label="process.next"
+          >
+            <span aria-hidden="true">→</span>
+          </button>
+        </div>
+
+        <p class="proceso__live visually-hidden" aria-live="polite"></p>
       </div>
     </section>
 

@@ -75,36 +75,9 @@ function syncHeroBrainWithScroll() {
   if (!heroWrap) return;
   const isMobile = window.matchMedia("(max-width: 768px)").matches;
   const vh = window.innerHeight;
-  const procesoSection = document.getElementById("proceso");
-  const procesoAnchor = document.getElementById("proceso-brain-anchor");
 
-  if (procesoSection && procesoAnchor) {
-    const sectionRect = procesoSection.getBoundingClientRect();
-    const inProceso = sectionRect.top <= vh * 0.02 && sectionRect.bottom >= vh * 0.98;
-
-    if (inProceso !== wasInProcesoBrain) {
-      wasInProcesoBrain = inProceso;
-      lockedHeroBrainPx = null;
-      lockedHeroBrainZoom = null;
-      heroWrap.style.removeProperty("width");
-      heroWrap.style.removeProperty("height");
-      lockHeroBrainDimensions();
-      resizeHeroSpline();
-    }
-
-    if (inProceso) {
-      const anchorRect = procesoAnchor.getBoundingClientRect();
-      heroWrap.classList.add("hero__canvas-wrap--proceso");
-      heroWrap.style.setProperty("--brain-scroll-x", `${anchorRect.left + anchorRect.width / 2}px`);
-      heroWrap.style.setProperty("--brain-scroll-y", `${anchorRect.top + anchorRect.height / 2}px`);
-      return;
-    }
-
-    heroWrap.classList.remove("hero__canvas-wrap--proceso");
-  } else {
-    heroWrap.classList.remove("hero__canvas-wrap--proceso");
-    wasInProcesoBrain = false;
-  }
+  heroWrap.classList.remove("hero__canvas-wrap--proceso");
+  wasInProcesoBrain = false;
 
   const startRatio = isMobile ? 0.56 : 0.5;
   const startY = vh * startRatio;
