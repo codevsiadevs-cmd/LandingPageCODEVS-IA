@@ -1,5 +1,5 @@
 /**
- * Carrusel infinito de Cómo Trabajamos (1–6).
+ * Carrusel infinito de Cómo Trabajamos.
  * Usa translate3d (sin scroll-snap ni scrollLeft) para swipe limpio
  * izquierda/derecha, sin pelear con el scroll vertical de la página.
  */
@@ -24,6 +24,12 @@ function initProcesoCards() {
     clone.classList.add("proceso__card--clone");
     clone.setAttribute("aria-hidden", "true");
     clone.removeAttribute("data-proceso-card");
+
+    // Un solo <video> real: en clones solo queda el fondo negro (no reinicia).
+    clone.querySelectorAll(".proceso__card-video").forEach((video) => {
+      video.remove();
+    });
+
     return clone;
   }
 
@@ -36,6 +42,19 @@ function initProcesoCards() {
   const realOffset = total;
   const AXIS_THRESHOLD = 8;
   const TRANSITION_MS = prefersReducedMotionGlobal ? 0 : 480;
+  const mainVideo = track.querySelector(
+    ".proceso__card[data-proceso-card] .proceso__card-video"
+  );
+
+  function keepVideoPlaying() {
+    if (!mainVideo) return;
+    mainVideo.muted = true;
+    mainVideo.loop = true;
+    if (mainVideo.paused) {
+      const playPromise = mainVideo.play();
+      if (playPromise?.catch) playPromise.catch(() => {});
+    }
+  }
 
   let slideIndex = 0;
   let positionIndex = realOffset;
@@ -75,6 +94,10 @@ function initProcesoCards() {
   function announce() {
     if (!liveEl) return;
     const card = originals[slideIndex];
+    if (card?.classList.contains("proceso__card--video")) {
+      liveEl.textContent = `Video ${slideIndex + 1} de ${total}`;
+      return;
+    }
     const title = card?.querySelector(".proceso__card-title")?.textContent?.trim() || "";
     liveEl.textContent = title
       ? `Paso ${slideIndex + 1} de ${total}: ${title}`
@@ -315,7 +338,14 @@ function initProcesoCards() {
 
   measureStep();
   goToLogical(0, false);
-  window.addEventListener("load", refreshLayout, { once: true });
+  keepVideoPlaying();
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) keepVideoPlaying();
+  });
+  window.addEventListener("load", () => {
+    refreshLayout();
+    keepVideoPlaying();
+  }, { once: true });
 }
 
 if (document.readyState === "loading") {

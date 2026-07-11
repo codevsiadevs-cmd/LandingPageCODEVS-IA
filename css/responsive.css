@@ -527,43 +527,25 @@
     font-weight: 200;
   }
 
-  .proceso__card-caption {
-    left: 0;
-    right: auto;
-    width: 100%;
-    max-width: 100%;
-    min-height: auto;
-    align-items: flex-end;
-    gap: 0.65rem;
-    padding: 1.05rem 1.05rem 1.1rem 1.15rem;
-  }
-
-  .proceso__card-caption-inner {
-    transform: none;
+  .proceso__card-body {
+    padding: 1.15rem 1.15rem 1.25rem;
+    padding-top: 5.75rem;
+    gap: 1rem;
   }
 
   .proceso__card-title {
-    font-size: clamp(1.05rem, 4.2vw, 1.25rem);
-    font-weight: 700;
+    font-size: clamp(1.2rem, 5vw, 1.45rem);
   }
 
   .proceso__card-desc {
-    margin-top: 0.45rem;
-    font-size: clamp(0.84rem, 3.5vw, 0.95rem);
-    line-height: 1.4;
-    opacity: 1;
-    max-height: none;
-    overflow: visible;
-    transform: none;
-    color: #4a4a4a;
+    margin-top: 0.55rem;
+    font-size: clamp(0.9rem, 3.6vw, 1rem);
+    line-height: 1.45;
+    color: rgba(255, 255, 255, 0.82);
   }
 
   .proceso__card-arrow {
-    opacity: 1;
-    visibility: visible;
-    transform: none;
     font-size: 1.55rem;
-    align-self: flex-end;
   }
 
   .proceso__nav {
