@@ -99,8 +99,8 @@
   pointer-events: none;
   transform-origin: left center;
   transform: scaleX(0);
-  background: linear-gradient(90deg, var(--accent-primary), rgba(15, 255, 212, 0.5));
-  box-shadow: 0 0 12px rgba(15, 255, 212, 0.4);
+  background: #ffffff;
+  box-shadow: none;
 }
 
 .btn {
@@ -1325,8 +1325,8 @@ textarea.contact__control:not(:placeholder-shown) ~ .contact__label {
   height: 2px;
   width: 0;
   border-radius: 1px;
-  background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
-  box-shadow: 0 0 10px rgba(15, 255, 212, 0.6);
+  background: #ffffff;
+  box-shadow: none;
   pointer-events: none;
   opacity: 0;
   transform: translateZ(0);
@@ -1348,7 +1348,7 @@ textarea.contact__control:not(:placeholder-shown) ~ .contact__label {
   bottom: 0.18rem;
   width: calc(100% - 1.6rem);
   height: 1.5px;
-  background: var(--accent-primary);
+  background: #ffffff;
   border-radius: 1px;
   transform: translateX(-50%) scaleX(0);
   transform-origin: center;
