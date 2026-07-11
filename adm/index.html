@@ -339,141 +339,197 @@
     </section>
 
     <section class="proceso" id="proceso" aria-labelledby="proceso-heading">
-      <div class="proceso__heading-wrap">
-        <h2 class="proceso__title" id="proceso-heading" data-i18n="process.title">Cómo Trabajamos</h2>
-      </div>
-
-      <div
-        class="proceso__cards"
-        id="proceso-cards"
-        role="region"
-        aria-roledescription="carrusel"
-        aria-label="Pasos de cómo trabajamos"
-        data-i18n-aria-label="process.carouselAria"
-      >
-        <div class="proceso__viewport" id="proceso-viewport" tabindex="0">
-          <div class="proceso__track" id="proceso-track">
-            <article class="proceso__card proceso__card--video" data-proceso-card>
-              <div class="proceso__card-media proceso__card-media--video">
-                <video
-                  class="proceso__card-video"
-                  src="../assets/videos/proceso-intro.mp4"
-                  autoplay
-                  muted
-                  loop
-                  playsinline
-                  preload="auto"
-                  aria-label="Video del proceso CODEVS IA"
-                ></video>
-              </div>
-            </article>
-
-            <article class="proceso__card" data-proceso-card>
-              <span class="proceso__card-index" aria-hidden="true">1</span>
-              <div class="proceso__card-media" style="background-color: #2f2f2f;"></div>
-              <div class="proceso__card-body">
-                <div class="proceso__card-body-inner">
-                  <h3 class="proceso__card-title" data-i18n="process.1.title">Descubrimiento</h3>
-                  <p class="proceso__card-desc" data-i18n="process.1.desc">
-                    Entendemos tu negocio y definimos objetivos claros
-                  </p>
-                </div>
-                <span class="proceso__card-arrow" aria-hidden="true">↗</span>
-              </div>
-            </article>
-
-            <article class="proceso__card" data-proceso-card>
-              <span class="proceso__card-index" aria-hidden="true">2</span>
-              <div class="proceso__card-media" style="background-color: #1e3a5f;"></div>
-              <div class="proceso__card-body">
-                <div class="proceso__card-body-inner">
-                  <h3 class="proceso__card-title" data-i18n="process.2.title">Diseño</h3>
-                  <p class="proceso__card-desc" data-i18n="process.2.desc">
-                    Arquitectura técnica y prototipo de experiencia
-                  </p>
-                </div>
-                <span class="proceso__card-arrow" aria-hidden="true">↗</span>
-              </div>
-            </article>
-
-            <article class="proceso__card" data-proceso-card>
-              <span class="proceso__card-index" aria-hidden="true">3</span>
-              <div class="proceso__card-media" style="background-color: #2d4a3e;"></div>
-              <div class="proceso__card-body">
-                <div class="proceso__card-body-inner">
-                  <h3 class="proceso__card-title" data-i18n="process.3.title">Desarrollo</h3>
-                  <p class="proceso__card-desc" data-i18n="process.3.desc">
-                    Código limpio, tests y entregas incrementales
-                  </p>
-                </div>
-                <span class="proceso__card-arrow" aria-hidden="true">↗</span>
-              </div>
-            </article>
-
-            <article class="proceso__card" data-proceso-card>
-              <span class="proceso__card-index" aria-hidden="true">4</span>
-              <div class="proceso__card-media" style="background-color: #4a3728;"></div>
-              <div class="proceso__card-body">
-                <div class="proceso__card-body-inner">
-                  <h3 class="proceso__card-title" data-i18n="process.4.title">QA &amp; Pruebas</h3>
-                  <p class="proceso__card-desc" data-i18n="process.4.desc">
-                    Validación rigurosa antes de cada release
-                  </p>
-                </div>
-                <span class="proceso__card-arrow" aria-hidden="true">↗</span>
-              </div>
-            </article>
-
-            <article class="proceso__card" data-proceso-card>
-              <span class="proceso__card-index" aria-hidden="true">5</span>
-              <div class="proceso__card-media" style="background-color: #3b2a4a;"></div>
-              <div class="proceso__card-body">
-                <div class="proceso__card-body-inner">
-                  <h3 class="proceso__card-title" data-i18n="process.5.title">Deploy</h3>
-                  <p class="proceso__card-desc" data-i18n="process.5.desc">
-                    Lanzamiento seguro con monitoreo en tiempo real
-                  </p>
-                </div>
-                <span class="proceso__card-arrow" aria-hidden="true">↗</span>
-              </div>
-            </article>
-
-            <article class="proceso__card" data-proceso-card>
-              <span class="proceso__card-index" aria-hidden="true">6</span>
-              <div class="proceso__card-media" style="background-color: #1f3d3a;"></div>
-              <div class="proceso__card-body">
-                <div class="proceso__card-body-inner">
-                  <h3 class="proceso__card-title" data-i18n="process.6.title">Soporte</h3>
-                  <p class="proceso__card-desc" data-i18n="process.6.desc">
-                    Acompañamiento continuo post-lanzamiento
-                  </p>
-                </div>
-                <span class="proceso__card-arrow" aria-hidden="true">↗</span>
-              </div>
-            </article>
+      <div class="proceso__scene">
+        <div class="proceso__copy">
+          <p class="proceso__eyebrow" data-i18n="nav.process">Proceso</p>
+          <h2 class="proceso__title" id="proceso-heading" data-i18n="process.title">Cómo Trabajamos</h2>
+          <p class="proceso__lead" data-proceso-lead>
+            Entendemos tu negocio y definimos objetivos claros
+          </p>
+          <div class="proceso__controls" aria-hidden="false">
+            <button
+              type="button"
+              class="proceso__nav proceso__nav--prev"
+              aria-label="Paso anterior"
+              data-i18n-aria-label="process.prev"
+            >
+              <span aria-hidden="true">←</span>
+            </button>
+            <button
+              type="button"
+              class="proceso__nav proceso__nav--next"
+              aria-label="Paso siguiente"
+              data-i18n-aria-label="process.next"
+            >
+              <span aria-hidden="true">→</span>
+            </button>
           </div>
         </div>
 
-        <div class="proceso__controls" aria-hidden="false">
-          <button
-            type="button"
-            class="proceso__nav proceso__nav--prev"
-            aria-label="Paso anterior"
-            data-i18n-aria-label="process.prev"
-          >
-            <span aria-hidden="true">←</span>
-          </button>
-          <button
-            type="button"
-            class="proceso__nav proceso__nav--next"
-            aria-label="Paso siguiente"
-            data-i18n-aria-label="process.next"
-          >
-            <span aria-hidden="true">→</span>
-          </button>
-        </div>
+        <div
+          class="proceso__cards"
+          id="proceso-cards"
+          role="region"
+          aria-roledescription="carrusel"
+          aria-label="Pasos de cómo trabajamos"
+          data-i18n-aria-label="process.carouselAria"
+        >
+          <div class="proceso__viewport" id="proceso-viewport" tabindex="0">
+            <div class="proceso__watermark" aria-hidden="true">C</div>
+            <div class="proceso__stack" id="proceso-track">
+              <article
+                class="proceso__card proceso__card--video"
+                data-proceso-card
+                data-proceso-title="CODEVS IA"
+                data-proceso-desc="Así transformamos ideas en productos digitales"
+                data-i18n-proceso-title="process.title"
+                data-i18n-proceso-desc="hero.intro"
+              >
+                <div class="proceso__card-face">
+                  <video
+                    class="proceso__card-video"
+                    src="../assets/videos/proceso-intro.mp4"
+                    autoplay
+                    muted
+                    loop
+                    playsinline
+                    preload="auto"
+                    aria-label="Video del proceso CODEVS IA"
+                  ></video>
+                  <div class="proceso__card-shine" aria-hidden="true"></div>
+                </div>
+              </article>
 
-        <p class="proceso__live visually-hidden" aria-live="polite"></p>
+              <article
+                class="proceso__card"
+                data-proceso-card
+                data-tone="1"
+                data-proceso-title="Descubrimiento"
+                data-proceso-desc="Entendemos tu negocio y definimos objetivos claros"
+              >
+                <div class="proceso__card-face">
+                  <span class="proceso__card-chip" aria-hidden="true"></span>
+                  <span class="proceso__card-index" aria-hidden="true">01</span>
+                  <div class="proceso__card-body">
+                    <h3 class="proceso__card-title" data-i18n="process.1.title">Descubrimiento</h3>
+                    <p class="proceso__card-desc" data-i18n="process.1.desc">
+                      Entendemos tu negocio y definimos objetivos claros
+                    </p>
+                  </div>
+                  <span class="proceso__card-mark" aria-hidden="true">CODEVS</span>
+                  <div class="proceso__card-glow" aria-hidden="true"></div>
+                </div>
+              </article>
+
+              <article
+                class="proceso__card"
+                data-proceso-card
+                data-tone="2"
+                data-proceso-title="Diseño"
+                data-proceso-desc="Arquitectura técnica y prototipo de experiencia"
+              >
+                <div class="proceso__card-face">
+                  <span class="proceso__card-chip" aria-hidden="true"></span>
+                  <span class="proceso__card-index" aria-hidden="true">02</span>
+                  <div class="proceso__card-body">
+                    <h3 class="proceso__card-title" data-i18n="process.2.title">Diseño</h3>
+                    <p class="proceso__card-desc" data-i18n="process.2.desc">
+                      Arquitectura técnica y prototipo de experiencia
+                    </p>
+                  </div>
+                  <span class="proceso__card-mark" aria-hidden="true">CODEVS</span>
+                  <div class="proceso__card-glow" aria-hidden="true"></div>
+                </div>
+              </article>
+
+              <article
+                class="proceso__card"
+                data-proceso-card
+                data-tone="3"
+                data-proceso-title="Desarrollo"
+                data-proceso-desc="Código limpio, tests y entregas incrementales"
+              >
+                <div class="proceso__card-face">
+                  <span class="proceso__card-chip" aria-hidden="true"></span>
+                  <span class="proceso__card-index" aria-hidden="true">03</span>
+                  <div class="proceso__card-body">
+                    <h3 class="proceso__card-title" data-i18n="process.3.title">Desarrollo</h3>
+                    <p class="proceso__card-desc" data-i18n="process.3.desc">
+                      Código limpio, tests y entregas incrementales
+                    </p>
+                  </div>
+                  <span class="proceso__card-mark" aria-hidden="true">CODEVS</span>
+                  <div class="proceso__card-glow" aria-hidden="true"></div>
+                </div>
+              </article>
+
+              <article
+                class="proceso__card"
+                data-proceso-card
+                data-tone="4"
+                data-proceso-title="QA & Pruebas"
+                data-proceso-desc="Validación rigurosa antes de cada release"
+              >
+                <div class="proceso__card-face">
+                  <span class="proceso__card-chip" aria-hidden="true"></span>
+                  <span class="proceso__card-index" aria-hidden="true">04</span>
+                  <div class="proceso__card-body">
+                    <h3 class="proceso__card-title" data-i18n="process.4.title">QA &amp; Pruebas</h3>
+                    <p class="proceso__card-desc" data-i18n="process.4.desc">
+                      Validación rigurosa antes de cada release
+                    </p>
+                  </div>
+                  <span class="proceso__card-mark" aria-hidden="true">CODEVS</span>
+                  <div class="proceso__card-glow" aria-hidden="true"></div>
+                </div>
+              </article>
+
+              <article
+                class="proceso__card"
+                data-proceso-card
+                data-tone="5"
+                data-proceso-title="Deploy"
+                data-proceso-desc="Lanzamiento seguro con monitoreo en tiempo real"
+              >
+                <div class="proceso__card-face">
+                  <span class="proceso__card-chip" aria-hidden="true"></span>
+                  <span class="proceso__card-index" aria-hidden="true">05</span>
+                  <div class="proceso__card-body">
+                    <h3 class="proceso__card-title" data-i18n="process.5.title">Deploy</h3>
+                    <p class="proceso__card-desc" data-i18n="process.5.desc">
+                      Lanzamiento seguro con monitoreo en tiempo real
+                    </p>
+                  </div>
+                  <span class="proceso__card-mark" aria-hidden="true">CODEVS</span>
+                  <div class="proceso__card-glow" aria-hidden="true"></div>
+                </div>
+              </article>
+
+              <article
+                class="proceso__card"
+                data-proceso-card
+                data-tone="6"
+                data-proceso-title="Soporte"
+                data-proceso-desc="Acompañamiento continuo post-lanzamiento"
+              >
+                <div class="proceso__card-face">
+                  <span class="proceso__card-chip" aria-hidden="true"></span>
+                  <span class="proceso__card-index" aria-hidden="true">06</span>
+                  <div class="proceso__card-body">
+                    <h3 class="proceso__card-title" data-i18n="process.6.title">Soporte</h3>
+                    <p class="proceso__card-desc" data-i18n="process.6.desc">
+                      Acompañamiento continuo post-lanzamiento
+                    </p>
+                  </div>
+                  <span class="proceso__card-mark" aria-hidden="true">CODEVS</span>
+                  <div class="proceso__card-glow" aria-hidden="true"></div>
+                </div>
+              </article>
+            </div>
+          </div>
+
+          <p class="proceso__live visually-hidden" aria-live="polite"></p>
+        </div>
       </div>
     </section>
 

@@ -506,78 +506,94 @@
   }
 
   .proceso {
-    --proceso-card-width: 86vw;
-    --proceso-card-gap: 0.75rem;
-    --proceso-cards-height: min(70vh, 34rem);
-    padding: 1.25rem 0 1.75rem;
+    padding: 1.75rem 0 2.5rem;
   }
 
-  .proceso__heading-wrap {
-    margin-bottom: 1rem;
-    text-align: left;
-    padding: 0 1.15rem;
+  .proceso__scene {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+    min-height: 0;
+    align-items: start;
+  }
+
+  .proceso__copy {
+    max-width: none;
+    gap: 0.75rem;
   }
 
   .proceso__title {
-    font-size: clamp(1.65rem, 7vw, 2rem);
-    text-align: left;
+    font-size: clamp(1.75rem, 8vw, 2.25rem);
+  }
+
+  .proceso__lead {
+    max-width: none;
+    min-height: 2.8em;
+    font-size: 0.95rem;
+  }
+
+  .proceso__copy .proceso__controls {
+    margin-top: 0.75rem;
   }
 
   .proceso__cards {
-    min-height: 26rem;
-    max-height: none;
+    height: min(62vh, 28rem);
+    min-height: 22rem;
+  }
+
+  .proceso {
+    --proceso-card-w: min(78vw, 19rem);
   }
 
   .proceso__viewport {
-    /* pan-y: scroll de página; el JS mueve el track en horizontal */
-    touch-action: pan-y;
+    perspective: 1000px;
+    perspective-origin: 50% 42%;
   }
 
-  .proceso__track {
-    gap: var(--proceso-card-gap);
+  .proceso__watermark {
+    font-size: clamp(10rem, 55vw, 16rem);
+    left: 50%;
   }
 
-  .proceso__card-index {
-    top: 1rem;
-    left: 1rem;
-    font-size: clamp(3.75rem, 20vw, 5.5rem);
-    font-weight: 200;
+  .proceso__card[data-slot="0"] {
+    --slot-x: 2%;
+    --slot-y: -34%;
+    --slot-z: -120px;
+    --slot-rx: 48deg;
+    --slot-ry: -18deg;
+    --slot-rz: 8deg;
   }
 
-  .proceso__card-body {
-    padding: 1.15rem 1.15rem 1.25rem;
-    padding-top: 5.75rem;
-    gap: 1rem;
+  .proceso__card[data-slot="1"] {
+    --slot-x: -8%;
+    --slot-y: -14%;
+    --slot-z: -60px;
+    --slot-rx: -12deg;
+    --slot-ry: 22deg;
   }
 
-  .proceso__card-title {
-    font-size: clamp(1.2rem, 5vw, 1.45rem);
+  .proceso__card[data-slot="2"] {
+    --slot-x: 0%;
+    --slot-y: 4%;
+    --slot-z: 40px;
+    --slot-rx: 6deg;
+    --slot-ry: -8deg;
+    --slot-scale: 1.02;
   }
 
-  .proceso__card-desc {
-    margin-top: 0.55rem;
-    font-size: clamp(0.9rem, 3.6vw, 1rem);
-    line-height: 1.45;
-    color: rgba(255, 255, 255, 0.82);
+  .proceso__card[data-slot="3"] {
+    --slot-x: 8%;
+    --slot-y: 24%;
+    --slot-rx: 64deg;
   }
 
-  .proceso__card-arrow {
-    font-size: 1.55rem;
+  .proceso__card[data-slot="4"] {
+    --slot-y: 36%;
   }
 
   .proceso__nav {
-    width: 2.25rem;
-    height: 2.25rem;
+    width: 2.5rem;
+    height: 2.5rem;
     font-size: 0.95rem;
-    background: #000000;
-  }
-
-  .proceso__nav--prev {
-    left: 0;
-  }
-
-  .proceso__nav--next {
-    right: 0;
   }
 }
 

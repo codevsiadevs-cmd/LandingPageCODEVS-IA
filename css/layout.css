@@ -1033,129 +1033,214 @@ main > section:not(.hero) {
   pointer-events: none;
 }
 
-/* ——— Proceso (carrusel de tarjetas 1–6) ——— */
+/* ——— Proceso (stack 3D de tarjetas) ——— */
 .proceso {
-  --proceso-card-width: 33.333vw;
-  --proceso-cards-height: calc(72vh - var(--nav-height) * 0.35);
+  --proceso-card-w: clamp(15.5rem, 26vw, 21.5rem);
+  --proceso-card-h: calc(var(--proceso-card-w) * 0.63);
   scroll-margin-top: calc(var(--nav-height) + 1rem);
   position: relative;
-  padding: clamp(2rem, 5vw, 3rem) 0 0;
+  padding: clamp(2.5rem, 6vw, 4.5rem) 0 clamp(3rem, 7vw, 5rem);
   overflow: hidden;
   background: #000000;
   color: #ffffff;
 }
 
-.proceso__heading-wrap {
-  max-width: 72rem;
-  margin: 0 auto clamp(1.25rem, 2.5vw, 1.75rem);
-  text-align: center;
+.proceso__scene {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(16rem, 0.92fr) minmax(0, 1.2fr);
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+  align-items: center;
+  max-width: 88rem;
+  margin: 0 auto;
   padding: 0 clamp(1.25rem, 4vw, 3rem);
+  min-height: min(78vh, 42rem);
+}
+
+.proceso__copy {
+  position: relative;
+  z-index: 2;
+  max-width: 26rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.proceso__eyebrow {
+  margin: 0;
+  font-family: "Instrument Serif", Georgia, "Times New Roman", serif;
+  font-size: clamp(1.35rem, 2.4vw, 1.85rem);
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  color: var(--accent-primary);
+  line-height: 1.1;
 }
 
 .proceso__title {
   margin: 0;
   font-family: var(--font-heading);
   font-weight: 700;
-  font-size: clamp(1.85rem, 4vw, 2.5rem);
-  letter-spacing: -0.02em;
-  line-height: 1.15;
+  font-size: clamp(2rem, 4.2vw, 3.25rem);
+  letter-spacing: -0.03em;
+  line-height: 1.05;
   color: #ffffff;
+}
+
+.proceso__lead {
+  margin: 0.35rem 0 0;
+  font-family: var(--font-body);
+  font-size: clamp(0.95rem, 1.35vw, 1.1rem);
+  font-weight: 400;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.72);
+  max-width: 22rem;
+  min-height: 3.4em;
+  transition: opacity 0.28s ease;
+}
+
+.proceso__copy .proceso__controls {
+  position: relative;
+  inset: auto;
+  margin-top: 1.25rem;
+  display: flex;
+  gap: 0.65rem;
+  pointer-events: auto;
 }
 
 .proceso__cards {
   position: relative;
-  height: var(--proceso-cards-height);
-  min-height: 22rem;
-  max-height: calc(100vh - var(--nav-height) - 4.5cm);
+  height: min(72vh, 36rem);
+  min-height: 26rem;
   width: 100%;
+  overflow: visible;
 }
 
 .proceso__viewport {
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
+  perspective: 1400px;
+  perspective-origin: 55% 45%;
   outline: none;
   touch-action: pan-y;
   user-select: none;
   -webkit-user-select: none;
+  overflow: visible;
 }
 
-@media (pointer: fine) {
-  .proceso__viewport {
-    cursor: grab;
-  }
-
-  .proceso__viewport.proceso__viewport--dragging {
-    cursor: grabbing;
-  }
-}
-
-.proceso__viewport.proceso__viewport--dragging .proceso__card-body {
+.proceso__watermark {
+  position: absolute;
+  left: 42%;
+  top: 46%;
+  transform: translate(-50%, -50%);
+  font-family: "Dirtyline36Daysoftype2022", system-ui, sans-serif;
+  font-size: clamp(14rem, 42vw, 28rem);
+  line-height: 0.8;
+  color: rgba(255, 255, 255, 0.035);
   pointer-events: none;
+  user-select: none;
+  z-index: 0;
 }
 
-.proceso__controls {
+.proceso__stack {
   position: absolute;
   inset: 0;
-  z-index: 30;
-  pointer-events: none;
-}
-
-.proceso__track {
-  display: flex;
-  height: 100%;
-  width: max-content;
-  will-change: transform;
-  transition-property: transform;
-  transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
-  transition-duration: 480ms;
-}
-
-.proceso__track.proceso__track--dragging {
-  transition-duration: 0ms !important;
+  transform-style: preserve-3d;
+  display: grid;
+  place-items: center;
 }
 
 .proceso__card {
+  --slot-x: 0px;
+  --slot-y: 0px;
+  --slot-z: 0px;
+  --slot-rx: 0deg;
+  --slot-ry: 0deg;
+  --slot-rz: 0deg;
+  --slot-opacity: 1;
+  --slot-scale: 1;
+  position: absolute;
+  width: var(--proceso-card-w);
+  height: var(--proceso-card-h);
+  margin: 0;
+  border: none;
+  background: transparent;
+  transform-style: preserve-3d;
+  transform:
+    translate3d(var(--slot-x), var(--slot-y), var(--slot-z))
+    rotateX(var(--slot-rx))
+    rotateY(var(--slot-ry))
+    rotateZ(var(--slot-rz))
+    scale(var(--slot-scale));
+  opacity: var(--slot-opacity);
+  transition:
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.45s ease;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.proceso__card.is-front {
+  z-index: 8;
+  cursor: default;
+}
+
+.proceso__card-face {
   position: relative;
-  flex: 0 0 var(--proceso-card-width);
-  width: var(--proceso-card-width);
+  width: 100%;
   height: 100%;
   overflow: hidden;
-  background: #111111;
+  border-radius: 1.05rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background:
+    radial-gradient(ellipse 85% 55% at 72% 108%, rgba(123, 97, 255, 0.42), transparent 58%),
+    linear-gradient(155deg, #17181d 0%, #07080a 62%, #101218 100%);
+  box-shadow:
+    0 18px 50px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  transform-style: preserve-3d;
 }
 
-.proceso__card--video {
-  background: #000000;
+.proceso__card[data-tone="1"] .proceso__card-face {
+  background:
+    radial-gradient(ellipse 80% 50% at 70% 110%, rgba(15, 255, 212, 0.28), transparent 55%),
+    linear-gradient(155deg, #15181c 0%, #08090b 100%);
 }
 
-.proceso__card-index {
-  position: absolute;
-  top: clamp(1rem, 2.5vw, 1.75rem);
-  left: clamp(1rem, 2.5vw, 1.75rem);
-  z-index: 2;
-  font-family: var(--font-heading);
-  font-size: clamp(3.25rem, 9vw, 6rem);
-  font-weight: 300;
-  line-height: 0.9;
-  letter-spacing: -0.04em;
-  color: #ffffff;
-  pointer-events: none;
-  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.35);
+.proceso__card[data-tone="2"] .proceso__card-face {
+  background:
+    radial-gradient(ellipse 80% 50% at 70% 110%, rgba(30, 90, 180, 0.45), transparent 55%),
+    linear-gradient(155deg, #121820 0%, #07090d 100%);
 }
 
-.proceso__card-media {
-  position: absolute;
-  inset: 0;
-  background-color: #111111;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+.proceso__card[data-tone="3"] .proceso__card-face {
+  background:
+    radial-gradient(ellipse 80% 50% at 70% 110%, rgba(45, 140, 100, 0.4), transparent 55%),
+    linear-gradient(155deg, #121a16 0%, #070a08 100%);
 }
 
-.proceso__card-media--video {
-  background: #000000;
+.proceso__card[data-tone="4"] .proceso__card-face {
+  background:
+    radial-gradient(ellipse 80% 50% at 70% 110%, rgba(210, 120, 60, 0.38), transparent 55%),
+    linear-gradient(155deg, #1a1410 0%, #0a0806 100%);
+}
+
+.proceso__card[data-tone="5"] .proceso__card-face {
+  background:
+    radial-gradient(ellipse 80% 50% at 70% 110%, rgba(123, 97, 255, 0.5), transparent 55%),
+    linear-gradient(155deg, #16121f 0%, #08060c 100%);
+}
+
+.proceso__card[data-tone="6"] .proceso__card-face {
+  background:
+    radial-gradient(ellipse 80% 50% at 70% 110%, rgba(15, 180, 170, 0.4), transparent 55%),
+    linear-gradient(155deg, #101818 0%, #060909 100%);
+}
+
+.proceso__card--video .proceso__card-face {
+  background: #050505;
+  padding: 0;
 }
 
 .proceso__card-video {
@@ -1166,32 +1251,77 @@ main > section:not(.hero) {
   pointer-events: none;
 }
 
-.proceso__card-body {
+.proceso__card-shine {
   position: absolute;
   inset: 0;
+  background: linear-gradient(
+    125deg,
+    rgba(255, 255, 255, 0.16) 0%,
+    transparent 38%,
+    transparent 62%,
+    rgba(255, 255, 255, 0.05) 100%
+  );
+  pointer-events: none;
+  mix-blend-mode: screen;
+  opacity: 0.55;
+}
+
+.proceso__card-chip {
+  position: absolute;
+  top: 1.05rem;
+  left: 1.1rem;
+  width: 2.15rem;
+  height: 1.55rem;
+  border-radius: 0.28rem;
+  background:
+    linear-gradient(135deg, #d7c48a 0%, #f0e2b0 40%, #b79a55 100%);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.2);
+}
+
+.proceso__card-chip::after {
+  content: "";
+  position: absolute;
+  inset: 18% 12%;
+  border: 1px solid rgba(0, 0, 0, 0.18);
+  border-radius: 0.12rem;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 2px,
+      rgba(0, 0, 0, 0.12) 2px 3px
+    );
+}
+
+.proceso__card-index {
+  position: absolute;
+  top: 0.85rem;
+  right: 1.05rem;
+  font-family: var(--font-heading);
+  font-size: clamp(1.35rem, 2.2vw, 1.75rem);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: rgba(255, 255, 255, 0.88);
+  line-height: 1;
+  text-shadow: none;
+}
+
+.proceso__card-body {
+  position: absolute;
+  left: 1.1rem;
+  right: 1.1rem;
+  bottom: 1rem;
   z-index: 1;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
-  align-items: stretch;
-  gap: 1.25rem;
-  padding: clamp(1.25rem, 3vw, 2rem);
-  padding-top: clamp(5.5rem, 14vw, 8rem);
+  gap: 0.35rem;
+  padding: 0;
   background: transparent;
-}
-
-.proceso__card-body-inner {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  min-width: 0;
 }
 
 .proceso__card-title {
   margin: 0;
   font-family: var(--font-heading);
-  font-size: clamp(1.35rem, 2.4vw, 2rem);
+  font-size: clamp(1.05rem, 1.7vw, 1.35rem);
   font-weight: 700;
   line-height: 1.15;
   letter-spacing: -0.02em;
@@ -1200,66 +1330,162 @@ main > section:not(.hero) {
 
 .proceso__card-desc {
   margin: 0;
-  margin-top: 0.85rem;
   font-family: var(--font-body);
-  font-size: clamp(0.95rem, 1.35vw, 1.125rem);
+  font-size: clamp(0.72rem, 1.05vw, 0.86rem);
   font-weight: 400;
-  line-height: 1.5;
-  color: rgba(255, 255, 255, 0.82);
-  opacity: 1;
-  max-height: none;
-  overflow: visible;
-  transform: none;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.72);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
-.proceso__card-arrow {
-  flex-shrink: 0;
-  align-self: flex-end;
-  font-size: clamp(1.5rem, 2.4vw, 2rem);
-  line-height: 1;
-  color: #ffffff;
-  opacity: 0.9;
-  visibility: visible;
-  transform: none;
+.proceso__card-mark {
+  position: absolute;
+  top: 1.15rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: "Instrument Serif", Georgia, serif;
+  font-size: 0.95rem;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.78);
+  pointer-events: none;
+}
+
+.proceso__card-glow {
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  bottom: -18%;
+  height: 55%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(123, 97, 255, 0.35) 0%,
+    transparent 70%
+  );
+  filter: blur(12px);
+  pointer-events: none;
+  opacity: 0.85;
+}
+
+/* Slots del stack (inspirados en la composición wavebank) */
+.proceso__card[data-slot="0"] {
+  --slot-x: 4%;
+  --slot-y: -38%;
+  --slot-z: -180px;
+  --slot-rx: 58deg;
+  --slot-ry: -28deg;
+  --slot-rz: 10deg;
+  --slot-scale: 0.86;
+  --slot-opacity: 0.78;
+  z-index: 2;
+}
+
+.proceso__card[data-slot="1"] {
+  --slot-x: -10%;
+  --slot-y: -16%;
+  --slot-z: -90px;
+  --slot-rx: -18deg;
+  --slot-ry: 32deg;
+  --slot-rz: -8deg;
+  --slot-scale: 0.92;
+  --slot-opacity: 0.88;
+  z-index: 3;
+}
+
+.proceso__card[data-slot="2"] {
+  --slot-x: 6%;
+  --slot-y: 2%;
+  --slot-z: 60px;
+  --slot-rx: 8deg;
+  --slot-ry: -14deg;
+  --slot-rz: 2deg;
+  --slot-scale: 1.05;
+  --slot-opacity: 1;
+  z-index: 8;
+}
+
+.proceso__card[data-slot="3"] {
+  --slot-x: 14%;
+  --slot-y: 22%;
+  --slot-z: -40px;
+  --slot-rx: 72deg;
+  --slot-ry: 8deg;
+  --slot-rz: -4deg;
+  --slot-scale: 0.9;
+  --slot-opacity: 0.82;
+  z-index: 4;
+}
+
+.proceso__card[data-slot="4"] {
+  --slot-x: -8%;
+  --slot-y: 34%;
+  --slot-z: -120px;
+  --slot-rx: -28deg;
+  --slot-ry: 18deg;
+  --slot-rz: 6deg;
+  --slot-scale: 0.88;
+  --slot-opacity: 0.75;
+  z-index: 2;
+}
+
+.proceso__card[data-slot="5"] {
+  --slot-x: 18%;
+  --slot-y: -8%;
+  --slot-z: -220px;
+  --slot-rx: 24deg;
+  --slot-ry: -40deg;
+  --slot-rz: 14deg;
+  --slot-scale: 0.8;
+  --slot-opacity: 0.55;
+  z-index: 1;
+}
+
+.proceso__card[data-slot="6"] {
+  --slot-x: -16%;
+  --slot-y: 10%;
+  --slot-z: -260px;
+  --slot-rx: 12deg;
+  --slot-ry: 48deg;
+  --slot-rz: -12deg;
+  --slot-scale: 0.78;
+  --slot-opacity: 0.45;
+  z-index: 1;
 }
 
 .proceso__nav {
-  position: absolute;
-  top: 50%;
-  z-index: 31;
-  transform: translateY(-50%);
+  position: relative;
+  top: auto;
+  left: auto;
+  right: auto;
+  transform: none;
   pointer-events: auto;
-  width: clamp(2.5rem, 4vw, 3rem);
-  height: clamp(2.5rem, 4vw, 3rem);
+  width: 2.75rem;
+  height: 2.75rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   padding: 0;
-  border: none;
-  background: rgba(0, 0, 0, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.55);
   color: #ffffff;
-  font-size: 1.15rem;
+  font-size: 1.05rem;
   line-height: 1;
   cursor: pointer;
-  transition: background 0.2s ease, opacity 0.2s ease;
+  transition: background 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
 }
 
 .proceso__nav:not(:disabled):hover {
-  background: #000000;
+  background: rgba(15, 255, 212, 0.12);
+  border-color: rgba(15, 255, 212, 0.45);
 }
 
-.proceso__nav--prev {
-  left: 0;
-}
-
+.proceso__nav--prev,
 .proceso__nav--next {
-  right: 0;
-}
-
-@media (max-width: 1100px) {
-  .proceso {
-    --proceso-card-width: 50vw;
-  }
+  left: auto;
+  right: auto;
 }
 
 .proceso__live {
@@ -1285,6 +1511,12 @@ main > section:not(.hero) {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .proceso__card {
+    transition: none;
+  }
 }
 
 /* ——— Por qué CODEVS (transición iris + punch zoom) ——— */
