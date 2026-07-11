@@ -1,5 +1,6 @@
 /**
  * Carrusel horizontal infinito de pasos (1–6) en Cómo Trabajamos.
+ * Clones a ambos lados para wrap natural 1↔6 en ambas direcciones.
  * Touch: swipe horizontal mueve el carrusel; vertical deja scrollear la página.
  */
 import { prefersReducedMotionGlobal } from "./scroll.js";
@@ -18,13 +19,24 @@ function initProcesoCards() {
   const total = originals.length;
   if (total === 0) return;
 
-  originals.forEach((card) => {
+  function makeClone(card) {
     const clone = card.cloneNode(true);
     clone.classList.add("proceso__card--clone");
     clone.setAttribute("aria-hidden", "true");
     clone.removeAttribute("data-proceso-card");
-    track.appendChild(clone);
-  });
+    return clone;
+  }
+
+  // Clones al final: … 1 2 3 4 5 6 | 1' 2' 3' 4' 5' 6'
+  originals.forEach((card) => track.appendChild(makeClone(card)));
+
+  // Clones al inicio: 1" 2" 3" 4" 5" 6" | 1 2 3 4 5 6 | …
+  const prependFragment = document.createDocumentFragment();
+  originals.forEach((card) => prependFragment.appendChild(makeClone(card)));
+  track.insertBefore(prependFragment, track.firstChild);
+
+  // Índices de scroll: [0..total-1]=clones prev, [total..2total-1]=reales, [2total..]=clones next
+  const realOffset = total;
 
   const AXIS_THRESHOLD = 10;
 
@@ -50,6 +62,12 @@ function initProcesoCards() {
     return width > 0 ? width : viewport.clientWidth;
   }
 
+  function logicalFromScrollIndex(scrollIndex) {
+    if (scrollIndex < total) return ((scrollIndex % total) + total) % total;
+    if (scrollIndex >= 2 * total) return ((scrollIndex - 2 * total) % total + total) % total;
+    return scrollIndex - realOffset;
+  }
+
   function announce() {
     if (!liveEl) return;
     const card = originals[slideIndex];
@@ -59,44 +77,65 @@ function initProcesoCards() {
       : `Paso ${slideIndex + 1} de ${total}`;
   }
 
-  function scrollToSlide(index, instant = false) {
-    const width = getSlideWidth();
-    if (width <= 0) return;
-
-    slideIndex = index;
-    scrollLock = true;
-    viewport.style.scrollBehavior =
-      instant || prefersReducedMotionGlobal ? "auto" : "smooth";
-    viewport.scrollLeft = index * width;
-    announce();
-
-    window.setTimeout(
-      () => {
-        viewport.style.scrollBehavior = "";
-        scrollLock = false;
-        normalizeLoop();
-      },
-      instant || prefersReducedMotionGlobal ? 32 : 720
-    );
-  }
-
   function normalizeLoop() {
     const width = getSlideWidth();
     if (width <= 0) return;
 
     const rawIndex = Math.round(viewport.scrollLeft / width);
 
-    if (rawIndex >= total) {
+    if (rawIndex < total) {
       viewport.style.scrollBehavior = "auto";
-      viewport.scrollLeft = 0;
-      slideIndex = 0;
+      viewport.scrollLeft = (rawIndex + total) * width;
+      slideIndex = logicalFromScrollIndex(rawIndex + total);
       viewport.style.scrollBehavior = "";
       announce();
       return;
     }
 
-    slideIndex = Math.max(0, Math.min(total - 1, rawIndex));
+    if (rawIndex >= 2 * total) {
+      viewport.style.scrollBehavior = "auto";
+      viewport.scrollLeft = (rawIndex - total) * width;
+      slideIndex = logicalFromScrollIndex(rawIndex - total);
+      viewport.style.scrollBehavior = "";
+      announce();
+      return;
+    }
+
+    slideIndex = logicalFromScrollIndex(rawIndex);
     announce();
+  }
+
+  function animateToScrollIndex(scrollIndex, instant = false) {
+    const width = getSlideWidth();
+    if (width <= 0) return;
+
+    slideIndex = logicalFromScrollIndex(scrollIndex);
+    scrollLock = true;
+    viewport.style.scrollBehavior =
+      instant || prefersReducedMotionGlobal ? "auto" : "smooth";
+    viewport.scrollLeft = scrollIndex * width;
+    announce();
+
+    window.setTimeout(
+      () => {
+        viewport.style.scrollBehavior = "auto";
+        normalizeLoop();
+        viewport.style.scrollBehavior = "";
+        scrollLock = false;
+      },
+      instant || prefersReducedMotionGlobal ? 32 : 720
+    );
+  }
+
+  function scrollToLogical(logicalIndex, instant = false) {
+    const safe = ((logicalIndex % total) + total) % total;
+    animateToScrollIndex(realOffset + safe, instant);
+  }
+
+  function currentScrollIndex() {
+    const width = getSlideWidth();
+    if (width <= 0) return realOffset + slideIndex;
+    return Math.round(viewport.scrollLeft / width);
   }
 
   function snapAfterDrag() {
@@ -104,52 +143,29 @@ function initProcesoCards() {
     if (width <= 0) return;
 
     const scrollPos = viewport.scrollLeft;
-    const threshold = width * 0.18;
+    const raw = scrollPos / width;
+    const nearest = Math.round(raw);
+    const threshold = 0.18;
 
-    if (scrollPos >= total * width - threshold && dragDeltaX < 0) {
-      scrollToSlide(total, false);
-      return;
+    // Empuje claro hacia un lado: ir al slide en esa dirección
+    let target = nearest;
+    if (dragDeltaX < -width * threshold) {
+      target = Math.ceil(raw - 0.001);
+    } else if (dragDeltaX > width * threshold) {
+      target = Math.floor(raw + 0.001);
     }
 
-    if (scrollPos <= threshold && dragDeltaX > 0 && slideIndex === 0) {
-      stepPrev();
-      return;
-    }
-
-    if (scrollPos >= total * width - 1) {
-      viewport.style.scrollBehavior = "auto";
-      viewport.scrollLeft = 0;
-      slideIndex = 0;
-      viewport.style.scrollBehavior = "";
-      announce();
-      return;
-    }
-
-    const nearest = Math.max(0, Math.min(total, Math.round(scrollPos / width)));
-    scrollToSlide(nearest >= total ? 0 : nearest, !prefersReducedMotionGlobal);
+    animateToScrollIndex(target, false);
   }
 
   function stepNext() {
     if (scrollLock || isDragging) return;
-    if (slideIndex >= total - 1) {
-      scrollToSlide(total, false);
-      return;
-    }
-    scrollToSlide(slideIndex + 1, false);
+    animateToScrollIndex(currentScrollIndex() + 1, false);
   }
 
   function stepPrev() {
     if (scrollLock || isDragging) return;
-    if (slideIndex <= 0) {
-      viewport.style.scrollBehavior = "auto";
-      viewport.scrollLeft = total * getSlideWidth();
-      slideIndex = total - 1;
-      viewport.style.scrollBehavior = "";
-      announce();
-      window.setTimeout(() => scrollToSlide(total - 1, false), 32);
-      return;
-    }
-    scrollToSlide(slideIndex - 1, false);
+    animateToScrollIndex(currentScrollIndex() - 1, false);
   }
 
   function beginHorizontalDrag(pointerId) {
@@ -226,7 +242,6 @@ function initProcesoCards() {
       if (axisLock === null) {
         if (Math.abs(dx) < AXIS_THRESHOLD && Math.abs(dy) < AXIS_THRESHOLD) return;
 
-        // Eje dominante: horizontal → carrusel; vertical → página
         axisLock = Math.abs(dx) >= Math.abs(dy) ? "x" : "y";
 
         if (axisLock === "y") {
@@ -287,12 +302,14 @@ function initProcesoCards() {
     { passive: true }
   );
 
-  window.addEventListener("resize", () => scrollToSlide(slideIndex, true), {
-    passive: true,
-  });
+  window.addEventListener(
+    "resize",
+    () => scrollToLogical(slideIndex, true),
+    { passive: true }
+  );
 
-  scrollToSlide(0, true);
-  window.addEventListener("load", () => scrollToSlide(slideIndex, true), {
+  scrollToLogical(0, true);
+  window.addEventListener("load", () => scrollToLogical(slideIndex, true), {
     once: true,
   });
 }
