@@ -1,6 +1,6 @@
 /**
  * Carrusel horizontal infinito de pasos (1–6) en Cómo Trabajamos.
- * Flechas, teclado y arrastre — mismo patrón que el carrusel de proyectos.
+ * Touch: swipe horizontal mueve el carrusel; vertical deja scrollear la página.
  */
 import { prefersReducedMotionGlobal } from "./scroll.js";
 
@@ -26,15 +26,26 @@ function initProcesoCards() {
     track.appendChild(clone);
   });
 
+  const AXIS_THRESHOLD = 10;
+
   let slideIndex = 0;
   let scrollLock = false;
+  let isPointerDown = false;
   let isDragging = false;
+  let axisLock = null;
   let dragPointerId = null;
   let dragStartX = 0;
+  let dragStartY = 0;
   let dragStartScroll = 0;
   let dragDeltaX = 0;
 
   function getSlideWidth() {
+    if (originals.length > 1) {
+      const a = originals[0].getBoundingClientRect();
+      const b = originals[1].getBoundingClientRect();
+      const step = b.left - a.left;
+      if (step > 0) return step;
+    }
     const width = originals[0].getBoundingClientRect().width;
     return width > 0 ? width : viewport.clientWidth;
   }
@@ -141,53 +152,107 @@ function initProcesoCards() {
     scrollToSlide(slideIndex - 1, false);
   }
 
-  function endDrag(pointerId) {
-    if (!isDragging) return;
+  function beginHorizontalDrag(pointerId) {
+    isDragging = true;
+    viewport.classList.add("proceso__viewport--dragging");
+    viewport.style.scrollSnapType = "none";
+    viewport.style.scrollBehavior = "auto";
+    try {
+      viewport.setPointerCapture(pointerId);
+    } catch {
+      /* ignore */
+    }
+  }
+
+  function resetPointerState() {
+    isPointerDown = false;
     isDragging = false;
+    axisLock = null;
     dragPointerId = null;
+    dragDeltaX = 0;
     viewport.classList.remove("proceso__viewport--dragging");
     viewport.style.scrollSnapType = "";
     viewport.style.scrollBehavior = "";
+  }
 
-    if (pointerId != null && viewport.hasPointerCapture(pointerId)) {
-      viewport.releasePointerCapture(pointerId);
+  function endDrag(pointerId) {
+    if (!isPointerDown && !isDragging) return;
+
+    const didHorizontalDrag = isDragging && axisLock === "x";
+    const delta = dragDeltaX;
+
+    if (pointerId != null && viewport.hasPointerCapture?.(pointerId)) {
+      try {
+        viewport.releasePointerCapture(pointerId);
+      } catch {
+        /* ignore */
+      }
     }
 
-    if (Math.abs(dragDeltaX) > 6) {
+    resetPointerState();
+
+    if (didHorizontalDrag && Math.abs(delta) > 6) {
+      dragDeltaX = delta;
       snapAfterDrag();
-    } else {
+      dragDeltaX = 0;
+    } else if (didHorizontalDrag) {
       normalizeLoop();
     }
-    dragDeltaX = 0;
   }
 
   viewport.addEventListener("pointerdown", (event) => {
     if (scrollLock) return;
     if (event.pointerType === "mouse" && event.button !== 0) return;
-    isDragging = true;
+    if (event.target.closest(".proceso__nav")) return;
+
+    isPointerDown = true;
+    isDragging = false;
+    axisLock = null;
     dragPointerId = event.pointerId;
     dragStartX = event.clientX;
+    dragStartY = event.clientY;
     dragStartScroll = viewport.scrollLeft;
     dragDeltaX = 0;
-    viewport.classList.add("proceso__viewport--dragging");
-    viewport.style.scrollSnapType = "none";
-    viewport.style.scrollBehavior = "auto";
-    viewport.setPointerCapture(event.pointerId);
   });
 
-  viewport.addEventListener("pointermove", (event) => {
-    if (!isDragging || event.pointerId !== dragPointerId) return;
-    dragDeltaX = event.clientX - dragStartX;
-    viewport.scrollLeft = dragStartScroll - dragDeltaX;
-  });
+  viewport.addEventListener(
+    "pointermove",
+    (event) => {
+      if (!isPointerDown || event.pointerId !== dragPointerId) return;
+
+      const dx = event.clientX - dragStartX;
+      const dy = event.clientY - dragStartY;
+
+      if (axisLock === null) {
+        if (Math.abs(dx) < AXIS_THRESHOLD && Math.abs(dy) < AXIS_THRESHOLD) return;
+
+        // Eje dominante: horizontal → carrusel; vertical → página
+        axisLock = Math.abs(dx) >= Math.abs(dy) ? "x" : "y";
+
+        if (axisLock === "y") {
+          resetPointerState();
+          return;
+        }
+
+        beginHorizontalDrag(event.pointerId);
+      }
+
+      if (axisLock !== "x") return;
+
+      dragDeltaX = dx;
+      viewport.scrollLeft = dragStartScroll - dx;
+      if (event.cancelable) event.preventDefault();
+    },
+    { passive: false }
+  );
 
   viewport.addEventListener("pointerup", (event) => {
-    if (event.pointerId !== dragPointerId) return;
+    if (event.pointerId !== dragPointerId && dragPointerId != null) return;
     endDrag(event.pointerId);
   });
 
   viewport.addEventListener("pointercancel", (event) => {
-    if (event.pointerId !== dragPointerId) return;
+    if (event.pointerId !== dragPointerId && dragPointerId != null) return;
     endDrag(event.pointerId);
   });
 

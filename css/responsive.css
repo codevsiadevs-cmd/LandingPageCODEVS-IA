@@ -489,9 +489,10 @@
   }
 
   .proceso {
-    --proceso-card-width: 85vw;
-    --proceso-cards-height: min(58vh, 26rem);
-    padding-top: 1.5rem;
+    --proceso-card-width: 86vw;
+    --proceso-card-gap: 0.75rem;
+    --proceso-cards-height: min(70vh, 34rem);
+    padding: 1.25rem 0 1.75rem;
   }
 
   .proceso__heading-wrap {
@@ -505,25 +506,84 @@
     text-align: left;
   }
 
+  .proceso__cards {
+    min-height: 26rem;
+    max-height: none;
+  }
+
+  .proceso__viewport {
+    /* pan-y: scroll de página; el JS captura solo el swipe horizontal */
+    touch-action: pan-y;
+  }
+
+  .proceso__track {
+    gap: var(--proceso-card-gap);
+  }
+
+  .proceso__card {
+    scroll-snap-align: start;
+  }
+
   .proceso__card-index {
-    font-size: clamp(2.75rem, 14vw, 4rem);
+    top: 1rem;
+    left: 1rem;
+    font-size: clamp(3.75rem, 20vw, 5.5rem);
+    font-weight: 200;
   }
 
   .proceso__card-caption {
-    width: min(92%, 20rem);
-    max-width: min(92%, 20rem);
+    left: 0;
+    right: auto;
+    width: 100%;
+    max-width: 100%;
+    min-height: auto;
+    align-items: flex-end;
+    gap: 0.65rem;
+    padding: 1.05rem 1.05rem 1.1rem 1.15rem;
+  }
+
+  .proceso__card-caption-inner {
+    transform: none;
+  }
+
+  .proceso__card-title {
+    font-size: clamp(1.05rem, 4.2vw, 1.25rem);
+    font-weight: 700;
+  }
+
+  .proceso__card-desc {
+    margin-top: 0.45rem;
+    font-size: clamp(0.84rem, 3.5vw, 0.95rem);
+    line-height: 1.4;
+    opacity: 1;
+    max-height: none;
+    overflow: visible;
+    transform: none;
+    color: #4a4a4a;
+  }
+
+  .proceso__card-arrow {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    font-size: 1.55rem;
+    align-self: flex-end;
   }
 
   .proceso__nav {
-    width: 2.5rem;
-    height: 2.5rem;
-    font-size: 1rem;
+    width: 2.25rem;
+    height: 2.25rem;
+    font-size: 0.95rem;
+    background: #000000;
   }
-}
 
-@media (max-width: 768px) {
-  .proceso {
-    --proceso-card-width: 88vw;
+  .proceso__nav--prev {
+    left: 0;
+  }
+
+  .proceso__nav--next {
+    /* Sobre el borde derecho de la tarjeta activa (peek a la derecha) */
+    right: calc(100vw - var(--proceso-card-width));
   }
 }
 

@@ -1144,7 +1144,6 @@
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  filter: grayscale(0.15) contrast(1.05);
 }
 
 .proceso__card-media::after {
