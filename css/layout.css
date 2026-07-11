@@ -447,8 +447,9 @@
 }
 
 .hero__canvas-wrap {
+  /* Fijo en viewport: no se mueve con el scroll */
   position: fixed;
-  z-index: 0;
+  z-index: 4;
   left: var(--brain-scroll-x, 73%);
   right: auto;
   top: var(--brain-scroll-y, 50vh);
@@ -458,12 +459,8 @@
   margin: 0;
   flex-shrink: 0;
   transform: translate(-50%, -50%) scale(var(--brain-scale, 1));
-  transition:
-    filter 300ms ease,
-    width 0.65s var(--ease-out),
-    height 0.65s var(--ease-out),
-    transform 0.65s var(--ease-out);
-  will-change: top, left, transform;
+  transition: filter 300ms ease;
+  will-change: filter;
   pointer-events: none;
   overflow: visible;
   mask-image: radial-gradient(
@@ -478,22 +475,17 @@
   );
 }
 
+/* Al inicio, por encima de main para poder interactuar */
+.hero__canvas-wrap.hero__canvas-wrap--interactive {
+  z-index: 6;
+}
+
 .hero__canvas-wrap.hero__canvas-wrap--proceso {
-  z-index: 7;
-  width: clamp(8rem, 15vw, 11rem);
-  height: clamp(8rem, 15vw, 11rem);
+  z-index: 4;
+  width: min(1320px, 72vw);
+  height: min(1320px, 72vw);
   --brain-scale: 1;
-  pointer-events: auto;
-  mask-image: radial-gradient(
-    ellipse 88% 84% at 50% 50%,
-    #000 55%,
-    transparent 92%
-  );
-  -webkit-mask-image: radial-gradient(
-    ellipse 88% 84% at 50% 50%,
-    #000 55%,
-    transparent 92%
-  );
+  pointer-events: none;
 }
 
 .hero__canvas-wrap canvas,
@@ -502,9 +494,15 @@
   width: 100% !important;
   height: 100% !important;
   margin: 0 auto;
-  pointer-events: auto;
+  pointer-events: none;
   touch-action: pan-y;
   cursor: grab;
+}
+
+.hero__canvas-wrap--interactive canvas,
+.hero__canvas-wrap--interactive spline-viewer,
+.hero__canvas-wrap--interactive .hero__brain-canvas {
+  pointer-events: auto;
 }
 
 .hero__brain-canvas--interacting,

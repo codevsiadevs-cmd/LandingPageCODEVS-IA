@@ -79,15 +79,14 @@ function syncHeroBrainWithScroll() {
   heroWrap.classList.remove("hero__canvas-wrap--proceso");
   wasInProcesoBrain = false;
 
-  const startRatio = isMobile ? 0.56 : 0.5;
-  const startY = vh * startRatio;
-  const topY = startY + Math.max(latestScrollY, 0);
-  heroWrap.style.setProperty("--brain-scroll-y", `${topY}px`);
+  /* Posición fija: el cerebro no sube ni baja con el scroll. */
+  heroWrap.style.setProperty("--brain-scroll-x", isMobile ? "50%" : "73%");
+  heroWrap.style.setProperty("--brain-scroll-y", isMobile ? "56vh" : "50vh");
+  heroWrap.style.removeProperty("opacity");
 
-  const docMaxScroll = Math.max(document.documentElement.scrollHeight - vh, 1);
-  const docProgress = Math.min(Math.max(latestScrollY / docMaxScroll, 0), 1);
-  const xPercent = isMobile ? 50 : 73 + (50 - 73) * docProgress;
-  heroWrap.style.setProperty("--brain-scroll-x", `${xPercent}%`);
+  /* Interacción solo al inicio (hero); luego el contenido queda por encima. */
+  const interactive = latestScrollY < vh * 0.72;
+  heroWrap.classList.toggle("hero__canvas-wrap--interactive", interactive);
 }
 
 /* ——— Nav: cerebro GLB original (Three.js) ——— */
