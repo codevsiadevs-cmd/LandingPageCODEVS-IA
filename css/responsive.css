@@ -384,7 +384,7 @@
     height: min(580px, 97vw);
     transform: translate(-50%, -50%);
     opacity: 1;
-    /* Una capa detrás de main (z-index 5) y de la red neuronal (4) */
+    /* Detrás del contenido (main z-index 5), pero interactivo vía pass-through */
     z-index: 3;
     mask-image: radial-gradient(
       ellipse 72% 68% at 50% 50%,
@@ -403,10 +403,24 @@
     z-index: 3;
   }
 
+  .hero__canvas-wrap canvas,
+  .hero__canvas-wrap spline-viewer,
+  .hero__brain-canvas,
   .hero__canvas-wrap--interactive canvas,
   .hero__canvas-wrap--interactive spline-viewer,
   .hero__canvas-wrap--interactive .hero__brain-canvas {
+    pointer-events: auto;
+    touch-action: pan-y;
+    cursor: grab;
+  }
+
+  /* El hero deja pasar el toque al cerebro; el resto de secciones sí capturan. */
+  main {
     pointer-events: none;
+  }
+
+  main > section:not(.hero) {
+    pointer-events: auto;
   }
   .hero__keyword {
     font-size: clamp(0.95rem, 4.2vw, 1.25rem);
