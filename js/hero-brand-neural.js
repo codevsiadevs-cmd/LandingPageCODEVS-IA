@@ -67,6 +67,7 @@ function initHeroBrandNeural() {
 
   /* Esperar tipografía para que el máscara del glifo coincida con la letra visible */
   const start = () => {
+    const isMobile = window.matchMedia("(max-width: 900px)").matches;
     const letters = [...root.querySelectorAll("[data-hero-letter]")];
     for (const letter of letters) {
       const canvas = letter.querySelector("canvas.hero__brand-letter-neural");
@@ -78,16 +79,19 @@ function initHeroBrandNeural() {
         hoverClass: "hero__brand-letter--neural",
         clipGlyph: glyph,
         clipFontEl: face,
-        gridDiv: 10,
-        linkCount: 5,
-        wander: 14,
+        enableTouch: true,
+        gridDiv: isMobile ? 9 : 10,
+        linkCount: isMobile ? 4 : 5,
+        wander: isMobile ? 10 : 14,
         colorRgb: "255,255,255",
-        reachScale: 0.42,
-        nodeRadiusMin: 1.6,
-        nodeRadiusMax: 3.4,
+        reachScale: isMobile ? 0.38 : 0.42,
+        nodeRadiusMin: isMobile ? 0.7 : 1.6,
+        nodeRadiusMax: isMobile ? 1.35 : 3.4,
+        spotlightLineWidth: isMobile ? 0.7 : 1.65,
+        lineWidth: isMobile ? 0.55 : 1,
         glyphBaseAlpha: 0,
         mouseSpotlight: true,
-        spotlightRadius: 0.58,
+        spotlightRadius: isMobile ? 0.5 : 0.58,
         lingerMs: 5000,
         fadeOutSpeed: 0.012,
         glyphNudgeY: GLYPH_NUDGE_Y[glyph] ?? 0.27,

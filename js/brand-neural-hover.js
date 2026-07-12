@@ -17,6 +17,8 @@ export function initBrandNeuralHover(panel, canvas, options = {}) {
     reachScale = 1,
     nodeRadiusMin = 1.2,
     nodeRadiusMax = 2.4,
+    lineWidth = 1,
+    spotlightLineWidth = 1.65,
     enableTouch = false,
     meshLinks = false,
     baseLinkAlpha = 0,
@@ -107,7 +109,7 @@ export function initBrandNeuralHover(panel, canvas, options = {}) {
   function drawLines(p) {
     if (!p.active) return;
     ctx.strokeStyle = `rgba(${colorRgb},${p.active})`;
-    ctx.lineWidth = mouseSpotlight ? 1.65 : 1;
+    ctx.lineWidth = mouseSpotlight ? spotlightLineWidth : lineWidth;
     for (let i = 0; i < p.closest.length; i += 1) {
       const n = p.closest[i];
       ctx.beginPath();

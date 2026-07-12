@@ -632,6 +632,8 @@ main > section:not(.hero) {
   line-height: 1;
   letter-spacing: 0;
   overflow: visible;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .hero__brand-letter-face {
