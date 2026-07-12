@@ -83,8 +83,10 @@ function initProcesoCards() {
     cards.forEach((el, i) => {
       const a = i - currentF;
       const aa = Math.abs(a);
-      const focalY = 50;
-      const focalX = sw < 900 ? 58 : 70;
+      const isMobile = sw < 900;
+      const focalY = isMobile ? 46 : 50;
+      /* En móvil se centra; en desktop se abre a la derecha */
+      const focalX = isMobile ? 50 : 70;
       const Y = a >= 0 ? focalY - 24 * (1 - 1 / (1 + a)) : focalY + 55 * -a;
       const focalPull = Math.max(0, 1 - aa);
       const scatter = 13 * Math.sin(a * 1.9 + i * 0.6);
@@ -100,6 +102,11 @@ function initProcesoCards() {
         const boost = 1 - aa / 0.35;
         scale = clamp(scale + 0.08 * boost, 0.4, 1.08);
         opacity = Math.max(opacity, 0.92 + 0.08 * boost);
+      }
+
+      /* En móvil, la tarjeta activa queda un poco más compacta */
+      if (isMobile) {
+        scale *= 0.86;
       }
 
       const dx = ((X - 50) / 100) * sw;
