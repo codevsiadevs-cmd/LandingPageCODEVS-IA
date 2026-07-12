@@ -1757,17 +1757,21 @@ html.theme-invert .footer__emoji {
   .nav__brand-panel--end .nav__brand-o.logo-brain {
     width: calc(var(--nav-brand-mark) * 1.35);
     height: calc(var(--nav-brand-mark) * 1.35);
-    margin-left: -0.95em;
-    margin-right: -0.85em;
+    margin-left: -0.62em;
+    margin-right: -0.52em;
     transform: translateY(0.04em);
   }
 
   .nav__brand-panel--end .nav__brand-group:not(.nav__brand-group--ia) .nav__brand-accent {
-    margin-right: -0.28em;
+    margin-right: -0.1em;
   }
 
   .nav__brand-panel--end .nav__brand-group:not(.nav__brand-group--ia) .nav__brand-plain {
-    margin-left: -0.28em;
+    margin-left: -0.06em;
+  }
+
+  .nav__brand-panel--end .nav__brand-group--ia {
+    margin-left: 0.18em;
   }
 }
 
