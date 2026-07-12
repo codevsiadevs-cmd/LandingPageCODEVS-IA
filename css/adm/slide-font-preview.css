@@ -30,7 +30,9 @@ html[data-slide-font] :is(
 /* Logos / títulos: Syne (CODEVS IA del hero en 800) */
 html[data-slide-font] .hero__brand,
 html[data-slide-font] .hero__brand-accent,
-html[data-slide-font] .hero__brand-plain {
+html[data-slide-font] .hero__brand-plain,
+html[data-slide-font] .hero__brand-letter,
+html[data-slide-font] .hero__brand-letter-face {
   font-family: var(--font-logo) !important;
   font-weight: 800 !important;
   text-rendering: optimizeLegibility !important;

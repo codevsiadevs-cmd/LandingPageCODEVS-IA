@@ -21,6 +21,13 @@ export function initBrandNeuralHover(panel, canvas, options = {}) {
     meshLinks = false,
     baseLinkAlpha = 0,
     baseNodeAlpha = 0,
+    /** Si se define, la red solo se pinta dentro del glifo (p. ej. letras del hero). */
+    clipGlyph = "",
+    clipFontEl = null,
+    glyphBaseAlpha = 0,
+    /** Solo muestra la red cerca del cursor (radio relativo al tamaño del panel). */
+    mouseSpotlight = false,
+    spotlightRadius = 0.42,
   } = options;
 
   if (!canHover && !enableTouch) return;
@@ -209,10 +216,35 @@ export function initBrandNeuralHover(panel, canvas, options = {}) {
     target.y = event.clientY - rect.top;
   }
 
+  function paintGlyphMask(alpha, rgb = "255,255,255") {
+    if (!clipGlyph || alpha < 0.01 || width < 1 || height < 1) return;
+    const face = clipFontEl || panel;
+    const brand = panel.closest?.(".hero__brand");
+    const cs = getComputedStyle(face);
+    const brandCs = brand ? getComputedStyle(brand) : cs;
+    const fontSize = cs.fontSize !== "0px" ? cs.fontSize : brandCs.fontSize;
+    const fontFamily = cs.fontFamily || brandCs.fontFamily || "Syne, sans-serif";
+    const fontWeight = cs.fontWeight && cs.fontWeight !== "400" ? cs.fontWeight : "800";
+
+    ctx.fillStyle = `rgba(${rgb},${alpha})`;
+    ctx.font = `${fontWeight} ${fontSize} ${fontFamily}`;
+    ctx.textAlign = "center";
+    ctx.textBaseline = "alphabetic";
+
+    const metrics = ctx.measureText(clipGlyph);
+    const ascent =
+      metrics.actualBoundingBoxAscent || parseFloat(fontSize) * 0.75;
+    const descent =
+      metrics.actualBoundingBoxDescent || parseFloat(fontSize) * 0.2;
+    const y = (height + ascent - descent) / 2;
+    ctx.fillText(clipGlyph, width / 2, y);
+  }
+
   function draw() {
     ctx.clearRect(0, 0, width, height);
     if (hoverBlend < 0.01 || points.length === 0) return;
 
+    const clipInside = Boolean(clipGlyph);
     const { near, mid, far } = getDistanceThresholds();
 
     for (let i = 0; i < points.length; i += 1) {
@@ -222,18 +254,23 @@ export function initBrandNeuralHover(panel, canvas, options = {}) {
       let circleActive = 0;
 
       if (d2 < near) {
-        active = 0.42;
-        circleActive = 0.78;
+        active = 0.55;
+        circleActive = 0.95;
       } else if (d2 < mid) {
-        active = 0.18;
-        circleActive = 0.38;
+        active = 0.28;
+        circleActive = 0.55;
       } else if (d2 < far) {
-        active = 0.06;
-        circleActive = 0.18;
+        active = 0.12;
+        circleActive = 0.28;
       }
 
       p.active = active * hoverBlend;
       p.circle.active = circleActive * hoverBlend;
+    }
+
+    if (clipInside && glyphBaseAlpha > 0.01) {
+      paintGlyphMask(glyphBaseAlpha * hoverBlend, "12,12,12");
+      ctx.globalCompositeOperation = "source-atop";
     }
 
     if (meshLinks && baseLinkAlpha > 0) {
@@ -243,6 +280,33 @@ export function initBrandNeuralHover(panel, canvas, options = {}) {
         drawLines(points[i]);
         points[i].circle.draw();
       }
+    }
+
+    if (clipInside) {
+      ctx.globalCompositeOperation = "destination-in";
+      paintGlyphMask(1, "255,255,255");
+      ctx.globalCompositeOperation = "source-over";
+    }
+
+    /* Spotlight: solo el área alrededor del mouse permanece visible */
+    if (mouseSpotlight) {
+      const radius = Math.max(28, Math.min(width, height) * spotlightRadius);
+      ctx.globalCompositeOperation = "destination-in";
+      const grad = ctx.createRadialGradient(
+        target.x,
+        target.y,
+        radius * 0.08,
+        target.x,
+        target.y,
+        radius
+      );
+      grad.addColorStop(0, `rgba(255,255,255,${hoverBlend})`);
+      grad.addColorStop(0.4, `rgba(255,255,255,${0.75 * hoverBlend})`);
+      grad.addColorStop(0.72, `rgba(255,255,255,${0.28 * hoverBlend})`);
+      grad.addColorStop(1, "rgba(255,255,255,0)");
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, width, height);
+      ctx.globalCompositeOperation = "source-over";
     }
   }
 

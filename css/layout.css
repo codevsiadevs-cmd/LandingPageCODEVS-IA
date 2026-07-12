@@ -600,12 +600,12 @@ main > section:not(.hero) {
 
 .hero__brand {
   position: absolute;
-  z-index: 2;
+  z-index: 6;
   top: var(--hero-brand-top);
   bottom: auto;
   left: var(--hero-brand-left);
   margin: 0;
-  pointer-events: none;
+  pointer-events: auto;
   font-family: var(--font-logo);
   font-size: var(--hero-title-size);
   line-height: 0.9;
@@ -613,11 +613,47 @@ main > section:not(.hero) {
   text-align: left;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
+  user-select: none;
 }
 
 .hero__brand-line {
   display: block;
   white-space: nowrap;
+}
+
+.hero__brand-letter {
+  position: relative;
+  display: inline-block;
+  vertical-align: baseline;
+  pointer-events: auto;
+  cursor: default;
+  font-family: inherit;
+  text-transform: none;
+  line-height: 0.9;
+  overflow: hidden;
+}
+
+.hero__brand-letter-face {
+  position: relative;
+  z-index: 1;
+  display: block;
+  color: inherit;
+}
+
+.hero__brand-letter-neural {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  mix-blend-mode: difference;
+}
+
+.hero__brand-letter--neural .hero__brand-letter-neural {
+  opacity: 1;
 }
 
 .hero__brand-accent,
@@ -639,15 +675,21 @@ main > section:not(.hero) {
   font-weight: 800;
   letter-spacing: 0.04em;
   font-feature-settings: normal;
-  margin-left: 0.06em;
+}
+
+.hero__brand-letter.hero__brand-plain {
   transform: translateY(0.02em);
+}
+
+.hero__brand-letter--lead {
+  margin-left: 0.06em;
 }
 
 .hero__brand-line--ia {
   color: var(--text-primary);
 }
 
-.hero__brand-line--ia .hero__brand-plain {
+.hero__brand-line--ia .hero__brand-letter--lead {
   margin-left: 0.05em;
 }
 
