@@ -416,7 +416,7 @@
   pointer-events: none;
   --hero-brand-left: clamp(0.2rem, 0.85vw, 0.65rem);
   --hero-title-size: clamp(3.6rem, 12.5vw, 8rem);
-  --hero-brand-top: calc(50% - clamp(0.35rem, 1.1vh, 0.75rem) + 1.65cm);
+  --hero-brand-top: calc(50% - clamp(0.35rem, 1.1vh, 0.75rem) + 0.7cm);
 }
 
 .hero__bg-dots {
@@ -698,6 +698,7 @@ main > section:not(.hero) {
 
 .hero__brand-line--ia {
   color: var(--text-primary);
+  transform: translateY(-0.1em);
 }
 
 .hero__brand-line--ia .hero__brand-letter--lead {

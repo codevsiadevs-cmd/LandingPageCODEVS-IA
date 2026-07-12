@@ -338,7 +338,7 @@
 @media (max-width: 768px) {
   .hero {
     --hero-brand-left: clamp(0.15rem, 0.6vw, 0.45rem);
-    --hero-brand-bottom: clamp(0.05rem, 0.25vh, 0.15rem);
+    --hero-brand-bottom: clamp(2.6rem, 5.5vh, 3.4rem);
     --hero-title-size: clamp(2.55rem, 12.5vw, 4.65rem);
     /* Hereda pointer-events: none de main → el toque llega al cerebro */
   }
@@ -348,6 +348,10 @@
     bottom: calc(var(--hero-brand-bottom) + env(safe-area-inset-bottom, 0px));
     z-index: 8;
     pointer-events: none;
+  }
+
+  .hero__brand-line--ia {
+    transform: translateY(-0.14em);
   }
 
   .hero__brand-letter {
@@ -801,7 +805,7 @@
   .hero {
     min-height: 92vh;
     --hero-title-size: clamp(2.15rem, 13vw, 3.55rem);
-    --hero-brand-bottom: clamp(0.08rem, 0.3vh, 0.18rem);
+    --hero-brand-bottom: clamp(2.4rem, 5vh, 3.1rem);
   }
 
   .hero__keywords {
