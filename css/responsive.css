@@ -348,21 +348,26 @@
   }
 
   .hero-intro {
-    margin-top: 4cm;
-    min-height: clamp(13rem, 40vh, 20rem);
+    margin-top: 1.2cm;
+    min-height: clamp(9.5rem, 28vh, 14rem);
     padding-bottom: clamp(2rem, 6vh, 3.25rem);
     padding-left: max(0.15rem, env(safe-area-inset-left, 0px));
+    align-items: center;
   }
 
   .hero-intro__inner {
-    padding-left: var(--hero-brand-left);
+    padding-left: 0;
+    padding-inline: clamp(1rem, 5vw, 1.75rem);
+    align-items: center;
   }
 
   .hero-intro__text {
     width: 100%;
-    max-width: 100%;
+    max-width: min(36rem, 100%);
     font-size: clamp(1.35rem, 6vw, 2.25rem);
+    font-weight: 400;
     line-height: 1.28;
+    text-align: center;
   }
 
   .hero-intro .tech-metrics {
