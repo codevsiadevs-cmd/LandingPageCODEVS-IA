@@ -340,7 +340,7 @@
     --hero-brand-left: clamp(0.15rem, 0.6vw, 0.45rem);
     --hero-brand-bottom: clamp(0.05rem, 0.25vh, 0.15rem);
     --hero-title-size: clamp(2.55rem, 12.5vw, 4.65rem);
-    pointer-events: auto;
+    /* Hereda pointer-events: none de main → el toque llega al cerebro */
   }
 
   .hero__brand {
@@ -397,7 +397,7 @@
     height: min(580px, 97vw);
     transform: translate(-50%, -50%);
     opacity: 1;
-    z-index: 3;
+    z-index: 4;
     mask-image: radial-gradient(
       ellipse 72% 68% at 50% 50%,
       #000 38%,
@@ -412,7 +412,7 @@
 
   .hero__canvas-wrap.hero__canvas-wrap--interactive,
   .hero__canvas-wrap.hero__canvas-wrap--proceso {
-    z-index: 3;
+    z-index: 4;
   }
 
   .hero__canvas-wrap canvas,
