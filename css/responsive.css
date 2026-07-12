@@ -488,13 +488,13 @@
 
   .projects__heading-wrap {
     margin-bottom: 1rem;
-    text-align: left;
+    text-align: center;
     padding: 0 1.15rem;
   }
 
   .projects__title {
     font-size: clamp(1.65rem, 7vw, 2rem);
-    text-align: left;
+    text-align: center;
   }
 
   .projects__row-inner {
@@ -508,10 +508,6 @@
 
   .projects__row-arrow {
     font-size: 1.1rem;
-  }
-
-  .proceso {
-    height: calc((var(--proceso-steps) - 1) * 85vh + 100vh);
   }
 
   .proceso__card {
@@ -596,6 +592,8 @@
 
   .proceso {
     background: #000000;
+    height: auto;
+    overflow: visible;
   }
 
   .proceso__transition,
@@ -612,8 +610,9 @@
     min-height: 100svh;
   }
 
+  /* Más recorrido por fase para poder ver las 6 tarjetas en móvil */
   .proceso__track {
-    height: calc((var(--proceso-steps) - 1) * 90svh + 110svh);
+    height: calc((var(--proceso-steps) - 1) * 110svh + 130svh);
   }
 
   .why__transition,

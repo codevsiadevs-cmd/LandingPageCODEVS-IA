@@ -41,7 +41,7 @@ function initProcesoCards() {
   function measure() {
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop || 0;
     trackTop = track.getBoundingClientRect().top + scrollTop;
-    trackLen = Math.max(track.clientHeight - stage.clientHeight, 1);
+    trackLen = Math.max(track.offsetHeight - stage.offsetHeight, 1);
     sw = stage.clientWidth;
     sh = stage.clientHeight;
   }
@@ -57,11 +57,22 @@ function initProcesoCards() {
 
   function paint() {
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop || 0;
+    /* Remedir en móvil: la barra del navegador cambia svh/vh al scrollear */
+    if (sw < 900) {
+      const nextTop = track.getBoundingClientRect().top + scrollTop;
+      const nextLen = Math.max(track.offsetHeight - stage.offsetHeight, 1);
+      if (Math.abs(nextTop - trackTop) > 1 || Math.abs(nextLen - trackLen) > 1) {
+        trackTop = nextTop;
+        trackLen = nextLen;
+        sh = stage.clientHeight;
+      }
+    }
+
     let progress = trackLen > 0 ? (scrollTop - trackTop) / trackLen : 0;
     progress = clamp(progress, 0, 1);
 
-    /* Hold breve para ver la primera tarjeta sin alargar el scroll */
-    const introHold = 0.1;
+    /* Hold breve; en móvil más corto para alcanzar todas las fases */
+    const introHold = sw < 900 ? 0.04 : 0.1;
     let currentF;
     if (progress <= introHold) {
       currentF = 0;
@@ -134,6 +145,14 @@ function initProcesoCards() {
     { passive: true }
   );
   window.addEventListener(
+    "resize",
+    () => {
+      measure();
+      paint();
+    },
+    { passive: true }
+  );
+  window.visualViewport?.addEventListener(
     "resize",
     () => {
       measure();

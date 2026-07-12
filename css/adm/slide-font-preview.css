@@ -6,6 +6,7 @@ html[data-slide-font] {
 
 html[data-slide-font] :is(
   .hero__tagline,
+  .tech__title,
   .projects__title,
   .projects__row-title,
   .contact__title,
@@ -17,6 +18,7 @@ html[data-slide-font] :is(
 
 html[data-slide-font] :is(
   .hero__tagline,
+  .tech__title,
   .projects__title,
   .projects__row-title,
   .contact__title

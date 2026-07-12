@@ -46,7 +46,8 @@ const translations = {
     "metrics.years": "Años de experiencia",
     "metrics.success": "Tasa de éxito",
     "tech.aria": "Stack tecnológico",
-    "projects.title": "Proyectos Destacados",
+    "tech.title": "Tecnologías",
+    "projects.title": "Proyectos",
     "projects.1":
       "Páginas Web — Sitios corporativos, landings y experiencias digitales de alto impacto con diseño moderno y rendimiento optimizado",
     "projects.2":
@@ -165,7 +166,8 @@ const translations = {
     "metrics.years": "Years of experience",
     "metrics.success": "Success rate",
     "tech.aria": "Technology stack",
-    "projects.title": "Featured Projects",
+    "tech.title": "Technologies",
+    "projects.title": "Projects",
     "projects.1":
       "Web Pages — Corporate sites, landings, and high-impact digital experiences with modern design and optimized performance",
     "projects.2":
