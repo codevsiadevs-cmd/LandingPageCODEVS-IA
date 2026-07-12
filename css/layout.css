@@ -629,8 +629,9 @@ main > section:not(.hero) {
   cursor: default;
   font-family: inherit;
   text-transform: none;
-  line-height: 0.9;
-  overflow: hidden;
+  line-height: 1;
+  letter-spacing: 0;
+  overflow: visible;
 }
 
 .hero__brand-letter-face {
@@ -638,6 +639,8 @@ main > section:not(.hero) {
   z-index: 1;
   display: block;
   color: inherit;
+  letter-spacing: 0;
+  line-height: 1;
 }
 
 .hero__brand-letter-neural {
@@ -648,7 +651,7 @@ main > section:not(.hero) {
   height: 100%;
   pointer-events: none;
   opacity: 0;
-  transition: opacity 0.15s ease;
+  transition: opacity 0.55s ease;
   mix-blend-mode: difference;
 }
 
@@ -666,19 +669,24 @@ main > section:not(.hero) {
 
 .hero__brand-accent {
   font-weight: 800;
-  letter-spacing: 0.02em;
+  letter-spacing: 0;
   font-feature-settings: "liga" 1, "clig" 1, "calt" 1;
   text-rendering: optimizeLegibility;
 }
 
 .hero__brand-plain {
   font-weight: 800;
-  letter-spacing: 0.04em;
+  letter-spacing: 0;
   font-feature-settings: normal;
 }
 
 .hero__brand-letter.hero__brand-plain {
-  transform: translateY(0.02em);
+  transform: none;
+}
+
+/* Tracking óptico entre letras (antes letter-spacing ensanchaba cada caja) */
+.hero__brand-letter + .hero__brand-letter {
+  margin-left: 0.035em;
 }
 
 .hero__brand-letter--lead {

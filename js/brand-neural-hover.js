@@ -28,6 +28,12 @@ export function initBrandNeuralHover(panel, canvas, options = {}) {
     /** Solo muestra la red cerca del cursor (radio relativo al tamaño del panel). */
     mouseSpotlight = false,
     spotlightRadius = 0.42,
+    /** Tras salir del hover, mantiene el efecto visible N ms antes de apagarlo. */
+    lingerMs = 0,
+    /** Desplazamiento vertical de la máscara (fracción del font-size; + baja, − sube). */
+    glyphNudgeY = 0.14,
+    /** Velocidad de fade-out del blend (más bajo = más suave). */
+    fadeOutSpeed = 0.06,
   } = options;
 
   if (!canHover && !enableTouch) return;
@@ -41,6 +47,7 @@ export function initBrandNeuralHover(panel, canvas, options = {}) {
   let animating = false;
   let hoverBlend = 0;
   let rafId = null;
+  let lingerTimer = null;
 
   function easeInOutCubic(t) {
     return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
@@ -100,7 +107,7 @@ export function initBrandNeuralHover(panel, canvas, options = {}) {
   function drawLines(p) {
     if (!p.active) return;
     ctx.strokeStyle = `rgba(${colorRgb},${p.active})`;
-    ctx.lineWidth = 1;
+    ctx.lineWidth = mouseSpotlight ? 1.65 : 1;
     for (let i = 0; i < p.closest.length; i += 1) {
       const n = p.closest[i];
       ctx.beginPath();
@@ -219,25 +226,56 @@ export function initBrandNeuralHover(panel, canvas, options = {}) {
   function paintGlyphMask(alpha, rgb = "255,255,255") {
     if (!clipGlyph || alpha < 0.01 || width < 1 || height < 1) return;
     const face = clipFontEl || panel;
-    const brand = panel.closest?.(".hero__brand");
+    if (!face) return;
+
     const cs = getComputedStyle(face);
+    const brand = panel.closest?.(".hero__brand");
     const brandCs = brand ? getComputedStyle(brand) : cs;
     const fontSize = cs.fontSize !== "0px" ? cs.fontSize : brandCs.fontSize;
     const fontFamily = cs.fontFamily || brandCs.fontFamily || "Syne, sans-serif";
     const fontWeight = cs.fontWeight && cs.fontWeight !== "400" ? cs.fontWeight : "800";
+    const fontStyle = cs.fontStyle || "normal";
+    const fontPx = parseFloat(fontSize) || height;
 
+    ctx.save();
     ctx.fillStyle = `rgba(${rgb},${alpha})`;
-    ctx.font = `${fontWeight} ${fontSize} ${fontFamily}`;
+    ctx.font = `${fontStyle} ${fontWeight} ${fontSize} ${fontFamily}`;
     ctx.textAlign = "center";
     ctx.textBaseline = "alphabetic";
+    if ("letterSpacing" in ctx) {
+      ctx.letterSpacing = "0px";
+    }
 
     const metrics = ctx.measureText(clipGlyph);
     const ascent =
-      metrics.actualBoundingBoxAscent || parseFloat(fontSize) * 0.75;
-    const descent =
-      metrics.actualBoundingBoxDescent || parseFloat(fontSize) * 0.2;
-    const y = (height + ascent - descent) / 2;
-    ctx.fillText(clipGlyph, width / 2, y);
+      metrics.actualBoundingBoxAscent ||
+      metrics.fontBoundingBoxAscent ||
+      fontPx * 0.72;
+    /* Syne: nudge por letra (glyphNudgeY, + = bajar) */
+    const yNudge = fontPx * glyphNudgeY;
+
+    const panelRect = panel.getBoundingClientRect();
+    let x = width / 2;
+    let y = ascent + yNudge;
+
+    try {
+      const range = document.createRange();
+      range.selectNodeContents(face);
+      const ink = range.getBoundingClientRect();
+      if (ink.width > 0.5 && ink.height > 0.5) {
+        x = ink.left - panelRect.left + ink.width / 2;
+        y = ink.top - panelRect.top + ascent + yNudge;
+      } else {
+        const faceRect = face.getBoundingClientRect();
+        x = faceRect.left - panelRect.left + faceRect.width / 2;
+        y = faceRect.top - panelRect.top + ascent + yNudge;
+      }
+    } catch {
+      /* fallback */
+    }
+
+    ctx.fillText(clipGlyph, x, y);
+    ctx.restore();
   }
 
   function draw() {
@@ -254,14 +292,14 @@ export function initBrandNeuralHover(panel, canvas, options = {}) {
       let circleActive = 0;
 
       if (d2 < near) {
-        active = 0.55;
-        circleActive = 0.95;
+        active = mouseSpotlight ? 0.82 : 0.55;
+        circleActive = mouseSpotlight ? 1 : 0.95;
       } else if (d2 < mid) {
-        active = 0.28;
-        circleActive = 0.55;
+        active = mouseSpotlight ? 0.48 : 0.28;
+        circleActive = mouseSpotlight ? 0.78 : 0.55;
       } else if (d2 < far) {
-        active = 0.12;
-        circleActive = 0.28;
+        active = mouseSpotlight ? 0.22 : 0.12;
+        circleActive = mouseSpotlight ? 0.42 : 0.28;
       }
 
       p.active = active * hoverBlend;
@@ -301,8 +339,9 @@ export function initBrandNeuralHover(panel, canvas, options = {}) {
         radius
       );
       grad.addColorStop(0, `rgba(255,255,255,${hoverBlend})`);
-      grad.addColorStop(0.4, `rgba(255,255,255,${0.75 * hoverBlend})`);
-      grad.addColorStop(0.72, `rgba(255,255,255,${0.28 * hoverBlend})`);
+      grad.addColorStop(0.35, `rgba(255,255,255,${0.85 * hoverBlend})`);
+      grad.addColorStop(0.6, `rgba(255,255,255,${0.45 * hoverBlend})`);
+      grad.addColorStop(0.82, `rgba(255,255,255,${0.15 * hoverBlend})`);
       grad.addColorStop(1, "rgba(255,255,255,0)");
       ctx.fillStyle = grad;
       ctx.fillRect(0, 0, width, height);
@@ -314,7 +353,7 @@ export function initBrandNeuralHover(panel, canvas, options = {}) {
     if (animating) {
       hoverBlend = Math.min(1, hoverBlend + 0.09);
     } else {
-      hoverBlend = Math.max(0, hoverBlend - 0.06);
+      hoverBlend = Math.max(0, hoverBlend - fadeOutSpeed);
     }
 
     if (hoverBlend > 0.01) {
@@ -323,6 +362,7 @@ export function initBrandNeuralHover(panel, canvas, options = {}) {
       return;
     }
 
+    panel.classList.remove(hoverClass);
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     rafId = null;
   }
@@ -331,7 +371,20 @@ export function initBrandNeuralHover(panel, canvas, options = {}) {
     if (!rafId) rafId = requestAnimationFrame(tick);
   }
 
+  function clearLinger() {
+    if (lingerTimer == null) return;
+    clearTimeout(lingerTimer);
+    lingerTimer = null;
+  }
+
+  function deactivateNow() {
+    /* Solo apaga el blend; la clase se quita al terminar el fade (evita corte brusco). */
+    animating = false;
+    startLoop();
+  }
+
   function activateFromEvent(event) {
+    clearLinger();
     rebuildScene();
     setTargetFromEvent(event);
     animating = true;
@@ -340,9 +393,15 @@ export function initBrandNeuralHover(panel, canvas, options = {}) {
   }
 
   function deactivate() {
-    animating = false;
-    panel.classList.remove(hoverClass);
-    startLoop();
+    if (lingerMs > 0) {
+      clearLinger();
+      lingerTimer = setTimeout(() => {
+        lingerTimer = null;
+        deactivateNow();
+      }, lingerMs);
+      return;
+    }
+    deactivateNow();
   }
 
   if (canHover) {

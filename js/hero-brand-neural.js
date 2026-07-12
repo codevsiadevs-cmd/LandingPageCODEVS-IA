@@ -3,6 +3,18 @@
  */
 import { initBrandNeuralHover } from "./brand-neural-hover.js";
 
+/** Ajuste vertical por glifo (+ baja el efecto, − lo sube), en fracción del font-size. */
+const GLYPH_NUDGE_Y = {
+  C: 0.27,
+  o: 0.43,
+  d: 0.23,
+  e: 0.43,
+  v: 0.43,
+  s: 0.43,
+  I: 0.27,
+  A: 0.27,
+};
+
 function wrapHeroBrandLetters(root) {
   const segments = [...root.querySelectorAll(".hero__brand-accent, .hero__brand-plain")];
 
@@ -70,12 +82,15 @@ function initHeroBrandNeural() {
         linkCount: 5,
         wander: 14,
         colorRgb: "255,255,255",
-        reachScale: 0.28,
-        nodeRadiusMin: 1.2,
-        nodeRadiusMax: 2.6,
+        reachScale: 0.42,
+        nodeRadiusMin: 1.6,
+        nodeRadiusMax: 3.4,
         glyphBaseAlpha: 0,
         mouseSpotlight: true,
-        spotlightRadius: 0.38,
+        spotlightRadius: 0.58,
+        lingerMs: 5000,
+        fadeOutSpeed: 0.012,
+        glyphNudgeY: GLYPH_NUDGE_Y[glyph] ?? 0.27,
       });
     }
   };
