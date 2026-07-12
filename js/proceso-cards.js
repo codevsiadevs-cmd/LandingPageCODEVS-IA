@@ -15,7 +15,6 @@ function initProcesoPhases() {
 
   const phases = [...stage.querySelectorAll("[data-proceso-phase]")];
   const liveEl = stage.querySelector(".proceso__live");
-  const counterEl = stage.querySelector("[data-proceso-counter]");
   const total = phases.length;
   if (!total) return;
 
@@ -86,9 +85,6 @@ function initProcesoPhases() {
     });
 
     const idx = clamp(Math.round(currentF), 0, total - 1);
-    if (counterEl) {
-      counterEl.textContent = `${String(idx + 1).padStart(2, "0")} / ${String(total).padStart(2, "0")}`;
-    }
     announce(idx);
   }
 
@@ -97,14 +93,13 @@ function initProcesoPhases() {
     requestAnimationFrame(tick);
   }
 
-  if (prefersReducedMotionGlobal) {
+    if (prefersReducedMotionGlobal) {
     root.classList.add("proceso--static");
     phases.forEach((el) => {
       el.style.transform = "none";
       el.style.opacity = "1";
       el.style.filter = "none";
     });
-    if (counterEl) counterEl.hidden = true;
     return;
   }
 

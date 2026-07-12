@@ -119,57 +119,6 @@
   color: rgba(240, 244, 248, 0.38);
 }
 
-.proceso__counter {
-  position: absolute;
-  right: clamp(1.25rem, 4vw, 2.5rem);
-  top: clamp(5.5rem, 12vh, 7rem);
-  z-index: 10;
-  margin: 0;
-  font-family: var(--font-body);
-  font-size: clamp(0.75rem, 1.3vw, 0.9rem);
-  font-weight: 500;
-  letter-spacing: 0.18em;
-  color: rgba(255, 255, 255, 0.5);
-  pointer-events: none;
-}
-
-.proceso__headline {
-  position: absolute;
-  left: clamp(1.25rem, 5.2vw, 4rem);
-  bottom: clamp(1.5rem, 5.5vh, 3.5rem);
-  z-index: 10;
-  max-width: min(52%, 34rem);
-  display: flex;
-  flex-direction: column;
-  gap: 0.85rem;
-  pointer-events: none;
-}
-
-.proceso__headline h2 {
-  margin: 0;
-  font-family: var(--font-title);
-  font-weight: 800;
-  font-size: clamp(1.15rem, 2.4vw, 1.85rem);
-  line-height: 1.1;
-  letter-spacing: -0.02em;
-  color: rgba(255, 255, 255, 0.72);
-}
-
-.proceso__headline h2 span {
-  display: block;
-}
-
-.proceso__headline p {
-  margin: 0;
-  max-width: 28rem;
-  font-family: var(--font-body);
-  font-weight: 500;
-  font-size: clamp(0.78rem, 1.2vw, 0.88rem);
-  line-height: 1.55;
-  letter-spacing: 0.03em;
-  color: #7f7f88;
-}
-
 .proceso__live {
   position: absolute;
   width: 1px;
@@ -209,8 +158,4 @@
   transform: none !important;
   opacity: 1 !important;
   width: 100%;
-}
-
-.proceso.proceso--static .proceso__counter {
-  display: none;
 }

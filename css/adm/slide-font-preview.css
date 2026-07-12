@@ -62,7 +62,6 @@ html[data-slide-font] .hero-intro__text {
 /* Cómo Trabajamos + ¿Por qué elegir? — Syne 800 */
 html[data-slide-font] :is(
   .proceso__title,
-  .proceso__headline h2,
   .proceso__phase-title,
   .why__transition-headline,
   .why__panel-title
