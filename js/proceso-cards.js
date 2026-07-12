@@ -58,17 +58,13 @@ function initProcesoCards() {
     let progress = track > 0 ? (scrollTop - rootTop) / track : 0;
     progress = clamp(progress, 0, 1);
 
-    /* Más tiempo con la tarjeta 01 a pantalla completa al entrar */
-    const introHold = 0.2;
-    const outroHold = 0.06;
+    /* Hold corto para ver bien la 01; el resto del scroll se reparte igual */
+    const introHold = 0.08;
     let currentF;
     if (progress <= introHold) {
       currentF = 0;
-    } else if (progress >= 1 - outroHold) {
-      currentF = total - 1;
     } else {
-      currentF =
-        ((progress - introHold) / (1 - introHold - outroHold)) * (total - 1);
+      currentF = ((progress - introHold) / (1 - introHold)) * (total - 1);
     }
 
     const parallaxOn = !prefersReducedMotionGlobal;

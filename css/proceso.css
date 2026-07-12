@@ -8,7 +8,7 @@
   --proceso-bg: #000000;
   scroll-margin-top: var(--nav-height);
   position: relative;
-  height: calc((var(--proceso-steps) - 1) * 120vh + 160vh);
+  height: calc((var(--proceso-steps) - 1) * 90vh + 100vh);
   padding: 0;
   background: #000000;
   color: var(--proceso-ink);

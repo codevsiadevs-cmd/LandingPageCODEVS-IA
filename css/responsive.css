@@ -506,7 +506,7 @@
   }
 
   .proceso {
-    height: calc((var(--proceso-steps) - 1) * 110vh + 100vh);
+    height: calc((var(--proceso-steps) - 1) * 85vh + 100vh);
   }
 
   .proceso__card {
