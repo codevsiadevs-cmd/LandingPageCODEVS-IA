@@ -408,16 +408,180 @@ function wireHeroBrainWheelPassthrough(target) {
 }
 
 /**
- * Solo touch: scroll vertical libre; rotación solo tras arrastre horizontal.
- * Orbit se engancha con un pointerdown sintético (Spline lo requiere desde el inicio).
+ * Spline Follow/Particle Force usa eventContext.updateRaycaster({ pageX, pageY }).
+ * En móvil el hover de mouse no existe: reenviamos el dedo como cursor.
+ */
+function getSplineEventContext(target) {
+  return (
+    target?.app?._eventManager?.eventContext ||
+    target?.app?.eventManager?.eventContext ||
+    null
+  );
+}
+
+function feedSplineCursorAt(target, clientX, clientY, pageX, pageY) {
+  if (!target?.ready || !target.canvas) return;
+  if (!target.wrap?.classList.contains("hero__canvas-wrap--interactive")) return;
+
+  const { canvas } = target;
+  const rect = canvas.getBoundingClientRect();
+  const pad = 12;
+  if (
+    clientX < rect.left - pad ||
+    clientX > rect.right + pad ||
+    clientY < rect.top - pad ||
+    clientY > rect.bottom + pad
+  ) {
+    return;
+  }
+
+  syncSplineDomRect(target);
+
+  const px = pageX ?? clientX + window.scrollX;
+  const py = pageY ?? clientY + window.scrollY;
+  const rayEvent = {
+    pageX: px,
+    pageY: py,
+    clientX,
+    clientY,
+    touches: [],
+  };
+
+  const ctx = getSplineEventContext(target);
+  if (ctx?.updateRaycaster) {
+    ctx.updateRaycaster(rayEvent);
+  }
+
+  const eventTarget = ctx?.eventElement || canvas;
+  const pointerInit = {
+    bubbles: true,
+    cancelable: true,
+    clientX,
+    clientY,
+    pageX: px,
+    pageY: py,
+    screenX: clientX,
+    screenY: clientY,
+    pointerId: 1,
+    pointerType: "mouse",
+    button: 0,
+    buttons: 1,
+    isPrimary: true,
+    view: window,
+  };
+
+  eventTarget.dispatchEvent(new PointerEvent("pointermove", pointerInit));
+  canvas.dispatchEvent(new PointerEvent("pointermove", pointerInit));
+
+  if (typeof targetMouseX !== "undefined") {
+    targetMouseX = (clientX / window.innerWidth) * 2 - 1;
+    targetMouseY = (clientY / window.innerHeight) * 2 - 1;
+  }
+}
+
+function wireHeroBrainTouchHoverBridge(target) {
+  const { canvas } = target;
+  if (!canvas || prefersReducedMotionGlobal) return;
+
+  let touchActive = false;
+
+  const fromTouch = (touch) => {
+    if (!touch) return;
+    feedSplineCursorAt(target, touch.clientX, touch.clientY, touch.pageX, touch.pageY);
+  };
+
+  /* pointerdown en canvas (Spline en touch también engancha Follow aquí). */
+  canvas.addEventListener(
+    "pointerdown",
+    (event) => {
+      if (event.pointerType !== "touch" || !target.ready) return;
+      touchActive = true;
+      syncSplineDomRect(target);
+      const px = event.pageX || event.clientX + window.scrollX;
+      const py = event.pageY || event.clientY + window.scrollY;
+      canvas.dispatchEvent(
+        new PointerEvent("pointerdown", {
+          bubbles: true,
+          cancelable: true,
+          clientX: event.clientX,
+          clientY: event.clientY,
+          pageX: px,
+          pageY: py,
+          pointerId: 1,
+          pointerType: "mouse",
+          button: 0,
+          buttons: 1,
+          isPrimary: true,
+          view: window,
+        })
+      );
+      feedSplineCursorAt(target, event.clientX, event.clientY, px, py);
+    },
+    { passive: true }
+  );
+
+  /* Cubre dedo sobre el título u otras capas encima del cerebro. */
+  window.addEventListener(
+    "touchstart",
+    (event) => {
+      const touch = event.touches?.[0];
+      if (!touch || !target.ready) return;
+      touchActive = true;
+      fromTouch(touch);
+    },
+    { passive: true }
+  );
+
+  window.addEventListener(
+    "touchmove",
+    (event) => {
+      if (!touchActive && !event.touches?.length) return;
+      fromTouch(event.touches?.[0]);
+    },
+    { passive: true }
+  );
+
+  window.addEventListener(
+    "touchend",
+    () => {
+      touchActive = false;
+    },
+    { passive: true }
+  );
+  window.addEventListener(
+    "touchcancel",
+    () => {
+      touchActive = false;
+    },
+    { passive: true }
+  );
+
+  canvas.addEventListener(
+    "pointermove",
+    (event) => {
+      if (event.pointerType !== "touch") return;
+      feedSplineCursorAt(
+        target,
+        event.clientX,
+        event.clientY,
+        event.pageX,
+        event.pageY
+      );
+    },
+    { passive: true }
+  );
+}
+
+/**
+ * Solo touch: scroll vertical libre; rotación solo si el arrastre no es vertical.
+ * El efecto de partículas lo gestiona wireHeroBrainTouchHoverBridge.
  */
 function wireHeroBrainTouchScrollGuard(target) {
   const { canvas } = target;
   if (!canvas) return;
 
-  const SCROLL_THRESHOLD = 14;
-  const SCROLL_DOMINANCE = 1.08;
-  const INTERACT_DOMINANCE = 1.05;
+  const SCROLL_THRESHOLD = 10;
+  const SCROLL_DOMINANCE = 1.2;
 
   let gestureMode = "idle";
   let startX = 0;
@@ -457,7 +621,9 @@ function wireHeroBrainTouchScrollGuard(target) {
   canvas.addEventListener(
     "pointermove",
     (event) => {
-      if (event.pointerType !== "touch" || event.pointerId !== activePointerId || !target.ready) return;
+      if (event.pointerType !== "touch" || event.pointerId !== activePointerId || !target.ready) {
+        return;
+      }
       if (gestureMode === "scroll" || gestureMode === "interact") return;
 
       const dx = Math.abs(event.clientX - startX);
@@ -471,15 +637,13 @@ function wireHeroBrainTouchScrollGuard(target) {
         return;
       }
 
-      if (dx >= dy * INTERACT_DOMINANCE) {
-        gestureMode = "interact";
-        canvas.classList.add("hero__brain-canvas--interacting");
-        canvas.style.touchAction = "none";
-        setHeroBrainOrbit(target, true);
-        syncSplineDomRect(target);
-        if (forwardOrbitPointerDown(target, event, startX, startY)) {
-          getHeroBrainOrbit(target)?.onPointerMove?.(event);
-        }
+      gestureMode = "interact";
+      canvas.classList.add("hero__brain-canvas--interacting");
+      canvas.style.touchAction = "none";
+      setHeroBrainOrbit(target, true);
+      syncSplineDomRect(target);
+      if (forwardOrbitPointerDown(target, event, startX, startY)) {
+        getHeroBrainOrbit(target)?.onPointerMove?.(event);
       }
     },
     { passive: true }
@@ -495,6 +659,7 @@ function configureHeroBrainInteraction(target) {
 
   patchSplineScrollFlags(target);
   wireHeroBrainWheelPassthrough(target);
+  wireHeroBrainTouchHoverBridge(target);
   wireHeroBrainTouchScrollGuard(target);
 
   const touchPrimary = isTouchPrimaryDevice();
