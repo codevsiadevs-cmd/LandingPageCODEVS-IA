@@ -522,23 +522,18 @@
     font-size: 1.1rem;
   }
 
-  .proceso__card {
-    --card-w: min(88vw, 20.5rem);
-    --card-h: min(14rem, calc(var(--card-w) * 0.68));
+  .proceso__phase-title {
+    font-size: clamp(2rem, 10vw, 3.25rem);
   }
 
-  .proceso__card-face {
-    padding: 1.12rem 1.18rem;
-    border-radius: 1.12rem;
+  .proceso__phase-desc {
+    font-size: 0.95rem;
+    max-width: 22rem;
   }
 
-  .proceso__card-title {
-    font-size: clamp(1.18rem, 4.9vw, 1.48rem);
-  }
-
-  .proceso__card-desc {
-    margin-top: 0.65rem;
-    font-size: 0.88rem;
+  .proceso__counter {
+    top: clamp(4.75rem, 10vh, 6rem);
+    right: 1.1rem;
   }
 
   .proceso__headline {
@@ -546,16 +541,16 @@
     right: 1.1rem;
     bottom: 1.25rem;
     max-width: none;
-    gap: 0.75rem;
+    gap: 0.55rem;
   }
 
   .proceso__headline h2 {
-    font-size: clamp(1.45rem, 6.8vw, 2.1rem);
+    font-size: clamp(0.95rem, 4.2vw, 1.2rem);
   }
 
   .proceso__headline p {
     max-width: 22rem;
-    font-size: 0.82rem;
+    font-size: 0.78rem;
   }
 }
 

@@ -63,7 +63,7 @@ html[data-slide-font] .hero-intro__text {
 html[data-slide-font] :is(
   .proceso__title,
   .proceso__headline h2,
-  .proceso__panel-title,
+  .proceso__phase-title,
   .why__transition-headline,
   .why__panel-title
 ) {
