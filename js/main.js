@@ -14,6 +14,6 @@ import "./nav-mobile.js";
 import "./tech-stack.js";
 import "./sections.js";
 import "./projects-hover.js";
-import "./music-toggle.js";
+import "./theme-toggle.js";
 
 updateGlobalScrollEffects();

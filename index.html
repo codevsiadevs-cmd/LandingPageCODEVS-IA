@@ -592,38 +592,15 @@
     </div>
   </footer>
 
-  <!-- Ibiza Global Radio (misma emisión que https://www.radio-espana.es/ibiza-global-radio) — stream MP3 oficial -->
-  <audio
-    id="site-music-audio"
-    class="site-music-audio"
-    preload="none"
-    playsinline
-    crossorigin="anonymous"
-    hidden
-  >
-    <source
-      src="https://cdn-peer012.streaming-pro.com:8024/ibizaglobalradio.mp3"
-      type="audio/mpeg"
-    />
-  </audio>
-
   <button
     type="button"
-    class="music-toggle"
-    id="music-toggle"
+    class="theme-toggle"
+    id="theme-toggle"
     aria-pressed="false"
-    aria-label="Reproducir Ibiza Global Radio en directo"
-    data-i18n-aria-label="music.play"
-    title="Ibiza Global Radio — en directo"
-    data-i18n-title="music.titleLive"
+    aria-label="Cambiar a fondo blanco"
+    title="Cambiar a fondo blanco"
   >
-    <span class="music-toggle__inner" aria-hidden="true">
-      <span class="music-toggle__bar"></span>
-      <span class="music-toggle__bar"></span>
-      <span class="music-toggle__bar"></span>
-      <span class="music-toggle__bar"></span>
-      <span class="music-toggle__bar"></span>
-    </span>
+    <span class="theme-toggle__icon" aria-hidden="true">◐</span>
   </button>
 
   <a

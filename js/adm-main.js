@@ -14,7 +14,7 @@ import "./nav-mobile.js";
 import "./tech-stack.js";
 import "./sections.js";
 import "./projects-hover.js";
-import "./music-toggle.js";
+import "./theme-toggle.js";
 import "./adm/preview-banner.js";
 import "./adm/slide-font-preview.js";
 import "./adm/brand-frame-preview.js";
