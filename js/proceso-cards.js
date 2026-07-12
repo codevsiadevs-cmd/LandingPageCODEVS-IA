@@ -1,211 +1,148 @@
 /**
- * Stack vertical de Cómo Trabajamos impulsado por scroll.
- * Las tarjetas se extienden arriba/abajo y avanzan una a una al scrollear.
+ * Cómo Trabajamos — stack sticky con scroll (port del DC de referencia).
  */
 import { prefersReducedMotionGlobal } from "./scroll.js";
 
-function clamp(value, min, max) {
-  return Math.min(max, Math.max(min, value));
+function clamp(v, a, b) {
+  return Math.min(b, Math.max(a, v));
 }
 
 function initProcesoCards() {
   const root = document.getElementById("proceso");
-  const slider = document.getElementById("proceso-cards");
-  const viewport = document.getElementById("proceso-viewport");
-  const stack = document.getElementById("proceso-track");
-  const prevBtn = root?.querySelector(".proceso__nav--prev");
-  const nextBtn = root?.querySelector(".proceso__nav--next");
-  const liveEl = slider?.querySelector(".proceso__live");
-  const leadEl = root?.querySelector("[data-proceso-lead]");
+  const stage = root?.querySelector("[data-proceso-stage]");
+  if (!root || !stage) return;
 
-  if (!root || !slider || !viewport || !stack || !prevBtn || !nextBtn) return;
-
-  const cards = [...stack.querySelectorAll("[data-proceso-card]")];
+  const cardsLayer = stage.querySelector("[data-proceso-cards-layer]");
+  const watermark = stage.querySelector("[data-proceso-wm]");
+  const cards = [...stage.querySelectorAll("[data-proceso-card]")];
+  const liveEl = stage.querySelector(".proceso__live");
   const total = cards.length;
-  if (total === 0) return;
+  if (!total) return;
 
   root.style.setProperty("--proceso-steps", String(total));
 
-  const mainVideo = stack.querySelector(".proceso__card-video");
-  let activeIndex = 0;
-  let lastAnnounced = -1;
-  let scrollingProgrammatically = false;
-  let scrollUnlockTimer = 0;
+  const names = cards.map((card) => {
+    const title = card.querySelector("[data-proceso-title]");
+    return title?.textContent?.trim() || card.dataset.procesoTitle || "";
+  });
+
+  let mx = 0;
+  let my = 0;
+  let cx = 0;
+  let cy = 0;
+  let rootTop = 0;
+  let track = 1;
+  let sw = 1;
+  let sh = 1;
   let raf = 0;
+  let lastIdx = -1;
 
-  function keepVideoPlaying() {
-    if (!mainVideo) return;
-    mainVideo.muted = true;
-    mainVideo.loop = true;
-    if (mainVideo.paused) {
-      const playPromise = mainVideo.play();
-      if (playPromise?.catch) playPromise.catch(() => {});
-    }
+  function measure() {
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop || 0;
+    rootTop = root.getBoundingClientRect().top + scrollTop;
+    track = Math.max(root.clientHeight - stage.clientHeight, 1);
+    sw = stage.clientWidth;
+    sh = stage.clientHeight;
   }
 
-  function cardLabel(card) {
-    if (card.classList.contains("proceso__card--video")) {
-      return card.dataset.procesoTitle || "CODEVS IA";
-    }
-    return (
-      card.querySelector(".proceso__card-title")?.textContent?.trim() ||
-      card.dataset.procesoTitle ||
-      ""
-    );
-  }
-
-  function cardDesc(card) {
-    return (
-      card.querySelector(".proceso__card-desc")?.textContent?.trim() ||
-      card.dataset.procesoDesc ||
-      ""
-    );
-  }
-
-  function announce() {
-    if (lastAnnounced === activeIndex) return;
-    lastAnnounced = activeIndex;
-    const card = cards[activeIndex];
-    if (!card || !liveEl) return;
-    const title = cardLabel(card);
+  function announce(idx) {
+    if (!liveEl || idx === lastIdx) return;
+    lastIdx = idx;
+    const title = names[idx] || "";
     liveEl.textContent = title
-      ? `Paso ${activeIndex + 1} de ${total}: ${title}`
-      : `Paso ${activeIndex + 1} de ${total}`;
-  }
-
-  function syncLead() {
-    if (!leadEl) return;
-    const card = cards[activeIndex];
-    if (!card) return;
-    const next = cardDesc(card) || cardLabel(card);
-    if (leadEl.textContent === next) return;
-    if (prefersReducedMotionGlobal) {
-      leadEl.textContent = next;
-      return;
-    }
-    leadEl.style.opacity = "0";
-    window.setTimeout(() => {
-      leadEl.textContent = next;
-      leadEl.style.opacity = "1";
-    }, 140);
-  }
-
-  function getScrollMetrics() {
-    const rect = root.getBoundingClientRect();
-    const totalScroll = Math.max(root.offsetHeight - window.innerHeight, 1);
-    const scrolled = clamp(-rect.top, 0, totalScroll);
-    return { totalScroll, scrolled, progress: scrolled / totalScroll };
-  }
-
-  function getLayoutMetrics() {
-    const isMobile = window.matchMedia("(max-width: 768px)").matches;
-    const cardH = cards[0]?.offsetHeight || 180;
-    return {
-      /* Separación vertical amplia entre tarjetas */
-      spacing: cardH * (isMobile ? 1.05 : 1.2),
-      tilt: isMobile ? 10 : 14,
-      depth: isMobile ? 28 : 36,
-    };
+      ? `Fase ${String(idx + 1).padStart(2, "0")} de ${String(total).padStart(2, "0")}: ${title}`
+      : `Fase ${idx + 1} de ${total}`;
   }
 
   function paint() {
-    const { progress } = getScrollMetrics();
-    const floatIndex = progress * Math.max(total - 1, 0);
-    const { spacing, tilt, depth } = getLayoutMetrics();
+    const scrollTop = window.pageYOffset || document.documentElement.scrollTop || 0;
+    let progress = track > 0 ? (scrollTop - rootTop) / track : 0;
+    progress = clamp(progress, 0, 1);
 
-    cards.forEach((card, index) => {
-      const offset = index - floatIndex;
-      const abs = Math.abs(offset);
-      const y = offset * spacing;
-      const rx = clamp(offset * tilt, -42, 42);
-      const z = -abs * depth;
-      const scale = clamp(1.05 - abs * 0.07, 0.78, 1.08);
-      const x = offset * (abs < 0.15 ? 0 : 6);
-
-      card.style.transform =
-        `translate3d(${x}px, ${y}px, ${z}px) rotateX(${rx}deg) rotateY(${-8}deg) scale(${scale})`;
-      card.style.zIndex = String(Math.round(80 - abs * 10));
-      card.style.opacity = String(abs > 3.5 ? 0 : abs > 2.7 ? 1 - (abs - 2.7) / 0.8 : 1);
-      card.classList.toggle("is-front", Math.round(floatIndex) === index);
-      card.setAttribute(
-        "aria-hidden",
-        Math.round(floatIndex) === index ? "false" : "true"
-      );
-    });
-
-    const nextActive = clamp(Math.round(floatIndex), 0, total - 1);
-    if (nextActive !== activeIndex) {
-      activeIndex = nextActive;
-      cards.forEach((card, index) => {
-        card.tabIndex = index === activeIndex ? 0 : -1;
-      });
-      syncLead();
-      announce();
-      keepVideoPlaying();
+    /* Más tiempo con la tarjeta 01 a pantalla completa al entrar */
+    const introHold = 0.2;
+    const outroHold = 0.06;
+    let currentF;
+    if (progress <= introHold) {
+      currentF = 0;
+    } else if (progress >= 1 - outroHold) {
+      currentF = total - 1;
+    } else {
+      currentF =
+        ((progress - introHold) / (1 - introHold - outroHold)) * (total - 1);
     }
-  }
 
-  function requestPaint() {
-    if (raf) return;
-    raf = window.requestAnimationFrame(() => {
-      raf = 0;
-      paint();
-    });
-  }
+    const parallaxOn = !prefersReducedMotionGlobal;
 
-  function scrollToIndex(index, smooth = true) {
-    if (total <= 1) return;
-    const targetIndex = ((index % total) + total) % total;
-    const docTop = root.getBoundingClientRect().top + window.scrollY;
-    const totalScroll = Math.max(root.offsetHeight - window.innerHeight, 1);
-    const top = docTop + (targetIndex / (total - 1)) * totalScroll;
-    scrollingProgrammatically = true;
-    window.clearTimeout(scrollUnlockTimer);
-    window.scrollTo({
-      top,
-      behavior: smooth && !prefersReducedMotionGlobal ? "smooth" : "auto",
-    });
-    scrollUnlockTimer = window.setTimeout(() => {
-      scrollingProgrammatically = false;
-      requestPaint();
-    }, smooth ? 750 : 80);
-  }
+    cx += ((parallaxOn ? mx : 0) - cx) * 0.06;
+    cy += ((parallaxOn ? my : 0) - cy) * 0.06;
 
-  function goTo(nextIndex) {
-    scrollToIndex(((nextIndex % total) + total) % total, true);
-  }
-
-  prevBtn.addEventListener("click", () => goTo(activeIndex - 1));
-  nextBtn.addEventListener("click", () => goTo(activeIndex + 1));
-
-  cards.forEach((card, index) => {
-    card.addEventListener("click", () => {
-      if (index === activeIndex) return;
-      goTo(index);
-    });
-  });
-
-  viewport.addEventListener("keydown", (event) => {
-    if (event.key === "ArrowRight" || event.key === "ArrowDown") {
-      event.preventDefault();
-      goTo(activeIndex + 1);
-    } else if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
-      event.preventDefault();
-      goTo(activeIndex - 1);
+    if (cardsLayer) {
+      cardsLayer.style.transform = `translate3d(${(-cx * 20).toFixed(2)}px, ${(-cy * 20).toFixed(2)}px, 0)`;
     }
-  });
+    if (watermark) {
+      watermark.style.transform = `translate3d(${(-cx * 10).toFixed(2)}px, ${(-cy * 10).toFixed(2)}px, 0)`;
+    }
+
+    cards.forEach((el, i) => {
+      const a = i - currentF;
+      const aa = Math.abs(a);
+      const focalY = 40;
+      const focalX = sw < 900 ? 54 : 64;
+      const Y = a >= 0 ? focalY - 24 * (1 - 1 / (1 + a)) : focalY + 55 * -a;
+      const focalPull = Math.max(0, 1 - aa);
+      const scatter = 13 * Math.sin(a * 1.9 + i * 0.6);
+      const X = focalX + scatter * (1 - focalPull);
+      let scale =
+        a >= 0 ? clamp(1 - 0.22 * a, 0.4, 1) : clamp(1 - 0.05 * -a, 0.72, 1);
+      const rot = 6 * Math.sin(a * 1.3 + i * 0.9);
+      let opacity =
+        a >= 0 ? clamp(1 - 0.55 * a, 0.05, 1) : clamp(1 + 1.35 * a, 0, 1);
+
+      /* Tarjeta activa más grande y nítida */
+      if (aa < 0.35) {
+        const boost = 1 - aa / 0.35;
+        scale = clamp(scale + 0.08 * boost, 0.4, 1.08);
+        opacity = Math.max(opacity, 0.92 + 0.08 * boost);
+      }
+
+      const dx = ((X - 50) / 100) * sw;
+      const dy = ((Y - 50) / 100) * sh;
+
+      el.style.transform = `translate3d(${dx.toFixed(1)}px, ${dy.toFixed(1)}px, 0) rotate(${rot.toFixed(2)}deg) scale(${scale.toFixed(3)})`;
+      el.style.opacity = opacity.toFixed(3);
+      el.style.zIndex = String(Math.round(200 - aa * 24));
+      el.style.pointerEvents = aa < 0.5 ? "auto" : "none";
+    });
+
+    const idx = clamp(Math.round(currentF), 0, total - 1);
+    announce(idx);
+  }
+
+  function tick() {
+    paint();
+    raf = requestAnimationFrame(tick);
+  }
 
   window.addEventListener(
-    "scroll",
-    () => {
-      requestPaint();
+    "mousemove",
+    (event) => {
+      mx = event.clientX / window.innerWidth - 0.5;
+      my = event.clientY / window.innerHeight - 0.5;
     },
     { passive: true }
   );
-  window.addEventListener("resize", requestPaint, { passive: true });
+  window.addEventListener(
+    "resize",
+    () => {
+      measure();
+      paint();
+    },
+    { passive: true }
+  );
 
-  paint();
-  keepVideoPlaying();
+  measure();
+  tick();
 }
 
 initProcesoCards();
