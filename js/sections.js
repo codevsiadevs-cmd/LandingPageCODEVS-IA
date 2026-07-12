@@ -71,24 +71,33 @@ if (heroIntro) {
  * resetCountUp(el) pinta '0' (con prefix/suffix) y cancela cualquier frame
  * en vuelo. setStaticValues fija el target final sin animar (reduced-motion).
  * ─────────────────────────────────────────────────────────────────────────── */
+function formatMetricValue(el, value) {
+  const prefix = el.dataset.prefix ?? "";
+  const suffix = el.dataset.suffix ?? "";
+  const pad = Number(el.dataset.pad);
+  let num = String(Math.round(Number(value)));
+  if (Number.isFinite(pad) && pad > 0) {
+    num = num.padStart(pad, "0");
+  }
+  return prefix + num + suffix;
+}
+
 function countUpRAF(el, duration = 1200) {
   if (el._countRafId) cancelAnimationFrame(el._countRafId);
 
   const target = Number(el.dataset.target);
   if (!Number.isFinite(target)) return;
-  const prefix = el.dataset.prefix ?? "";
-  const suffix = el.dataset.suffix ?? "";
   const start = performance.now();
   const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
 
   function frame(now) {
     const t = Math.min(1, (now - start) / duration);
     const v = target * easeOutCubic(t);
-    el.textContent = prefix + Math.round(v) + suffix;
+    el.textContent = formatMetricValue(el, v);
     if (t < 1) {
       el._countRafId = requestAnimationFrame(frame);
     } else {
-      el.textContent = prefix + target + suffix;
+      el.textContent = formatMetricValue(el, target);
       el._countRafId = null;
     }
   }
@@ -100,16 +109,12 @@ function resetCountUp(el) {
     cancelAnimationFrame(el._countRafId);
     el._countRafId = null;
   }
-  const prefix = el.dataset.prefix ?? "";
-  const suffix = el.dataset.suffix ?? "";
-  el.textContent = prefix + "0" + suffix;
+  el.textContent = formatMetricValue(el, 0);
 }
 
 function setStaticValues(els) {
   els.forEach((el) => {
-    const prefix = el.dataset.prefix ?? "";
-    const suffix = el.dataset.suffix ?? "";
-    el.textContent = prefix + el.dataset.target + suffix;
+    el.textContent = formatMetricValue(el, el.dataset.target);
   });
 }
 
