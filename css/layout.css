@@ -605,7 +605,8 @@ main > section:not(.hero) {
   bottom: auto;
   left: var(--hero-brand-left);
   margin: 0;
-  pointer-events: auto;
+  /* Solo las letras capturan eventos; el resto deja pasar el toque al cerebro */
+  pointer-events: none;
   font-family: var(--font-logo);
   font-size: var(--hero-title-size);
   line-height: 0.9;

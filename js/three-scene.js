@@ -84,7 +84,7 @@ function syncHeroBrainWithScroll() {
   wasInProcesoBrain = false;
 
   /* Y fijo en el centro vertical del viewport. */
-  heroWrap.style.setProperty("--brain-scroll-y", isMobile ? "56vh" : "50vh");
+  heroWrap.style.setProperty("--brain-scroll-y", "50vh");
 
   if (isMobile) {
     heroWrap.style.setProperty("--brain-scroll-x", "50%");

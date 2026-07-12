@@ -347,20 +347,12 @@
     top: auto;
     bottom: calc(var(--hero-brand-bottom) + env(safe-area-inset-bottom, 0px));
     z-index: 8;
-    pointer-events: auto;
+    pointer-events: none;
   }
 
   .hero__brand-letter {
     padding: 0.06em 0.04em;
-  }
-
-  /* El cerebro no debe robar el toque del título en móvil */
-  .hero__canvas-wrap,
-  .hero__canvas-wrap.hero__canvas-wrap--interactive,
-  .hero__canvas-wrap--interactive canvas,
-  .hero__canvas-wrap--interactive spline-viewer,
-  .hero__canvas-wrap--interactive .hero__brain-canvas {
-    pointer-events: none !important;
+    pointer-events: auto;
   }
 
   .hero-intro {
@@ -400,7 +392,7 @@
   .hero__canvas-wrap {
     left: 50%;
     right: auto;
-    top: var(--brain-scroll-y, 56vh);
+    top: var(--brain-scroll-y, 50vh);
     width: min(580px, 97vw);
     height: min(580px, 97vw);
     transform: translate(-50%, -50%);
@@ -854,7 +846,7 @@
     max-width: 100%;
   }
   .hero__canvas-wrap {
-    top: var(--brain-scroll-y, 54vh);
+    top: var(--brain-scroll-y, 48vh);
     width: min(520px, 98vw);
     height: min(520px, 98vw);
   }
