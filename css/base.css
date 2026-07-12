@@ -55,8 +55,9 @@ html {
 
 /*
  * Modo claro: invierte negro ↔ blanco.
- * Fondo sólido (sin velos/nebulosas). Cerebro, idioma y WhatsApp se
- * re-invierten para quedar con su aspecto original.
+ * Fondo sólido (sin velos/nebulosas).
+ * Idioma, WhatsApp y botón de tema se re-invierten.
+ * El cerebro se invierte con la página (mismo look, colores al contrario).
  */
 html.theme-invert {
   filter: invert(1);
@@ -106,7 +107,21 @@ html.theme-invert .contact__control {
   background-image: none !important;
 }
 
-/* Excepciones: mantienen su look original */
+/*
+ * Cerebro en claro = el mismo del oscuro con colores al revés
+ * (blancos↔negros). Se aclara/contrasta ANTES del invert del html
+ * para que no quede una mancha blanca sin detalle.
+ */
+html.theme-invert .hero__canvas-wrap {
+  filter: brightness(1.45) contrast(1.55) saturate(0);
+}
+
+html.theme-invert .nav__brand-o canvas,
+html.theme-invert .nav__brand-o spline-viewer {
+  filter: grayscale(1) brightness(1.9) contrast(1.35);
+}
+
+/* Excepciones: mantienen su look original (cerebro SÍ se invierte) */
 html.theme-invert .nav__lang,
 html.theme-invert .whatsapp-float,
 html.theme-invert .theme-toggle {
