@@ -607,9 +607,9 @@
     text-align: center;
   }
 
-  .why__transition,
-  .why__transition-pin {
-    background: #ffffff;
+  .why__title {
+    font-size: clamp(1.65rem, 7vw, 2rem);
+    text-align: center;
   }
 
   .why__showcase,
@@ -635,15 +635,6 @@
 
   .why {
     z-index: 3;
-  }
-
-  .why__transition {
-    height: 180svh;
-  }
-
-  .why__transition-pin {
-    height: 100svh;
-    min-height: 100svh;
   }
 
   .why__showcase {
@@ -691,11 +682,6 @@
     line-height: 1.06;
     letter-spacing: -0.025em;
     text-align: center;
-  }
-
-  .why__transition-headline {
-    font-size: clamp(1.45rem, 5.8vw, 2.65rem);
-    line-height: 1.08;
   }
 }
 

@@ -41,10 +41,6 @@ function initWhyShowcase() {
   const section = document.getElementById("nosotros");
   if (!section) return;
 
-  const transitionEl = section.querySelector("[data-why-transition]");
-  const iris = section.querySelector("[data-why-iris]");
-  const transitionCopy = section.querySelector(".why__transition-copy");
-  const transitionPin = section.querySelector(".why__transition-pin");
   const showcase = section.querySelector("[data-why-showcase]");
   const slider = showcase?.querySelector(".why__slider");
   const panels = showcase ? [...showcase.querySelectorAll("[data-why-panel]")] : [];
@@ -54,24 +50,6 @@ function initWhyShowcase() {
 
   function paint() {
     const vh = window.innerHeight;
-
-    if (transitionEl && iris) {
-      const tr = transitionEl.getBoundingClientRect();
-      const ttotal = tr.height - vh;
-      const tp = clamp01(ttotal > 0 ? -tr.top / ttotal : 0);
-      const irisProgress = smoothstep(tp);
-      iris.style.transform = `scale(${irisProgress})`;
-
-      if (transitionCopy) {
-        const headlineFade = tp <= 0.42 ? 1 : clamp01(1 - (tp - 0.42) / 0.38);
-        transitionCopy.style.opacity = String(headlineFade);
-      }
-
-      if (transitionPin) {
-        transitionPin.style.setProperty("--why-entry-fade", String(Math.min(tp * 2.2, 1)));
-      }
-    }
-
     const rect = showcase.getBoundingClientRect();
     const total = rect.height - vh;
     const progress = clamp01(total > 0 ? -rect.top / total : 0);
@@ -118,9 +96,6 @@ function initWhyShowcase() {
 
   if (prefersReducedMotionGlobal) {
     section.classList.add("why--static");
-    if (iris) iris.style.transform = "scale(1)";
-    if (transitionCopy) transitionCopy.style.opacity = "1";
-    if (transitionPin) transitionPin.style.setProperty("--why-entry-fade", "0");
     if (slider) slider.style.opacity = "1";
     section.classList.remove("why--exiting");
     section.style.setProperty("--why-exit-fade", "0");

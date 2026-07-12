@@ -63,7 +63,7 @@ html[data-slide-font] .hero-intro__text {
 html[data-slide-font] :is(
   .proceso__title,
   .proceso__phase-title,
-  .why__transition-headline,
+  .why__title,
   .why__panel-title
 ) {
   font-family: var(--font-heading) !important;

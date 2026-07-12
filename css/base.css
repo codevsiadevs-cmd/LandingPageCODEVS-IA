@@ -89,7 +89,7 @@ html.theme-invert .contact {
 }
 
 /* Fondos sólidos (tras invert → blanco completo, sin difuminados).
-   No tocar .why*: debe conservar gradientes de entrada/salida. */
+   /* No tocar .why*: conserva fondo y salida al contacto. */
 html.theme-invert .tech,
 html.theme-invert .tech-row,
 html.theme-invert .projects,
