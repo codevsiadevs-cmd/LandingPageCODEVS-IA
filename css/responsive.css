@@ -604,23 +604,19 @@
     overflow: visible;
   }
 
-  .proceso__transition,
-  .proceso__transition-pin {
-    background: #ffffff;
-  }
-
-  .proceso__transition {
-    height: 180svh;
-  }
-
-  .proceso__transition-pin {
-    height: 100svh;
-    min-height: 100svh;
-  }
-
-  /* Más recorrido por fase para poder ver las 6 tarjetas en móvil */
   .proceso__track {
     height: calc((var(--proceso-steps) - 1) * 110svh + 130svh);
+  }
+
+  .proceso__heading-wrap {
+    margin-bottom: 1rem;
+    text-align: center;
+    padding: 0 1.15rem;
+  }
+
+  .proceso__title {
+    font-size: clamp(1.65rem, 7vw, 2rem);
+    text-align: center;
   }
 
   .why__transition,

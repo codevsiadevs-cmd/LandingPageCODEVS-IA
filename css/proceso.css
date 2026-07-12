@@ -9,96 +9,33 @@
   scroll-margin-top: var(--nav-height);
   position: relative;
   height: auto;
-  padding: 0;
+  padding: clamp(2rem, 5vw, 3rem) 0 0;
   background: #000000;
   color: var(--proceso-ink);
   overflow: visible;
 }
 
-/* Transición iris triangular (análoga a Por qué, con triángulo) */
-.proceso__transition {
-  position: relative;
-  height: 180vh;
-  background: #ffffff;
-}
-
-.proceso__transition::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: min(14vh, 8rem);
-  background: linear-gradient(180deg, #ffffff 0%, rgba(255, 255, 255, 0) 100%);
-  pointer-events: none;
-  z-index: 3;
-}
-
-.proceso__transition-pin {
-  position: sticky;
-  top: 0;
-  z-index: 6;
-  height: 100vh;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #ffffff;
-}
-
-.proceso__iris {
-  position: absolute;
-  width: 200vmax;
-  height: 200vmax;
-  background: #000000;
-  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-  transform: scale(0);
-  transform-origin: center center;
-  will-change: transform;
-}
-
-.proceso__transition-copy {
-  position: relative;
-  z-index: 2;
-  width: min(92vw, 52rem);
-  max-width: 100%;
-  mix-blend-mode: difference;
-  color: #ffffff;
+.proceso__heading-wrap {
+  max-width: 72rem;
+  margin: 0 auto clamp(1.5rem, 3vw, 2.25rem);
   text-align: center;
-  padding: 0 1.5rem;
-  will-change: opacity;
+  padding: 0 clamp(1.25rem, 4vw, 3rem);
 }
 
-.proceso__transition-headline {
-  margin: 0;
-  font-family: var(--font-heading);
-  font-size: clamp(1.75rem, 5.5vmin, 3.75rem);
+.proceso__title {
+  font-family: var(--font-title);
   font-weight: 800;
-  line-height: 1.05;
+  font-size: clamp(1.85rem, 4vw, 2.5rem);
   letter-spacing: -0.02em;
-  max-width: 100%;
-  text-wrap: balance;
-}
-
-.proceso.proceso--static .proceso__transition {
-  height: auto;
-}
-
-.proceso.proceso--static .proceso__transition-pin {
-  position: relative;
-  height: auto;
-  min-height: 50vh;
-  padding: calc(var(--nav-height) + 3rem) 1.5rem 3rem;
-}
-
-.proceso.proceso--static .proceso__iris {
-  transform: scale(1) !important;
+  line-height: 1.15;
+  color: #fff;
+  margin: 0;
 }
 
 .proceso__track {
   --proceso-steps: 6;
   position: relative;
-  height: calc((var(--proceso-steps) - 1) * 90vh + 110vh);
+  height: calc((var(--proceso-steps) - 1) * 90vh + 100vh);
   background: #000000;
 }
 
@@ -365,22 +302,5 @@
 @media (prefers-reduced-motion: reduce) {
   .proceso__card-float {
     animation: none !important;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .proceso__transition {
-    height: auto;
-  }
-
-  .proceso__transition-pin {
-    position: relative;
-    height: auto;
-    min-height: 50vh;
-    padding: calc(var(--nav-height) + 3rem) 1.5rem 3rem;
-  }
-
-  .proceso__iris {
-    transform: scale(1) !important;
   }
 }

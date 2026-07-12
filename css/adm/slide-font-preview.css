@@ -8,6 +8,7 @@ html[data-slide-font] :is(
   .hero__tagline,
   .tech__title,
   .projects__title,
+  .proceso__title,
   .projects__row-title,
   .contact__title,
   .tech-metric__value
@@ -20,6 +21,7 @@ html[data-slide-font] :is(
   .hero__tagline,
   .tech__title,
   .projects__title,
+  .proceso__title,
   .projects__row-title,
   .contact__title
 ) {
@@ -59,7 +61,8 @@ html[data-slide-font] .hero-intro__text {
 
 /* Cómo Trabajamos + ¿Por qué elegir? — Syne 800 */
 html[data-slide-font] :is(
-  .proceso__transition-headline,
+  .proceso__title,
+  .proceso__headline h2,
   .proceso__panel-title,
   .why__transition-headline,
   .why__panel-title
