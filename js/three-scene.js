@@ -558,11 +558,11 @@ function createHeroSplineBrain() {
   return target;
 }
 
-/* Cerebro Spline en logos: navbar más lejos; footer un poco menos; final como estaba */
+/* Cerebro Spline en logos: navbar y footer mismo zoom; final más cerca */
 const NAV_LOGO_BRAIN_ZOOM_DESKTOP = 0.1;
 const NAV_LOGO_BRAIN_ZOOM_MOBILE = 0.08;
-const FOOTER_LOGO_BRAIN_ZOOM_DESKTOP = 0.135;
-const FOOTER_LOGO_BRAIN_ZOOM_MOBILE = 0.11;
+const FOOTER_LOGO_BRAIN_ZOOM_DESKTOP = NAV_LOGO_BRAIN_ZOOM_DESKTOP;
+const FOOTER_LOGO_BRAIN_ZOOM_MOBILE = NAV_LOGO_BRAIN_ZOOM_MOBILE;
 const END_LOGO_BRAIN_ZOOM_DESKTOP = 0.38;
 const END_LOGO_BRAIN_ZOOM_MOBILE = 0.32;
 

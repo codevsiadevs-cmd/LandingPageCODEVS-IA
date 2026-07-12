@@ -141,6 +141,8 @@
   border-radius: 0;
   min-width: 0;
   min-height: 0;
+  margin-left: -0.1em;
+  margin-right: -0.1em;
   transform: translateY(0.04em);
   mask-image: none;
   -webkit-mask-image: none;
