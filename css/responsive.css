@@ -108,7 +108,7 @@
   }
 
   .nav__brand-panel {
-    --nav-brand-mark: clamp(1.5rem, 7.2vw, 1.95rem);
+    --nav-brand-mark: clamp(1.25rem, 6vw, 1.65rem);
     display: inline-flex;
     align-items: center;
     height: 100%;
@@ -338,8 +338,8 @@
 @media (max-width: 768px) {
   .hero {
     --hero-brand-left: clamp(0.15rem, 0.6vw, 0.45rem);
-    --hero-brand-bottom: clamp(0rem, 0.15vh, 0.1rem);
-    --hero-title-size: clamp(3.5rem, 16.5vw, 6.35rem);
+    --hero-brand-bottom: clamp(0.05rem, 0.25vh, 0.15rem);
+    --hero-title-size: clamp(2.55rem, 12.5vw, 4.65rem);
   }
 
   .hero__brand {
@@ -361,7 +361,7 @@
   .hero-intro__text {
     width: 100%;
     max-width: 100%;
-    font-size: clamp(1.65rem, 7.5vw, 2.85rem);
+    font-size: clamp(1.35rem, 6vw, 2.25rem);
     line-height: 1.28;
   }
 
@@ -744,34 +744,42 @@
 
 @media (max-width: 980px) {
   .footer__top {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.5rem;
   }
 }
 
-@media (max-width: 620px) {
+@media (max-width: 720px) {
   .footer__top {
     grid-template-columns: 1fr;
     gap: 2rem;
+    justify-items: center;
+  }
+
+  .footer__top > * {
+    max-width: 22rem;
   }
 
   .footer__brand-block {
     gap: 0.5rem;
     margin-bottom: 0.25rem;
+    align-items: center;
   }
 }
 
 @media (max-width: 768px) {
   .footer__bottom {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
+    text-align: center;
   }
 }
 
 @media (max-width: 520px) {
   .hero {
     min-height: 92vh;
-    --hero-title-size: clamp(2.9rem, 17.5vw, 4.85rem);
-    --hero-brand-bottom: clamp(0.05rem, 0.35vh, 0.2rem);
+    --hero-title-size: clamp(2.15rem, 13vw, 3.55rem);
+    --hero-brand-bottom: clamp(0.08rem, 0.3vh, 0.18rem);
   }
 
   .hero__keywords {

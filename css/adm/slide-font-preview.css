@@ -25,12 +25,12 @@ html[data-slide-font] :is(
   letter-spacing: var(--slide-font-tracking, revert);
 }
 
-/* Título principal fijo — Dirtyline: mayúscula decorativa + minúscula sans */
+/* Logos / títulos: Syne (CODEVS IA del hero en 800) */
 html[data-slide-font] .hero__brand,
 html[data-slide-font] .hero__brand-accent,
 html[data-slide-font] .hero__brand-plain {
-  font-family: "Dirtyline36Daysoftype2022", system-ui, sans-serif !important;
-  font-weight: 400 !important;
+  font-family: var(--font-logo) !important;
+  font-weight: 800 !important;
   text-rendering: optimizeLegibility !important;
 }
 
@@ -44,22 +44,22 @@ html[data-slide-font] .hero__brand-plain {
   font-feature-settings: normal !important;
 }
 
-/* Párrafo intro fijo — Instrument Serif */
+/* Párrafo intro — Syne */
 html[data-slide-font] .hero-intro__text {
-  font-family: "Instrument Serif", Georgia, "Times New Roman", serif !important;
-  font-weight: 400 !important;
+  font-family: var(--font-title) !important;
+  font-weight: 800 !important;
   letter-spacing: -0.01em !important;
   font-style: normal !important;
 }
 
-/* Cómo Trabajamos + ¿Por qué elegir? — Instrument Serif */
+/* Cómo Trabajamos + ¿Por qué elegir? — Syne 800 */
 html[data-slide-font] :is(
   .proceso__panel-title,
   .why__transition-headline,
   .why__panel-title
 ) {
-  font-family: "Instrument Serif", Georgia, "Times New Roman", serif !important;
-  font-weight: 400 !important;
+  font-family: var(--font-heading) !important;
+  font-weight: 800 !important;
   font-style: normal !important;
 }
 

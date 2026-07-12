@@ -14,11 +14,11 @@
   --surface-card: #0c0e12;
   --text-primary: #eef1f7;
   --text-secondary: #8b95a8;
-  /* Logos: Dirtyline · Títulos: Instrument Serif · Resto: sans-serif */
-  --font-logo: "Dirtyline36Daysoftype2022", system-ui, sans-serif;
-  --font-title: "Instrument Serif", Georgia, "Times New Roman", serif;
-  --font-heading: "IBM Plex Sans", system-ui, sans-serif;
-  --font-body: "IBM Plex Sans", system-ui, sans-serif;
+  /* Tipografía unificada: Syne */
+  --font-logo: "Syne", system-ui, sans-serif;
+  --font-title: "Syne", system-ui, sans-serif;
+  --font-heading: "Syne", system-ui, sans-serif;
+  --font-body: "Syne", system-ui, sans-serif;
   --glass-border: rgba(180, 195, 220, 0.08);
   --glass-bg: rgba(10, 12, 16, 0.78);
   --nav-height: calc(4.25rem + 0.25cm);

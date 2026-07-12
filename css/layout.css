@@ -36,7 +36,7 @@
 }
 
 .nav__brand-panel {
-  --nav-brand-mark: clamp(1.85rem, 3.25vw, 2.5rem);
+  --nav-brand-mark: clamp(1.55rem, 2.75vw, 2.1rem);
   position: relative;
   display: inline-flex;
   flex-direction: row;
@@ -73,7 +73,7 @@
   position: relative;
   z-index: 1;
   font-family: var(--font-logo);
-  font-weight: 400;
+  font-weight: 800;
   font-size: calc(var(--nav-brand-mark) * 0.78);
   font-synthesis: none;
   text-transform: none;
@@ -415,7 +415,7 @@
   text-align: center;
   pointer-events: none;
   --hero-brand-left: clamp(0.2rem, 0.85vw, 0.65rem);
-  --hero-title-size: clamp(5rem, 17vw, 11.5rem);
+  --hero-title-size: clamp(3.6rem, 12.5vw, 8rem);
   --hero-brand-top: calc(50% - clamp(0.35rem, 1.1vh, 0.75rem) + 1.65cm);
 }
 
@@ -629,14 +629,14 @@ main > section:not(.hero) {
 }
 
 .hero__brand-accent {
-  font-weight: 400;
+  font-weight: 800;
   letter-spacing: 0.02em;
   font-feature-settings: "liga" 1, "clig" 1, "calt" 1;
   text-rendering: optimizeLegibility;
 }
 
 .hero__brand-plain {
-  font-weight: 400;
+  font-weight: 800;
   letter-spacing: 0.04em;
   font-feature-settings: normal;
   margin-left: 0.06em;
@@ -759,8 +759,8 @@ main > section:not(.hero) {
   width: 100%;
   margin: 0;
   font-family: var(--font-title);
-  font-size: clamp(2.1rem, 6.2vw, 4.25rem);
-  font-weight: 400;
+  font-size: clamp(1.7rem, 4.8vw, 3.25rem);
+  font-weight: 800;
   line-height: 1.28;
   letter-spacing: -0.01em;
   color: #ffffff;
@@ -906,7 +906,7 @@ main > section:not(.hero) {
 
 .projects__title {
   font-family: var(--font-title);
-  font-weight: 400;
+  font-weight: 800;
   font-size: clamp(1.85rem, 4vw, 2.5rem);
   letter-spacing: -0.02em;
   line-height: 1.15;
@@ -1125,9 +1125,9 @@ main > section:not(.hero) {
 
 .why__transition-headline {
   margin: 0;
-  font-family: var(--font-title);
+  font-family: var(--font-heading);
   font-size: clamp(1.75rem, 5.5vmin, 3.75rem);
-  font-weight: 400;
+  font-weight: 800;
   line-height: 1.05;
   letter-spacing: -0.02em;
   max-width: 100%;
@@ -1296,9 +1296,9 @@ main > section:not(.hero) {
   margin: 0 auto;
   padding-left: 0;
   max-width: 20ch;
-  font-family: var(--font-title);
+  font-family: var(--font-heading);
   font-size: clamp(2.5rem, 6.6vw, 6.75rem);
-  font-weight: 400;
+  font-weight: 800;
   line-height: 0.98;
   letter-spacing: -0.02em;
   text-wrap: balance;
@@ -1414,7 +1414,7 @@ main > section:not(.hero) {
 
 .testimonials__title {
   font-family: var(--font-title);
-  font-weight: 400;
+  font-weight: 800;
   font-size: clamp(1.75rem, 4vw, 2.35rem);
   letter-spacing: -0.02em;
   color: var(--text-primary);
@@ -1485,10 +1485,17 @@ main > section:not(.hero) {
 
 .footer__top {
   display: grid;
-  gap: 1.75rem;
-  grid-template-columns: 1.1fr 1fr 1fr 1fr;
+  gap: clamp(1.5rem, 4vw, 2.75rem);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   align-items: start;
+  justify-items: center;
+  text-align: center;
   margin-bottom: 1.4rem;
+}
+
+.footer__top > * {
+  width: 100%;
+  max-width: 18rem;
 }
 
 .footer__bottom {

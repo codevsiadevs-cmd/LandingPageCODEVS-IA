@@ -541,7 +541,7 @@
 .contact__title {
   font-family: var(--font-title);
   font-size: clamp(2rem, 5vw, 3rem);
-  font-weight: 400;
+  font-weight: 800;
   letter-spacing: -0.03em;
   line-height: 1.1;
   color: #ffffff;
@@ -986,7 +986,7 @@ textarea.contact__control:not(:placeholder-shown) ~ .contact__label {
 .footer__brand-block {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   align-self: start;
   gap: 0.45rem;
   max-width: 20rem;
@@ -995,14 +995,14 @@ textarea.contact__control:not(:placeholder-shown) ~ .contact__label {
 .footer__brand {
   display: inline-flex;
   flex: 0 0 auto;
-  align-self: flex-start;
+  align-self: center;
   margin: 0;
   text-decoration: none;
   color: inherit;
 }
 
 .nav__brand-panel.nav__brand-panel--footer {
-  --nav-brand-mark: clamp(2.35rem, 5.5vw, 3.35rem);
+  --nav-brand-mark: clamp(1.95rem, 4.5vw, 2.75rem);
   display: inline-flex;
   width: fit-content;
   height: auto;
@@ -1023,6 +1023,7 @@ textarea.contact__control:not(:placeholder-shown) ~ .contact__label {
   font-size: 0.9rem;
   max-width: 20rem;
   line-height: 1.45;
+  text-align: center;
 }
 
 .footer__brand-title {
@@ -1044,11 +1045,15 @@ textarea.contact__control:not(:placeholder-shown) ~ .contact__label {
   font-weight: 700;
   margin-bottom: 0.6rem;
   color: var(--text-primary);
+  text-align: center;
 }
 
 .footer__list {
   display: grid;
   gap: 0.45rem;
+  justify-items: center;
+  padding: 0;
+  list-style: none;
 }
 
 .footer__list a {

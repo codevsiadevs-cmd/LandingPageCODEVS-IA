@@ -167,7 +167,7 @@
 .proceso__card-title {
   margin: 0;
   font-family: var(--font-title);
-  font-weight: 400;
+  font-weight: 800;
   font-size: clamp(1.35rem, 3vw, 1.875rem);
   letter-spacing: -0.01em;
   color: #ffffff;
@@ -225,7 +225,7 @@
 .proceso__headline h2 {
   margin: 0;
   font-family: var(--font-title);
-  font-weight: 400;
+  font-weight: 800;
   font-size: clamp(1.85rem, 4.2vw, 3.75rem);
   line-height: 1.02;
   letter-spacing: -0.02em;
@@ -238,7 +238,7 @@
 
 .proceso__headline-accent {
   font-family: var(--font-title);
-  font-weight: 400;
+  font-weight: 800;
   color: #b8b8bf;
   font-size: 1em;
   margin-right: 0.06em;
