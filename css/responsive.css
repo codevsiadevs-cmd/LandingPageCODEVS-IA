@@ -671,6 +671,7 @@
     font-size: 0.75rem;
     margin-bottom: 1rem;
     padding-left: 0;
+    text-align: center;
   }
 
   .why__panel-title {
@@ -679,6 +680,7 @@
     font-size: clamp(1.2rem, 5.6vw, 1.95rem);
     line-height: 1.06;
     letter-spacing: -0.025em;
+    text-align: center;
   }
 
   .why__transition-headline {
