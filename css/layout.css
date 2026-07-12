@@ -995,7 +995,7 @@ main > section:not(.hero) {
   opacity: 0.92;
 }
 
-/* ——— Proyectos ——— */
+/* ——— Soluciones ——— */
 .projects {
   --projects-thumb-size: clamp(5.5rem, 12vw, 9.5rem);
   scroll-margin-top: calc(var(--nav-height) + 1rem);

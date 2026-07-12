@@ -27,7 +27,7 @@ const translations = {
     "nav.brand": "CODEVS IA — Inicio",
     "nav.main": "Principal",
     "nav.technologies": "Tecnologías",
-    "nav.projects": "Proyectos",
+    "nav.projects": "Soluciones",
     "nav.process": "Proceso",
     "nav.about": "Nosotros",
     "nav.contact": "Contacto",
@@ -47,7 +47,7 @@ const translations = {
     "metrics.success": "Tasa de éxito",
     "tech.aria": "Stack tecnológico",
     "tech.title": "Tecnologías",
-    "projects.title": "Proyectos",
+    "projects.title": "Soluciones",
     "projects.1":
       "Páginas Web — Sitios corporativos, landings y experiencias digitales de alto impacto con diseño moderno y rendimiento optimizado",
     "projects.2":
@@ -141,7 +141,7 @@ const translations = {
     "nav.brand": "CODEVS IA — Home",
     "nav.main": "Main",
     "nav.technologies": "Technologies",
-    "nav.projects": "Projects",
+    "nav.projects": "Solutions",
     "nav.process": "Process",
     "nav.about": "About",
     "nav.contact": "Contact",
@@ -161,7 +161,7 @@ const translations = {
     "metrics.success": "Success rate",
     "tech.aria": "Technology stack",
     "tech.title": "Technologies",
-    "projects.title": "Projects",
+    "projects.title": "Solutions",
     "projects.1":
       "Web Pages — Corporate sites, landings, and high-impact digital experiences with modern design and optimized performance",
     "projects.2":

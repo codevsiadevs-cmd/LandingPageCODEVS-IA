@@ -53,7 +53,7 @@ const SECTION_IDS = [
   "inicio",
   "presentacion",
   "tecnologias",
-  "proyectos",
+  "soluciones",
   "proceso",
   "nosotros",
   "contacto",

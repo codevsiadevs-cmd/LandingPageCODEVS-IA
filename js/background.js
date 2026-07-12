@@ -150,7 +150,7 @@ export function updateNebula(docProgress, mouseXNorm, mouseYNorm) {
   nebula2.style.transform = `translate3d(${Math.sin(orbit * 1.1) * 26 * motionScale + centerPullX * 0.25}px, ${Math.cos(orbit * 0.8) * 28 * motionScale + centerPullY * 0.25}px, 0)`;
 
   const base2 = 0.05 + sceneMotion.sharedPulse * 0.03;
-  const sectionBoost = section === "proyectos" ? 1.35 : section === "contacto" ? 1.25 : 1;
+  const sectionBoost = section === "soluciones" ? 1.35 : section === "contacto" ? 1.25 : 1;
   nebula2.style.opacity = String(Math.min(0.14, base2 * sectionBoost * sectionFactor));
   nebula1.style.opacity = String(Math.min(0.11, (0.04 + docProgress * 0.02) * sectionFactor));
   nebula3.style.opacity = String(Math.min(0.1, (0.03 + docProgress * 0.016) * sectionFactor));
