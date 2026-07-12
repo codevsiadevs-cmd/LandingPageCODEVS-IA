@@ -18,8 +18,8 @@ const SPLINE_SCENE_URL = "./assets/3d/particle-ai-brain.splinecode";
 /** Zoom Spline = cerebro más grande en pantalla (sin solo desplazar el contenedor). */
 const HERO_BRAIN_ZOOM_DESKTOP = 2.28;
 const HERO_BRAIN_ZOOM_MOBILE = 1.55;
-/** Perfil lateral del logo nav al inicio (no de frente). */
-const NAV_BRAIN_BASE_ROT_Y = -Math.PI * 0.5;
+/** Perfil lateral del logo nav al inicio (lado opuesto). */
+const NAV_BRAIN_BASE_ROT_Y = Math.PI * 0.5;
 
 const navWrap = document.getElementById("nav-brain-wrap");
 const footerWrap = document.getElementById("footer-brain-wrap");
@@ -594,7 +594,46 @@ function resizeLogoSpline(target) {
   target.canvas.style.width = "100%";
   target.canvas.style.height = "100%";
   applyLogoBrainZoom(target);
+  if (target.kind === "nav") captureNavLogoOrbitBaseline(target);
   syncSplineDomRect(target);
+}
+
+function captureNavLogoOrbitBaseline(target) {
+  if (!target?.ready) return;
+  const orbit = getHeroBrainOrbit(target);
+  if (!orbit?.object || !orbit.target) return;
+  const offset = new THREE.Vector3().subVectors(orbit.object.position, orbit.target);
+  const spherical = new THREE.Spherical().setFromVector3(offset);
+  target._navOrbitPhi = spherical.phi;
+  target._navOrbitRadius = spherical.radius;
+}
+
+/** Solo navbar: gira el cerebro Spline según el scroll (no footer ni logo final). */
+function applyNavLogoSplineScrollSpin(scrollRot) {
+  for (const target of logoSplineTargets) {
+    if (target.kind !== "nav" || !target.ready) continue;
+
+    const spin = prefersReducedMotionGlobal ? scrollRot * 0.2 : scrollRot;
+    /* Gira hacia la izquierda al scrollear; mantiene el perfil inicial. */
+    const theta = NAV_BRAIN_BASE_ROT_Y - spin;
+    const orbit = getHeroBrainOrbit(target);
+
+    if (orbit?.object && orbit.target) {
+      if (target._navOrbitRadius == null) captureNavLogoOrbitBaseline(target);
+      const offset = new THREE.Vector3().subVectors(orbit.object.position, orbit.target);
+      const spherical = new THREE.Spherical().setFromVector3(offset);
+      spherical.radius = target._navOrbitRadius ?? spherical.radius;
+      spherical.phi = target._navOrbitPhi ?? spherical.phi;
+      spherical.theta = theta;
+      orbit.object.position.setFromSpherical(spherical).add(orbit.target);
+      orbit.object.lookAt(orbit.target);
+      orbit.update?.();
+      continue;
+    }
+
+    const deg = ((theta * 180) / Math.PI) % 360;
+    target.canvas.style.transform = `translate(-50%, -50%) rotate(${deg}deg)`;
+  }
 }
 
 function resizeAllLogoSplines() {
@@ -622,6 +661,10 @@ function createLogoSplineBrain(wrap, kind = "nav") {
       app.play?.();
       applyLogoBrainZoom(target);
       setHeroBrainOrbit(target, false);
+      if (kind === "nav") {
+        captureNavLogoOrbitBaseline(target);
+        applyNavLogoSplineScrollSpin(0);
+      }
       patchSplineScrollFlags(target);
       resizeLogoSpline(target);
       requestAnimationFrame(() => {
@@ -800,7 +843,7 @@ function animate(now) {
   const targetGlow = docProgress > 0.5 ? (docProgress - 0.5) * 2 : 0;
   glowLevel += (targetGlow - glowLevel) * 0.06;
 
-  /* GLB de marca desactivado: logos usan Spline (logoSplineTargets). */
+  applyNavLogoSplineScrollSpin(scrollRot);
 
   if (!prefersReducedMotionGlobal) {
     sceneMotion.sharedPulse += (pulse - sceneMotion.sharedPulse) * 0.22;
