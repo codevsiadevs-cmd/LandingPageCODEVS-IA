@@ -25,11 +25,16 @@
   font-family: "Archivo", var(--font-heading), system-ui, sans-serif;
 }
 
+.proceso__stage .section-neural-canvas {
+  z-index: 2;
+}
+
 .proceso__cards-layer {
   position: absolute;
   inset: 0;
   z-index: 5;
   will-change: transform;
+  pointer-events: none;
 }
 
 .proceso__card {

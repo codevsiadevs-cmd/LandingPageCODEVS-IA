@@ -8,6 +8,13 @@ const sectionNeuralTargets = [
     gridDiv: 16,
     colorRgb: "255,255,255",
   },
+  {
+    panel: document.querySelector("[data-proceso-stage]"),
+    canvas: document.getElementById("proceso-neural-canvas"),
+    hoverClass: "proceso__stage--neural-hover",
+    gridDiv: 16,
+    colorRgb: "255,255,255",
+  },
 ];
 
 function initSectionNeural() {
