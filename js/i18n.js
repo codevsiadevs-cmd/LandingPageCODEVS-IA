@@ -50,11 +50,11 @@ const translations = {
     "projects.1":
       "Páginas Web — Sitios corporativos, landings y experiencias digitales de alto impacto con diseño moderno y rendimiento optimizado",
     "projects.2":
-      "Chatbot IA — Asistente conversacional para atención al cliente, soporte y respuestas inteligentes 24/7",
-    "projects.3":
-      "API Gateway — Infraestructura escalable para conectar, proteger y orquestar microservicios empresariales",
-    "projects.4":
       "Agentes IA — Sistemas autónomos que planifican, ejecutan y resuelven flujos de trabajo con modelos de lenguaje",
+    "projects.3":
+      "Chatbot IA — Asistente conversacional para atención al cliente, soporte y respuestas inteligentes 24/7",
+    "projects.4":
+      "API Gateway — Infraestructura escalable para conectar, proteger y orquestar microservicios empresariales",
     "process.title": "Cómo Trabajamos",
     "process.punch.badge": "Cómo trabajamos",
     "process.carouselAria": "Pasos de cómo trabajamos",
@@ -169,11 +169,11 @@ const translations = {
     "projects.1":
       "Web Pages — Corporate sites, landings, and high-impact digital experiences with modern design and optimized performance",
     "projects.2":
-      "AI Chatbot — Conversational assistant for customer support and intelligent 24/7 responses",
-    "projects.3":
-      "API Gateway — Scalable infrastructure to connect, secure, and orchestrate enterprise microservices",
-    "projects.4":
       "AI Agents — Autonomous systems that plan, execute, and solve workflows with language models",
+    "projects.3":
+      "AI Chatbot — Conversational assistant for customer support and intelligent 24/7 responses",
+    "projects.4":
+      "API Gateway — Scalable infrastructure to connect, secure, and orchestrate enterprise microservices",
     "process.title": "How We Work",
     "process.punch.badge": "How we work",
     "process.carouselAria": "How we work steps",
