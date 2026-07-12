@@ -510,26 +510,26 @@
   }
 
   .proceso__card {
-    --card-w: min(78vw, 18rem);
-    --card-h: min(12.25rem, calc(var(--card-w) * 0.68));
+    --card-w: min(88vw, 20.5rem);
+    --card-h: min(14rem, calc(var(--card-w) * 0.68));
   }
 
   .proceso__card-face {
-    padding: 1rem 1.05rem;
-    border-radius: 1.05rem;
+    padding: 1.12rem 1.18rem;
+    border-radius: 1.12rem;
   }
 
   .proceso__card-num {
-    font-size: clamp(1.75rem, 8vw, 2.4rem);
+    font-size: clamp(2.05rem, 8.6vw, 2.8rem);
   }
 
   .proceso__card-title {
-    font-size: clamp(1.05rem, 4.5vw, 1.35rem);
+    font-size: clamp(1.18rem, 4.9vw, 1.48rem);
   }
 
   .proceso__card-desc {
-    margin-top: 0.55rem;
-    font-size: 0.82rem;
+    margin-top: 0.65rem;
+    font-size: 0.88rem;
   }
 
   .proceso__headline {

@@ -84,7 +84,7 @@ function initProcesoCards() {
       const a = i - currentF;
       const aa = Math.abs(a);
       const isMobile = sw < 900;
-      const focalY = isMobile ? 46 : 50;
+      const focalY = isMobile ? 40 : 44;
       /* En móvil se centra; en desktop se abre a la derecha */
       const focalX = isMobile ? 50 : 70;
       const Y = a >= 0 ? focalY + 24 * (1 - 1 / (1 + a)) : focalY - 55 * -a;
@@ -106,7 +106,7 @@ function initProcesoCards() {
 
       /* En móvil, la tarjeta activa queda un poco más compacta */
       if (isMobile) {
-        scale *= 0.86;
+        scale *= 0.95;
       }
 
       const dx = ((X - 50) / 100) * sw;
