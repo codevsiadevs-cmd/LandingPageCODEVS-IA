@@ -75,8 +75,7 @@ html.theme-invert #bg-neural-canvas,
 html.theme-invert #bg-particles-canvas,
 html.theme-invert #bg-grid-canvas,
 html.theme-invert .hero__gradient,
-html.theme-invert .hero__bg-dots,
-html.theme-invert .section-neural-canvas {
+html.theme-invert .hero__bg-dots {
   opacity: 0 !important;
   visibility: hidden !important;
   pointer-events: none !important;
