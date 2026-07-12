@@ -142,20 +142,4 @@ if (techMetricsBlock && techMetricEls.length && techValueEls.length) {
   }
 }
 
-/* ─────────────────────────────────────────────────────────────────────────────
- * Footer reveal — bidireccional. Si el usuario scrollea hacia arriba desde
- * el footer y vuelve a bajar, el reveal se replay.
- * ─────────────────────────────────────────────────────────────────────────── */
-const footer = document.getElementById("site-footer");
-if (footer) {
-  if (prefersReducedMotionGlobal) {
-    footer.classList.add("footer--visible");
-  } else {
-    observeReveal(
-      footer,
-      () => footer.classList.add("footer--visible"),
-      () => footer.classList.remove("footer--visible"),
-      { rootMargin: "0px 0px -5% 0px", threshold: 0.1 }
-    );
-  }
-}
+/* Footer: sin reveal; siempre quieto al subir/bajar. */

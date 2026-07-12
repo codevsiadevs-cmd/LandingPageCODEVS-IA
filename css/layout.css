@@ -1603,19 +1603,8 @@ main > section:not(.hero) {
   border-top: 1px solid var(--glass-border);
   padding: 2.5rem clamp(1.25rem, 4vw, 3rem) 1rem;
   margin-bottom: 0;
-  opacity: 0;
-  transition: opacity 0.65s var(--ease-out);
-}
-
-.footer--visible {
   opacity: 1;
-}
-
-/* Reset instantáneo cuando el footer deja el viewport (sections.js): el
- * usuario puede scrollear hacia arriba y bajar otra vez para ver el
- * reveal de nuevo sin un fade-out previo. */
-.footer:not(.footer--visible) {
-  transition: none !important;
+  transition: none;
 }
 
 .footer__inner {
