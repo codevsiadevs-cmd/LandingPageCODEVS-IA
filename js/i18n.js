@@ -52,13 +52,9 @@ const translations = {
     "projects.2":
       "Chatbot IA — Asistente conversacional para atención al cliente, soporte y respuestas inteligentes 24/7",
     "projects.3":
-      "E-commerce IA — Comercio digital con recomendaciones personalizadas, búsqueda semántica y checkout optimizado",
-    "projects.4":
       "API Gateway — Infraestructura escalable para conectar, proteger y orquestar microservicios empresariales",
-    "projects.5":
+    "projects.4":
       "Agentes IA — Sistemas autónomos que planifican, ejecutan y resuelven flujos de trabajo con modelos de lenguaje",
-    "projects.6":
-      "Automatización de Documentos — Extracción, clasificación y procesamiento inteligente de documentos para equipos operativos",
     "process.title": "Cómo Trabajamos",
     "process.punch.badge": "Cómo trabajamos",
     "process.carouselAria": "Pasos de cómo trabajamos",
@@ -175,13 +171,9 @@ const translations = {
     "projects.2":
       "AI Chatbot — Conversational assistant for customer support and intelligent 24/7 responses",
     "projects.3":
-      "AI E-commerce — Digital commerce with personalized recommendations, semantic search, and optimized checkout",
-    "projects.4":
       "API Gateway — Scalable infrastructure to connect, secure, and orchestrate enterprise microservices",
-    "projects.5":
+    "projects.4":
       "AI Agents — Autonomous systems that plan, execute, and solve workflows with language models",
-    "projects.6":
-      "Document Automation — Intelligent extraction, classification, and processing for operations teams",
     "process.title": "How We Work",
     "process.punch.badge": "How we work",
     "process.carouselAria": "How we work steps",
