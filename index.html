@@ -305,7 +305,17 @@
       </div>
     </section>
 
-        <section class="proceso" id="proceso" aria-labelledby="proceso-heading" style="--proceso-steps: 6">
+        <section class="proceso" id="proceso" aria-labelledby="proceso-heading">
+      <div class="proceso__transition" data-proceso-transition>
+        <div class="proceso__transition-pin">
+          <div class="proceso__iris" data-proceso-iris aria-hidden="true"></div>
+          <div class="proceso__transition-copy">
+            <h2 id="proceso-heading" class="proceso__transition-headline" data-i18n="process.title">Cómo trabajamos</h2>
+          </div>
+        </div>
+      </div>
+
+      <div class="proceso__track" data-proceso-track style="--proceso-steps: 6">
       <div class="proceso__stage" data-proceso-stage>
         <canvas class="section-neural-canvas" id="proceso-neural-canvas" aria-hidden="true"></canvas>
         <div
@@ -474,8 +484,7 @@
         </div>
 
         <div class="proceso__headline">
-          <h2 id="proceso-heading">
-            <span><span class="proceso__headline-accent">Cómo trabajamos</span><span> —</span></span>
+          <h2 id="proceso-subheading">
             <span>Software Inteligente:</span>
             <span>Ágil, Seguro, Escalable</span>
           </h2>
@@ -485,6 +494,7 @@
         </div>
 
         <p class="proceso__live visually-hidden" aria-live="polite"></p>
+      </div>
       </div>
     </section>
 

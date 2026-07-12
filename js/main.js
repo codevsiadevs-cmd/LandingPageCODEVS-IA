@@ -1,6 +1,7 @@
 import "./i18n.js";
 import "./why-showcase.js";
 import "./preloader.js";
+import "./proceso-transition.js";
 import "./proceso-cards.js";
 import "./console-easter.js";
 import { updateGlobalScrollEffects } from "./scroll.js";

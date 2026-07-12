@@ -9,8 +9,9 @@ function clamp(v, a, b) {
 
 function initProcesoCards() {
   const root = document.getElementById("proceso");
+  const track = root?.querySelector("[data-proceso-track]") || root;
   const stage = root?.querySelector("[data-proceso-stage]");
-  if (!root || !stage) return;
+  if (!root || !stage || !track) return;
 
   const cardsLayer = stage.querySelector("[data-proceso-cards-layer]");
   const cards = [...stage.querySelectorAll("[data-proceso-card]")];
@@ -18,6 +19,7 @@ function initProcesoCards() {
   const total = cards.length;
   if (!total) return;
 
+  track.style.setProperty("--proceso-steps", String(total));
   root.style.setProperty("--proceso-steps", String(total));
 
   const names = cards.map((card) => {
@@ -29,8 +31,8 @@ function initProcesoCards() {
   let my = 0;
   let cx = 0;
   let cy = 0;
-  let rootTop = 0;
-  let track = 1;
+  let trackTop = 0;
+  let trackLen = 1;
   let sw = 1;
   let sh = 1;
   let raf = 0;
@@ -38,8 +40,8 @@ function initProcesoCards() {
 
   function measure() {
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop || 0;
-    rootTop = root.getBoundingClientRect().top + scrollTop;
-    track = Math.max(root.clientHeight - stage.clientHeight, 1);
+    trackTop = track.getBoundingClientRect().top + scrollTop;
+    trackLen = Math.max(track.clientHeight - stage.clientHeight, 1);
     sw = stage.clientWidth;
     sh = stage.clientHeight;
   }
@@ -55,11 +57,11 @@ function initProcesoCards() {
 
   function paint() {
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop || 0;
-    let progress = track > 0 ? (scrollTop - rootTop) / track : 0;
+    let progress = trackLen > 0 ? (scrollTop - trackTop) / trackLen : 0;
     progress = clamp(progress, 0, 1);
 
-    /* Hold corto para ver bien la 01; el resto del scroll se reparte igual */
-    const introHold = 0.08;
+    /* Hold breve para ver la primera tarjeta sin alargar el scroll */
+    const introHold = 0.1;
     let currentF;
     if (progress <= introHold) {
       currentF = 0;

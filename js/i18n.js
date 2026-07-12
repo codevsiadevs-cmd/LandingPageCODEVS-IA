@@ -55,7 +55,7 @@ const translations = {
       "Chatbot IA — Asistente conversacional para atención al cliente, soporte y respuestas inteligentes 24/7",
     "projects.4":
       "API Gateway — Infraestructura escalable para conectar, proteger y orquestar microservicios empresariales",
-    "process.title": "Cómo Trabajamos",
+    "process.title": "Cómo trabajamos",
     "process.punch.badge": "Cómo trabajamos",
     "process.carouselAria": "Pasos de cómo trabajamos",
     "process.prev": "Paso anterior",

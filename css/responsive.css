@@ -373,7 +373,7 @@
   .hero-intro .tech-metrics {
     width: 100%;
     max-width: 100%;
-    margin-top: clamp(5rem, 18vh, 9rem);
+    margin-top: clamp(1.5rem, 5vh, 2.75rem);
     gap: 1.25rem;
   }
 
@@ -596,6 +596,24 @@
 
   .proceso {
     background: #000000;
+  }
+
+  .proceso__transition,
+  .proceso__transition-pin {
+    background: #ffffff;
+  }
+
+  .proceso__transition {
+    height: 180svh;
+  }
+
+  .proceso__transition-pin {
+    height: 100svh;
+    min-height: 100svh;
+  }
+
+  .proceso__track {
+    height: calc((var(--proceso-steps) - 1) * 90svh + 110svh);
   }
 
   .why__transition,
