@@ -1,5 +1,5 @@
 /**
- * Título hero (CODEVS IA): red neuronal del navbar, recortada dentro de cada letra.
+ * Título hero + logo final: red neuronal recortada dentro de cada letra.
  */
 import { initBrandNeuralHover } from "./brand-neural-hover.js";
 
@@ -15,8 +15,8 @@ const GLYPH_NUDGE_Y = {
   A: 0.27,
 };
 
-function wrapHeroBrandLetters(root) {
-  const segments = [...root.querySelectorAll(".hero__brand-accent, .hero__brand-plain")];
+function wrapBrandLetters(root, segmentSelector) {
+  const segments = [...root.querySelectorAll(segmentSelector)];
 
   for (const segment of segments) {
     if (segment.classList.contains("hero__brand-letter")) continue;
@@ -24,8 +24,12 @@ function wrapHeroBrandLetters(root) {
     const text = segment.textContent ?? "";
     if (!text) continue;
 
-    const isAccent = segment.classList.contains("hero__brand-accent");
-    const isPlain = segment.classList.contains("hero__brand-plain");
+    const isAccent =
+      segment.classList.contains("hero__brand-accent") ||
+      segment.classList.contains("nav__brand-accent");
+    const isPlain =
+      segment.classList.contains("hero__brand-plain") ||
+      segment.classList.contains("nav__brand-plain");
     const frag = document.createDocumentFragment();
     let plainIndex = 0;
 
@@ -59,44 +63,59 @@ function wrapHeroBrandLetters(root) {
   }
 }
 
-function initHeroBrandNeural() {
-  const root = document.getElementById("hero-heading");
+function initLetterNeural(root) {
   if (!root) return;
 
-  wrapHeroBrandLetters(root);
+  const isMobile = window.matchMedia("(max-width: 900px)").matches;
+  const letters = [...root.querySelectorAll("[data-hero-letter]")];
+  for (const letter of letters) {
+    const canvas = letter.querySelector("canvas.hero__brand-letter-neural");
+    const face = letter.querySelector(".hero__brand-letter-face");
+    const glyph = letter.dataset.heroLetter || "";
+    if (!canvas || !glyph) continue;
 
-  /* Esperar tipografía para que el máscara del glifo coincida con la letra visible */
+    initBrandNeuralHover(letter, canvas, {
+      hoverClass: "hero__brand-letter--neural",
+      clipGlyph: glyph,
+      clipFontEl: face,
+      enableTouch: true,
+      gridDiv: isMobile ? 9 : 10,
+      linkCount: isMobile ? 4 : 5,
+      wander: isMobile ? 10 : 14,
+      colorRgb: "255,255,255",
+      reachScale: isMobile ? 0.38 : 0.42,
+      nodeRadiusMin: isMobile ? 0.7 : 1.6,
+      nodeRadiusMax: isMobile ? 1.35 : 3.4,
+      spotlightLineWidth: isMobile ? 0.7 : 1.65,
+      lineWidth: isMobile ? 0.55 : 1,
+      glyphBaseAlpha: 0,
+      mouseSpotlight: true,
+      spotlightRadius: isMobile ? 0.5 : 0.58,
+      lingerMs: 5000,
+      fadeOutSpeed: 0.012,
+      glyphNudgeY: GLYPH_NUDGE_Y[glyph] ?? 0.27,
+    });
+  }
+}
+
+function initHeroBrandNeural() {
+  const heroRoot = document.getElementById("hero-heading");
+  const endRoot = document.querySelector(".nav__brand-panel--end");
+
+  if (heroRoot) {
+    wrapBrandLetters(heroRoot, ".hero__brand-accent, .hero__brand-plain");
+  }
+  if (endRoot) {
+    wrapBrandLetters(
+      endRoot,
+      ".nav__brand-segment.nav__brand-accent, .nav__brand-segment.nav__brand-plain"
+    );
+  }
+
+  /* Esperar tipografía para que la máscara del glifo coincida con la letra visible */
   const start = () => {
-    const isMobile = window.matchMedia("(max-width: 900px)").matches;
-    const letters = [...root.querySelectorAll("[data-hero-letter]")];
-    for (const letter of letters) {
-      const canvas = letter.querySelector("canvas.hero__brand-letter-neural");
-      const face = letter.querySelector(".hero__brand-letter-face");
-      const glyph = letter.dataset.heroLetter || "";
-      if (!canvas || !glyph) continue;
-
-      initBrandNeuralHover(letter, canvas, {
-        hoverClass: "hero__brand-letter--neural",
-        clipGlyph: glyph,
-        clipFontEl: face,
-        enableTouch: true,
-        gridDiv: isMobile ? 9 : 10,
-        linkCount: isMobile ? 4 : 5,
-        wander: isMobile ? 10 : 14,
-        colorRgb: "255,255,255",
-        reachScale: isMobile ? 0.38 : 0.42,
-        nodeRadiusMin: isMobile ? 0.7 : 1.6,
-        nodeRadiusMax: isMobile ? 1.35 : 3.4,
-        spotlightLineWidth: isMobile ? 0.7 : 1.65,
-        lineWidth: isMobile ? 0.55 : 1,
-        glyphBaseAlpha: 0,
-        mouseSpotlight: true,
-        spotlightRadius: isMobile ? 0.5 : 0.58,
-        lingerMs: 5000,
-        fadeOutSpeed: 0.012,
-        glyphNudgeY: GLYPH_NUDGE_Y[glyph] ?? 0.27,
-      });
-    }
+    initLetterNeural(heroRoot);
+    initLetterNeural(endRoot);
   };
 
   if (document.fonts?.ready) {

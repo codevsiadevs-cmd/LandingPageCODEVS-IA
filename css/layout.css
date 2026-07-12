@@ -1704,20 +1704,31 @@ html.theme-invert .footer__emoji {
   margin-left: -2.35em;
   margin-right: -2.1em;
   transform: translateY(0.14em);
+  pointer-events: none;
 }
 
-.nav__brand-panel--end .nav__brand-segment {
+/* Letras del logo final: mismo efecto neuronal del título hero */
+.nav__brand-panel--end .hero__brand-letter {
   position: relative;
   z-index: 2;
+  font-family: var(--font-logo);
+  font-size: calc(var(--nav-brand-mark) * 0.78);
+  font-weight: 800;
+  line-height: 0.87;
+  color: #ffffff;
+  pointer-events: auto;
 }
 
-.nav__brand-panel--end .nav__brand-group:not(.nav__brand-group--ia) .nav__brand-accent {
+.nav__brand-panel--end .hero__brand-letter-face {
+  color: #ffffff;
+}
+
+.nav__brand-panel--end .nav__brand-group:not(.nav__brand-group--ia) > .hero__brand-letter.hero__brand-accent {
   margin-right: -0.8em;
 }
 
-.nav__brand-panel--end .nav__brand-group:not(.nav__brand-group--ia) .nav__brand-plain {
+.nav__brand-panel--end .nav__brand-group:not(.nav__brand-group--ia) > .hero__brand-letter--lead {
   margin-left: -0.75em;
-  letter-spacing: 0.02em;
 }
 
 .nav__brand-panel--end .nav__brand-copy {
@@ -1738,6 +1749,7 @@ html.theme-invert .footer__emoji {
   visibility: visible !important;
   transform: none;
   scale: 1;
+  pointer-events: none;
 }
 
 @media (max-width: 768px) {
@@ -1762,11 +1774,11 @@ html.theme-invert .footer__emoji {
     transform: translateY(0.04em);
   }
 
-  .nav__brand-panel--end .nav__brand-group:not(.nav__brand-group--ia) .nav__brand-accent {
+  .nav__brand-panel--end .nav__brand-group:not(.nav__brand-group--ia) > .hero__brand-letter.hero__brand-accent {
     margin-right: -0.1em;
   }
 
-  .nav__brand-panel--end .nav__brand-group:not(.nav__brand-group--ia) .nav__brand-plain {
+  .nav__brand-panel--end .nav__brand-group:not(.nav__brand-group--ia) > .hero__brand-letter--lead {
     margin-left: -0.06em;
   }
 
