@@ -535,10 +535,6 @@
     max-width: 22rem;
     font-size: 0.82rem;
   }
-
-  .proceso__wm span {
-    font-size: min(42vw, 12rem);
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -566,7 +562,7 @@
 
 @media (max-width: 900px) {
   body[data-section="proceso"] {
-    background: #050505;
+    background: #000000;
   }
 
   body[data-section="nosotros"] {

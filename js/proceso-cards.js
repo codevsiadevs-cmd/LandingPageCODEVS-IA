@@ -13,7 +13,6 @@ function initProcesoCards() {
   if (!root || !stage) return;
 
   const cardsLayer = stage.querySelector("[data-proceso-cards-layer]");
-  const watermark = stage.querySelector("[data-proceso-wm]");
   const cards = [...stage.querySelectorAll("[data-proceso-card]")];
   const liveEl = stage.querySelector(".proceso__live");
   const total = cards.length;
@@ -80,14 +79,11 @@ function initProcesoCards() {
     if (cardsLayer) {
       cardsLayer.style.transform = `translate3d(${(-cx * 20).toFixed(2)}px, ${(-cy * 20).toFixed(2)}px, 0)`;
     }
-    if (watermark) {
-      watermark.style.transform = `translate3d(${(-cx * 10).toFixed(2)}px, ${(-cy * 10).toFixed(2)}px, 0)`;
-    }
 
     cards.forEach((el, i) => {
       const a = i - currentF;
       const aa = Math.abs(a);
-      const focalY = 40;
+      const focalY = 50;
       const focalX = sw < 900 ? 58 : 70;
       const Y = a >= 0 ? focalY - 24 * (1 - 1 / (1 + a)) : focalY + 55 * -a;
       const focalPull = Math.max(0, 1 - aa);

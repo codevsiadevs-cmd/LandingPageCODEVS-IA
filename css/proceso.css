@@ -5,12 +5,12 @@
   --proceso-ink: #f5f5f2;
   --proceso-muted: #adadb4;
   --proceso-dim: #75757c;
-  --proceso-bg: #08080a;
+  --proceso-bg: #000000;
   scroll-margin-top: var(--nav-height);
   position: relative;
   height: calc((var(--proceso-steps) - 1) * 120vh + 160vh);
   padding: 0;
-  background: var(--proceso-bg);
+  background: #000000;
   color: var(--proceso-ink);
   overflow: visible;
 }
@@ -21,33 +21,8 @@
   z-index: 1;
   height: 100svh;
   overflow: hidden;
-  background:
-    radial-gradient(120% 90% at 58% 46%, color-mix(in srgb, var(--proceso-accent) 5.5%, transparent), transparent 55%),
-    var(--proceso-bg);
+  background: #000000;
   font-family: "Archivo", var(--font-heading), system-ui, sans-serif;
-}
-
-.proceso__wm {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;
-  will-change: transform;
-}
-
-.proceso__wm span {
-  margin-top: -2%;
-  font-family: "Dancing Script", "Allura", cursive;
-  font-weight: 700;
-  font-size: min(31vw, 27.5rem);
-  line-height: 1;
-  color: #151519;
-  white-space: nowrap;
-  letter-spacing: -0.01em;
-  user-select: none;
 }
 
 .proceso__cards-layer {
@@ -229,25 +204,6 @@
   letter-spacing: 0.18em;
   color: rgba(240, 244, 248, 0.4);
   text-align: right;
-}
-
-.proceso__veil-bottom {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 34%;
-  z-index: 6;
-  pointer-events: none;
-  background: linear-gradient(to top, var(--proceso-bg) 18%, rgba(8, 8, 10, 0.55) 55%, transparent);
-}
-
-.proceso__veil-radial {
-  position: absolute;
-  inset: 0;
-  z-index: 6;
-  pointer-events: none;
-  background: radial-gradient(125% 100% at 50% 42%, transparent 56%, rgba(0, 0, 0, 0.5));
 }
 
 .proceso__headline {
