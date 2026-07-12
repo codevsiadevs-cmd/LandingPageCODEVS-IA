@@ -155,15 +155,6 @@
   gap: 1rem;
 }
 
-.proceso__card-num {
-  font-family: var(--font-body);
-  font-weight: 800;
-  font-size: clamp(2.4rem, 6vw, 4rem);
-  line-height: 0.9;
-  letter-spacing: -0.02em;
-  color: #ffffff;
-}
-
 .proceso__card-title {
   margin: 0;
   font-family: var(--font-title);

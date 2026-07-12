@@ -524,10 +524,6 @@
     border-radius: 1.12rem;
   }
 
-  .proceso__card-num {
-    font-size: clamp(2.05rem, 8.6vw, 2.8rem);
-  }
-
   .proceso__card-title {
     font-size: clamp(1.18rem, 4.9vw, 1.48rem);
   }
