@@ -88,7 +88,7 @@ function initProcesoCards() {
       const a = i - currentF;
       const aa = Math.abs(a);
       const focalY = 40;
-      const focalX = sw < 900 ? 54 : 64;
+      const focalX = sw < 900 ? 58 : 70;
       const Y = a >= 0 ? focalY - 24 * (1 - 1 / (1 + a)) : focalY + 55 * -a;
       const focalPull = Math.max(0, 1 - aa);
       const scatter = 13 * Math.sin(a * 1.9 + i * 0.6);
