@@ -89,17 +89,14 @@ html.theme-invert .contact {
   background-image: none !important;
 }
 
-/* Fondos sólidos (tras invert → blanco completo, sin difuminados) */
+/* Fondos sólidos (tras invert → blanco completo, sin difuminados).
+   No tocar .why*: debe conservar gradientes de entrada/salida. */
 html.theme-invert .tech,
 html.theme-invert .tech-row,
 html.theme-invert .projects,
 html.theme-invert .proceso,
 html.theme-invert .proceso__track,
 html.theme-invert .proceso__stage,
-html.theme-invert .why,
-html.theme-invert .why::after,
-html.theme-invert .why__transition,
-html.theme-invert .why__showcase,
 html.theme-invert .testimonials,
 html.theme-invert .footer,
 html.theme-invert .nav--scrolled,

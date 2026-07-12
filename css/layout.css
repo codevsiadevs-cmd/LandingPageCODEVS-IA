@@ -1586,5 +1586,16 @@ main > section:not(.hero) {
 .footer__made {
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
+  flex-wrap: wrap;
+  gap: 0.2em;
+}
+
+.footer__emoji {
+  display: inline-block;
+  line-height: 1;
+}
+
+/* Colores originales de emoji en modo claro (doble invert) */
+html.theme-invert .footer__emoji {
+  filter: invert(1);
 }
