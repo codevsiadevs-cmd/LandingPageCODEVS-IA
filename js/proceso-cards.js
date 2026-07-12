@@ -87,7 +87,7 @@ function initProcesoCards() {
       const focalY = isMobile ? 46 : 50;
       /* En móvil se centra; en desktop se abre a la derecha */
       const focalX = isMobile ? 50 : 70;
-      const Y = a >= 0 ? focalY - 24 * (1 - 1 / (1 + a)) : focalY + 55 * -a;
+      const Y = a >= 0 ? focalY + 24 * (1 - 1 / (1 + a)) : focalY - 55 * -a;
       const focalPull = Math.max(0, 1 - aa);
       const scatter = 13 * Math.sin(a * 1.9 + i * 0.6);
       const X = focalX + scatter * (1 - focalPull);
