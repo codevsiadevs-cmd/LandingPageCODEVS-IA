@@ -22,7 +22,7 @@
   height: 100svh;
   overflow: hidden;
   background: #000000;
-  font-family: "Archivo", var(--font-heading), system-ui, sans-serif;
+  font-family: var(--font-body);
 }
 
 .proceso__stage .section-neural-canvas {
@@ -133,7 +133,7 @@
 .proceso__card-brand,
 .proceso__card-phase,
 .proceso__card-tag {
-  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-family: var(--font-body);
   text-transform: uppercase;
 }
 
@@ -156,7 +156,7 @@
 }
 
 .proceso__card-num {
-  font-family: "Archivo", var(--font-heading), sans-serif;
+  font-family: var(--font-body);
   font-weight: 800;
   font-size: clamp(2.4rem, 6vw, 4rem);
   line-height: 0.9;
@@ -166,8 +166,8 @@
 
 .proceso__card-title {
   margin: 0;
-  font-family: "Archivo", var(--font-heading), sans-serif;
-  font-weight: 700;
+  font-family: var(--font-title);
+  font-weight: 400;
   font-size: clamp(1.35rem, 3vw, 1.875rem);
   letter-spacing: -0.01em;
   color: #ffffff;
@@ -176,7 +176,7 @@
 .proceso__card-desc {
   margin: 0.85rem 0 0;
   max-width: 25rem;
-  font-family: "Archivo", var(--font-body), sans-serif;
+  font-family: var(--font-body);
   font-weight: 500;
   font-size: clamp(0.9rem, 1.6vw, 1rem);
   line-height: 1.5;
@@ -224,8 +224,8 @@
 
 .proceso__headline h2 {
   margin: 0;
-  font-family: "Archivo", var(--font-heading), sans-serif;
-  font-weight: 800;
+  font-family: var(--font-title);
+  font-weight: 400;
   font-size: clamp(1.85rem, 4.2vw, 3.75rem);
   line-height: 1.02;
   letter-spacing: -0.02em;
@@ -237,8 +237,8 @@
 }
 
 .proceso__headline-accent {
-  font-family: "Archivo", var(--font-heading), sans-serif;
-  font-weight: 800;
+  font-family: var(--font-title);
+  font-weight: 400;
   color: #b8b8bf;
   font-size: 1em;
   margin-right: 0.06em;
@@ -247,7 +247,7 @@
 .proceso__headline p {
   margin: 0;
   max-width: 31rem;
-  font-family: "Archivo", var(--font-body), sans-serif;
+  font-family: var(--font-body);
   font-weight: 500;
   font-size: clamp(0.88rem, 1.4vw, 0.95rem);
   line-height: 1.6;

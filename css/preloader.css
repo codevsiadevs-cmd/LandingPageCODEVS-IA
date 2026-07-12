@@ -51,7 +51,7 @@ body.is-preloading {
 
 .preloader__num {
   display: block;
-  font-family: "Cormorant Garamond", "Times New Roman", serif;
+  font-family: var(--font-body);
   font-size: clamp(5.5rem, 18vw, 11rem);
   font-weight: 600;
   font-variant-numeric: slashed-zero;
