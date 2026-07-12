@@ -133,12 +133,46 @@
   transform: translateY(-0.26em);
 }
 
+/* Logos: mismo cerebro Spline libre que el bloque final */
+.nav__brand-o.logo-brain,
+.end-logo__brain.logo-brain {
+  padding: 0;
+  overflow: visible;
+  border-radius: 0;
+  min-width: 0;
+  min-height: 0;
+  transform: translateY(0.04em);
+  mask-image: none;
+  -webkit-mask-image: none;
+  background: transparent;
+}
+
+.nav__brand-o.logo-brain canvas,
+.end-logo__brain canvas,
+.logo-brain__canvas {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  max-height: none !important;
+  transform: translate(-50%, -50%);
+  filter: none !important;
+  pointer-events: none;
+}
+
 .nav__brand-o canvas,
 .nav__brand-o spline-viewer {
   display: block;
   width: 100% !important;
   height: 100% !important;
   filter: grayscale(1) brightness(1.72) contrast(1.14);
+}
+
+.nav__brand-o.logo-brain canvas {
+  filter: none !important;
 }
 
 .nav__actions {
@@ -1630,4 +1664,92 @@ main > section:not(.hero) {
 /* Colores originales de emoji en modo claro (doble invert) */
 html.theme-invert .footer__emoji {
   filter: invert(1);
+}
+
+/* ——— Logo final a pantalla completa (una línea, cerebro Spline en la O) ——— */
+.end-logo {
+  position: relative;
+  z-index: 5;
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(1.5rem, 4vw, 3rem);
+  background: #000000;
+  overflow: visible;
+}
+
+.end-logo__panel {
+  --end-logo-size: clamp(3.25rem, 11vw, 7.5rem);
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 0.02em;
+  font-family: var(--font-logo);
+  font-weight: 800;
+  font-size: var(--end-logo-size);
+  line-height: 0.88;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+  user-select: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  overflow: visible;
+}
+
+.end-logo__accent,
+.end-logo__plain {
+  display: inline-block;
+  position: relative;
+  z-index: 1;
+}
+
+.end-logo__plain {
+  letter-spacing: 0.02em;
+}
+
+.end-logo__ia {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 0.28em;
+}
+
+.end-logo__copy {
+  display: inline-block;
+  align-self: flex-end;
+  margin-left: 0.08em;
+  margin-bottom: 0.12em;
+  font-family: system-ui, "Segoe UI", sans-serif;
+  font-weight: 400;
+  font-size: 0.28em;
+  line-height: 1;
+  color: #ffffff;
+}
+
+/* Cerebro libre (sin recorte de O) entre C y devs */
+.end-logo__brain {
+  position: relative;
+  z-index: 1;
+  flex: 0 0 auto;
+  width: 0.95em;
+  height: 0.95em;
+  min-width: 0;
+  min-height: 0;
+  max-width: 0.95em;
+  max-height: 0.95em;
+  margin: 0 -0.02em;
+  padding: 0;
+  overflow: visible;
+  border-radius: 0;
+  transform: translateY(0.04em);
+  mask-image: none;
+  -webkit-mask-image: none;
+  background: transparent;
+}
+
+html.theme-invert .logo-brain__canvas,
+html.theme-invert .end-logo__brain canvas,
+html.theme-invert .nav__brand-o.logo-brain canvas {
+  filter: brightness(1.45) contrast(1.55) saturate(0) !important;
 }

@@ -63,11 +63,12 @@ const SECTION_IDS = [
 let sectionRects = [];
 let cachedDocMaxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
 
-function getFooterMaxScroll() {
-  const footer = document.getElementById("site-footer");
-  if (!footer) return null;
-  const footerBottom = footer.getBoundingClientRect().bottom + window.scrollY;
-  return Math.max(0, footerBottom - window.innerHeight);
+function getPageEndMaxScroll() {
+  const endLogo = document.querySelector(".end-logo");
+  const endEl = endLogo || document.getElementById("site-footer");
+  if (!endEl) return null;
+  const endBottom = endEl.getBoundingClientRect().bottom + window.scrollY;
+  return Math.max(0, endBottom - window.innerHeight);
 }
 
 function recalcSectionRects() {
@@ -81,8 +82,8 @@ function recalcSectionRects() {
   }
   sectionRects = next;
   const docMax = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
-  const footerMax = getFooterMaxScroll();
-  cachedDocMaxScroll = footerMax != null ? Math.min(docMax, footerMax) : docMax;
+  const pageEndMax = getPageEndMaxScroll();
+  cachedDocMaxScroll = pageEndMax != null ? Math.min(docMax, pageEndMax) : docMax;
 }
 
 function clampScrollToPageEnd() {
@@ -110,6 +111,8 @@ if (typeof ResizeObserver !== "undefined") {
   layoutRo.observe(document.body);
   const footer = document.getElementById("site-footer");
   if (footer) layoutRo.observe(footer);
+  const endLogo = document.querySelector(".end-logo");
+  if (endLogo) layoutRo.observe(endLogo);
 }
 window.addEventListener("load", recalcSectionRects);
 window.addEventListener("resize", recalcSectionRects, { passive: true });

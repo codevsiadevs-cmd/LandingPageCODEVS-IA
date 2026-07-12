@@ -23,12 +23,16 @@ const NAV_BRAIN_BASE_ROT_Y = -Math.PI * 0.5;
 
 const navWrap = document.getElementById("nav-brain-wrap");
 const footerWrap = document.getElementById("footer-brain-wrap");
+const endLogoWrap = document.getElementById("end-logo-brain-wrap");
 const heroWrap = document.getElementById("hero-brain-wrap");
 const hasNavBrain = Boolean(navWrap);
 const hasFooterBrain = Boolean(footerWrap);
+const hasEndLogoBrain = Boolean(endLogoWrap);
 const hasHeroBrain = Boolean(heroWrap);
-const hasBrandBrain = hasNavBrain || hasFooterBrain;
-const hasBrainScene = hasBrandBrain || hasHeroBrain;
+/** Logos usan el cerebro Spline del hero; ya no el GLB Three.js. */
+const hasBrandBrain = false;
+const hasLogoSplineBrain = hasNavBrain || hasFooterBrain || hasEndLogoBrain;
+const hasBrainScene = hasHeroBrain || hasLogoSplineBrain;
 
 /** Tamaño y zoom del hero Spline fijados al valor inicial (no cambian con el scroll). */
 let lockedHeroBrainPx = null;
@@ -67,6 +71,7 @@ if (hasBrainScene && typeof ResizeObserver !== "undefined") {
   const wrapResizeObserver = new ResizeObserver(refreshWrapRects);
   if (navWrap) wrapResizeObserver.observe(navWrap);
   if (footerWrap) wrapResizeObserver.observe(footerWrap);
+  if (endLogoWrap) wrapResizeObserver.observe(endLogoWrap);
   if (heroWrap) wrapResizeObserver.observe(heroWrap);
 }
 window.addEventListener("resize", refreshWrapRects, { passive: true });
@@ -150,14 +155,6 @@ function updateBrandRendererSize(renderer, wrap) {
   camera.updateProjectionMatrix();
   renderer.setSize(size, size, false);
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobileBg ? 1 : 2));
-}
-
-if (hasNavBrain) {
-  navRenderer = createBrandRenderer(navWrap, updateNavRendererSize);
-}
-
-if (hasFooterBrain) {
-  footerRenderer = createBrandRenderer(footerWrap, updateFooterRendererSize);
 }
 
 const hemi = new THREE.HemisphereLight(0xffffff, 0x0a0a0a, 0.82);
@@ -561,10 +558,103 @@ function createHeroSplineBrain() {
   return target;
 }
 
+/* Cerebro Spline en logos: navbar más lejos; footer un poco menos; final como estaba */
+const NAV_LOGO_BRAIN_ZOOM_DESKTOP = 0.1;
+const NAV_LOGO_BRAIN_ZOOM_MOBILE = 0.08;
+const FOOTER_LOGO_BRAIN_ZOOM_DESKTOP = 0.135;
+const FOOTER_LOGO_BRAIN_ZOOM_MOBILE = 0.11;
+const END_LOGO_BRAIN_ZOOM_DESKTOP = 0.38;
+const END_LOGO_BRAIN_ZOOM_MOBILE = 0.32;
+
+/** @type {{ wrap: HTMLElement, canvas: HTMLCanvasElement, app: *, ready: boolean, kind: "nav" | "footer" | "end" }[]} */
+const logoSplineTargets = [];
+
+function applyLogoBrainZoom(target) {
+  if (!target?.ready) return;
+  const isMobile = window.matchMedia("(max-width: 768px)").matches;
+  let zoom;
+  if (target.kind === "end") {
+    zoom = isMobile ? END_LOGO_BRAIN_ZOOM_MOBILE : END_LOGO_BRAIN_ZOOM_DESKTOP;
+  } else if (target.kind === "footer") {
+    zoom = isMobile ? FOOTER_LOGO_BRAIN_ZOOM_MOBILE : FOOTER_LOGO_BRAIN_ZOOM_DESKTOP;
+  } else {
+    zoom = isMobile ? NAV_LOGO_BRAIN_ZOOM_MOBILE : NAV_LOGO_BRAIN_ZOOM_DESKTOP;
+  }
+  target.app.setZoom?.(zoom);
+}
+
+function resizeLogoSpline(target) {
+  if (!target?.ready || !target.wrap) return;
+  const rect = target.wrap.getBoundingClientRect();
+  const display = Math.max(Math.round(Math.min(rect.width, rect.height) || target.wrap.clientWidth), 1);
+  if (display < 4) return;
+  const dpr = Math.min(Math.max(window.devicePixelRatio || 1, 2), isMobileBg ? 2.25 : 2.75);
+  const size = Math.max(Math.round(display * dpr), 1);
+  target.app.setSize(size, size);
+  target.canvas.style.width = "100%";
+  target.canvas.style.height = "100%";
+  applyLogoBrainZoom(target);
+  syncSplineDomRect(target);
+}
+
+function resizeAllLogoSplines() {
+  logoSplineTargets.forEach(resizeLogoSpline);
+}
+
+function createLogoSplineBrain(wrap, kind = "nav") {
+  if (!wrap) return null;
+
+  wrap.classList.add("logo-brain");
+
+  const canvas = document.createElement("canvas");
+  canvas.className = "logo-brain__canvas hero__brain-canvas";
+  canvas.setAttribute("aria-hidden", "true");
+  wrap.appendChild(canvas);
+
+  const app = new Application(canvas);
+  const target = { wrap, canvas, app, ready: false, kind };
+  logoSplineTargets.push(target);
+
+  app
+    .load(SPLINE_SCENE_URL)
+    .then(() => {
+      target.ready = true;
+      app.play?.();
+      applyLogoBrainZoom(target);
+      setHeroBrainOrbit(target, false);
+      patchSplineScrollFlags(target);
+      resizeLogoSpline(target);
+      requestAnimationFrame(() => {
+        resizeLogoSpline(target);
+        applyLogoBrainZoom(target);
+      });
+    })
+    .catch(() => {});
+
+  if (typeof IntersectionObserver !== "undefined") {
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          resizeLogoSpline(target);
+          applyLogoBrainZoom(target);
+        }
+      },
+      { threshold: 0.05 }
+    );
+    io.observe(wrap);
+  }
+
+  return target;
+}
+
 if (hasHeroBrain) {
   lockHeroBrainDimensions();
   createHeroSplineBrain();
 }
+
+if (hasNavBrain) createLogoSplineBrain(navWrap, "nav");
+if (hasFooterBrain) createLogoSplineBrain(footerWrap, "footer");
+if (hasEndLogoBrain) createLogoSplineBrain(endLogoWrap, "end");
 
 /** Spline cachea getBoundingClientRect(); refrescarlo si el wrap se mueve o rota. */
 function syncSplineDomRect(target) {
@@ -597,6 +687,7 @@ function resizeBrains() {
   updateNavRendererSize();
   updateFooterRendererSize();
   resizeHeroSpline();
+  resizeAllLogoSplines();
 }
 
 updateBackgroundCanvasSize();
@@ -661,7 +752,7 @@ function animate(now) {
   const scrollRot = docProgress * Math.PI * 2.75;
   const scrollBlend = Math.min(Math.max(latestScrollY / 320, 0), 1);
 
-  if (hasNavBrain || hasFooterBrain || splineTargets.length) {
+  if (splineTargets.length || logoSplineTargets.length) {
     if (!prefersReducedMotionGlobal) {
       currentMouseX += (targetMouseX - currentMouseX) * 0.05;
       currentMouseY += (targetMouseY - currentMouseY) * 0.05;
@@ -674,46 +765,7 @@ function animate(now) {
   const targetGlow = docProgress > 0.5 ? (docProgress - 0.5) * 2 : 0;
   glowLevel += (targetGlow - glowLevel) * 0.06;
 
-  if (hasNavBrain || hasFooterBrain) {
-    if (navRenderer) {
-      navRenderer.toneMappingExposure = 1.22;
-    }
-    if (footerRenderer) {
-      footerRenderer.toneMappingExposure = 1.22;
-    }
-
-    if (prefersReducedMotionGlobal) {
-      innerPulseLight.intensity = 0.48;
-      innerPulseLight.color.set(0xffffff);
-      dir.intensity = 0.94;
-      fill.intensity = 0.46;
-      rim.intensity = 0.24;
-    } else {
-      innerPulseLight.intensity = 0.48 + pulse * 0.18 + glowLevel * 0.06;
-      pulseColor.copy(whiteColor).lerp(softGrayColor, pulse * 0.08);
-      innerPulseLight.color.copy(pulseColor);
-      dir.intensity = 1.04 + glowLevel * 0.1;
-      fill.intensity = 0.52 + glowLevel * 0.08;
-      rim.intensity = 0.28 + pulse * 0.05;
-    }
-
-    applyNavBrainRotation({ scrollRot, scrollBlend });
-    navRenderer?.render(scene, camera);
-
-    /* Footer: cerebro estático (sin scroll ni mouse). */
-    if (footerRenderer) {
-      const spinY = spinGroup.rotation.y;
-      const tiltX = tiltGroup.rotation.x;
-      const tiltY = tiltGroup.rotation.y;
-      spinGroup.rotation.y = NAV_BRAIN_BASE_ROT_Y;
-      tiltGroup.rotation.x = 0;
-      tiltGroup.rotation.y = 0;
-      footerRenderer.render(scene, camera);
-      spinGroup.rotation.y = spinY;
-      tiltGroup.rotation.x = tiltX;
-      tiltGroup.rotation.y = tiltY;
-    }
-  }
+  /* GLB de marca desactivado: logos usan Spline (logoSplineTargets). */
 
   if (!prefersReducedMotionGlobal) {
     sceneMotion.sharedPulse += (pulse - sceneMotion.sharedPulse) * 0.22;
