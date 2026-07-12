@@ -558,13 +558,13 @@ function createHeroSplineBrain() {
   return target;
 }
 
-/* Cerebro Spline en logos: navbar y footer mismo zoom; final más cerca */
+/* Cerebro Spline en logos: navbar/footer lejos; cierre más cerca (más grande) */
 const NAV_LOGO_BRAIN_ZOOM_DESKTOP = 0.1;
 const NAV_LOGO_BRAIN_ZOOM_MOBILE = 0.08;
 const FOOTER_LOGO_BRAIN_ZOOM_DESKTOP = NAV_LOGO_BRAIN_ZOOM_DESKTOP;
 const FOOTER_LOGO_BRAIN_ZOOM_MOBILE = NAV_LOGO_BRAIN_ZOOM_MOBILE;
-const END_LOGO_BRAIN_ZOOM_DESKTOP = 0.38;
-const END_LOGO_BRAIN_ZOOM_MOBILE = 0.32;
+const END_LOGO_BRAIN_ZOOM_DESKTOP = 0.35;
+const END_LOGO_BRAIN_ZOOM_MOBILE = 0.3;
 
 /** @type {{ wrap: HTMLElement, canvas: HTMLCanvasElement, app: *, ready: boolean, kind: "nav" | "footer" | "end" }[]} */
 const logoSplineTargets = [];
