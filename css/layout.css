@@ -100,6 +100,24 @@
   margin-left: 0.05em;
 }
 
+.nav__brand-copy {
+  display: inline-block;
+  align-self: flex-end;
+  margin-left: 0.06em;
+  margin-bottom: 0.2em;
+  font-family: system-ui, "Segoe UI", sans-serif;
+  font-weight: 400;
+  font-size: 0.7rem;
+  line-height: 1;
+  letter-spacing: normal;
+  font-stretch: normal;
+  transform: none;
+  scale: 1;
+  color: #ffffff;
+  pointer-events: none;
+  user-select: none;
+}
+
 .nav__brand-o {
   position: relative;
   z-index: 1;
@@ -703,6 +721,20 @@ main > section:not(.hero) {
 
 .hero__brand-line--ia .hero__brand-letter--lead {
   margin-left: 0.05em;
+}
+
+.hero__brand-copy {
+  display: inline-block;
+  margin-left: 0.06em;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 0.42em;
+  line-height: 1;
+  vertical-align: baseline;
+  transform: translateY(0);
+  letter-spacing: 0;
+  pointer-events: none;
+  user-select: none;
 }
 
 .hero__tagline {
