@@ -563,8 +563,8 @@ const NAV_LOGO_BRAIN_ZOOM_DESKTOP = 0.1;
 const NAV_LOGO_BRAIN_ZOOM_MOBILE = 0.08;
 const FOOTER_LOGO_BRAIN_ZOOM_DESKTOP = NAV_LOGO_BRAIN_ZOOM_DESKTOP;
 const FOOTER_LOGO_BRAIN_ZOOM_MOBILE = NAV_LOGO_BRAIN_ZOOM_MOBILE;
-const END_LOGO_BRAIN_ZOOM_DESKTOP = 0.35;
-const END_LOGO_BRAIN_ZOOM_MOBILE = 0.3;
+const END_LOGO_BRAIN_ZOOM_DESKTOP = 0.55;
+const END_LOGO_BRAIN_ZOOM_MOBILE = 0.16;
 
 /** @type {{ wrap: HTMLElement, canvas: HTMLCanvasElement, app: *, ready: boolean, kind: "nav" | "footer" | "end" }[]} */
 const logoSplineTargets = [];
@@ -656,6 +656,30 @@ if (hasNavBrain) createLogoSplineBrain(navWrap, "nav");
 if (hasFooterBrain) createLogoSplineBrain(footerWrap, "footer");
 if (hasEndLogoBrain) createLogoSplineBrain(endLogoWrap, "end");
 
+/** Escala el logo final para llenar el ancho disponible (desktop y móvil). */
+function fitEndLogoToWidth() {
+  const section = document.querySelector(".end-logo");
+  const panel = document.querySelector(".nav__brand-panel--end");
+  if (!section || !panel) return;
+
+  const styles = getComputedStyle(section);
+  const padX =
+    (parseFloat(styles.paddingLeft) || 0) + (parseFloat(styles.paddingRight) || 0);
+  const available = Math.max(section.clientWidth - padX, 1) * 0.97;
+
+  const prevMax = panel.style.maxWidth;
+  panel.style.maxWidth = "none";
+
+  const probe = 100;
+  panel.style.setProperty("--nav-brand-mark", `${probe}px`);
+  void panel.offsetWidth;
+  const natural = Math.max(panel.scrollWidth, panel.getBoundingClientRect().width, 1);
+  const mark = Math.max((available / natural) * probe, 28);
+
+  panel.style.setProperty("--nav-brand-mark", `${mark}px`);
+  panel.style.maxWidth = prevMax;
+}
+
 /** Spline cachea getBoundingClientRect(); refrescarlo si el wrap se mueve o rota. */
 function syncSplineDomRect(target) {
   if (!target?.ready || !target.canvas) return;
@@ -684,6 +708,7 @@ function resizeHeroSpline() {
 }
 
 function resizeBrains() {
+  fitEndLogoToWidth();
   updateNavRendererSize();
   updateFooterRendererSize();
   resizeHeroSpline();
@@ -711,15 +736,25 @@ if (hasBrainScene) {
 window.addEventListener(
   "load",
   () => {
-    if (!hasHeroBrain) return;
-    lockedHeroBrainPx = null;
-    lockedHeroBrainZoom = null;
-    lockHeroBrainDimensions();
-    resizeHeroSpline();
+    fitEndLogoToWidth();
+    if (hasHeroBrain) {
+      lockedHeroBrainPx = null;
+      lockedHeroBrainZoom = null;
+      lockHeroBrainDimensions();
+      resizeHeroSpline();
+    }
+    resizeAllLogoSplines();
     refreshWrapRects();
   },
   { once: true }
 );
+
+if (document.fonts?.ready) {
+  document.fonts.ready.then(() => {
+    fitEndLogoToWidth();
+    resizeAllLogoSplines();
+  });
+}
 
 initNeuralBackground();
 
