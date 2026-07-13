@@ -226,17 +226,24 @@ export function initBrandNeuralHover(panel, canvas, options = {}) {
 
   /**
    * Viewport → coords locales de la letra.
-   * En logo final móvil (rotado ±90°) usa el centro visual de la propia letra,
-   * igual que el título hero pero compensando la rotación del panel.
+   * Solo aplica compensación ±90° si el panel está realmente rotado (móvil).
+   * En desktop (horizontal) usa el mismo mapeo simple que el título.
    */
   function clientToLocal(clientX, clientY) {
     const rotRoot = panel.closest("[data-end-rotate]");
-    const rot = Number(rotRoot?.dataset?.endRotate || 0);
     const rect = panel.getBoundingClientRect();
     const w = Math.max(panel.offsetWidth || panel.clientWidth || 0, 1);
     const h = Math.max(panel.offsetHeight || panel.clientHeight || 0, 1);
 
-    if (!rot || !rotRoot) {
+    let rot = 0;
+    if (rotRoot) {
+      const t = getComputedStyle(rotRoot).transform;
+      if (t && t !== "none") {
+        rot = Number(rotRoot.dataset.endRotate || 0);
+      }
+    }
+
+    if (!rot) {
       return { x: clientX - rect.left, y: clientY - rect.top };
     }
 
@@ -245,7 +252,6 @@ export function initBrandNeuralHover(panel, canvas, options = {}) {
     const sx = clientX - cx;
     const sy = clientY - cy;
 
-    /* Inversa de rotate(±90deg) alrededor del centro de la letra */
     if (rot < 0) {
       return { x: sy + w / 2, y: -sx + h / 2 };
     }
@@ -259,7 +265,10 @@ export function initBrandNeuralHover(panel, canvas, options = {}) {
   }
 
   function hasRotatedEndAncestor() {
-    return Boolean(panel.closest("[data-end-rotate]"));
+    const rotRoot = panel.closest("[data-end-rotate]");
+    if (!rotRoot) return false;
+    const t = getComputedStyle(rotRoot).transform;
+    return Boolean(t && t !== "none");
   }
 
   function paintGlyphMask(alpha, rgb = "255,255,255") {

@@ -93,6 +93,8 @@ function initLetterNeural(root) {
   if (!root) return;
 
   const isEndLogo = root.classList?.contains("nav__brand-panel--end");
+  const isMobileEnd =
+    isEndLogo && window.matchMedia("(max-width: 768px)").matches;
   const letters = [...root.querySelectorAll("[data-hero-letter]")];
   for (const letter of letters) {
     if (letter.__brandNeural) continue;
@@ -103,8 +105,8 @@ function initLetterNeural(root) {
 
     const opts = getHeroNeuralOptions(glyph);
     opts.clipFontEl = face;
-    /* Logos finales: proxy de .end-logo maneja el touch (rotación ±90°) */
-    if (isEndLogo) {
+    /* Solo en móvil el proxy de .end-logo controla el touch (logos rotados) */
+    if (isMobileEnd) {
       opts.enableTouch = false;
       opts.externalControl = true;
     }
@@ -123,6 +125,9 @@ function rebuildEndLogoNeural() {
  * así que resolvemos la letra con elementsFromPoint — mismo feeling que el título.
  */
 function bindEndLogoTouchProxy() {
+  /* Desktop: hover normal en letras, sin proxy */
+  if (!window.matchMedia("(max-width: 768px)").matches) return;
+
   const section = document.querySelector(".end-logo");
   if (!section || section.dataset.neuralProxyBound === "1") return;
   section.dataset.neuralProxyBound = "1";
@@ -200,14 +205,22 @@ function initHeroBrandNeural() {
 
   const start = () => {
     initLetterNeural(heroRoot);
-    endRoots.forEach((endRoot) => initLetterNeural(endRoot));
-    bindEndLogoTouchProxy();
-    /* Tras el fit del logo (tamaño real), reconstruir la red como en el título */
-    rebuildEndLogoNeural();
-    requestAnimationFrame(() => {
-      rebuildEndLogoNeural();
-      bindEndLogoTouchProxy();
+    const isMobile = window.matchMedia("(max-width: 768px)").matches;
+    endRoots.forEach((endRoot) => {
+      /* Desktop: no inicializar el espejo (oculto) */
+      if (!isMobile && endRoot.classList.contains("nav__brand-panel--end-mirror")) {
+        return;
+      }
+      initLetterNeural(endRoot);
     });
+    if (isMobile) {
+      bindEndLogoTouchProxy();
+      rebuildEndLogoNeural();
+      requestAnimationFrame(() => {
+        rebuildEndLogoNeural();
+        bindEndLogoTouchProxy();
+      });
+    }
   };
 
   if (document.fonts?.ready) {
@@ -217,12 +230,16 @@ function initHeroBrandNeural() {
   }
 
   window.addEventListener("end-logo-fitted", () => {
-    rebuildEndLogoNeural();
+    if (window.matchMedia("(max-width: 768px)").matches) {
+      rebuildEndLogoNeural();
+    }
   });
 
   window.addEventListener("load", () => {
-    rebuildEndLogoNeural();
-    bindEndLogoTouchProxy();
+    if (window.matchMedia("(max-width: 768px)").matches) {
+      rebuildEndLogoNeural();
+      bindEndLogoTouchProxy();
+    }
   });
 }
 
