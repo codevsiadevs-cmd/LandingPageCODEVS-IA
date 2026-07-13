@@ -38,9 +38,11 @@ export function initBrandNeuralHover(panel, canvas, options = {}) {
     fadeOutSpeed = 0.06,
     /** Efecto siempre activo (logo final móvil: los 2 paneles). */
     ambient = false,
+    /** Solo expone API (__brandNeural); el proxy de .end-logo controla el touch. */
+    externalControl = false,
   } = options;
 
-  if (!canHover && !enableTouch) return;
+  if (!canHover && !enableTouch && !externalControl) return;
 
   const ctx = canvas.getContext("2d");
   let width = 0;
@@ -222,79 +224,42 @@ export function initBrandNeuralHover(panel, canvas, options = {}) {
     }
   }
 
-  function findTransformedAncestor(el) {
-    for (let n = el; n; n = n.parentElement) {
-      const t = getComputedStyle(n).transform;
-      if (t && t !== "none") return n;
-    }
-    return null;
-  }
-
-  function offsetRelativeTo(el, ancestor) {
-    let x = 0;
-    let y = 0;
-    let n = el;
-    while (n && n !== ancestor) {
-      x += n.offsetLeft;
-      y += n.offsetTop;
-      const next = n.offsetParent;
-      if (!next || next === ancestor) {
-        if (next === ancestor) return { x, y };
-        break;
-      }
-      /* Si el offsetParent salta por encima, seguir por parentElement */
-      if (ancestor.contains && !ancestor.contains(next)) break;
-      n = next;
-    }
-    if (n === ancestor) return { x, y };
-
-    x = 0;
-    y = 0;
-    n = el;
-    while (n && n !== ancestor) {
-      x += n.offsetLeft;
-      y += n.offsetTop;
-      n = n.parentElement;
-    }
-    return { x, y };
-  }
-
   /**
-   * Viewport → coords locales del panel.
-   * Respeta rotate(-90deg) CCW del logo final móvil (C abajo → © arriba).
+   * Viewport → coords locales de la letra.
+   * En logo final móvil (rotado ±90°) usa el centro visual de la propia letra,
+   * igual que el título hero pero compensando la rotación del panel.
    */
   function clientToLocal(clientX, clientY) {
-    const transformed = findTransformedAncestor(panel);
-    if (!transformed) {
-      const rect = panel.getBoundingClientRect();
+    const rotRoot = panel.closest("[data-end-rotate]");
+    const rot = Number(rotRoot?.dataset?.endRotate || 0);
+    const rect = panel.getBoundingClientRect();
+    const w = Math.max(panel.offsetWidth || panel.clientWidth || 0, 1);
+    const h = Math.max(panel.offsetHeight || panel.clientHeight || 0, 1);
+
+    if (!rot || !rotRoot) {
       return { x: clientX - rect.left, y: clientY - rect.top };
     }
 
-    const rootRect = transformed.getBoundingClientRect();
-    const rw = transformed.offsetWidth || 1;
-    const rh = transformed.offsetHeight || 1;
-    const cx = rootRect.left + rootRect.width / 2;
-    const cy = rootRect.top + rootRect.height / 2;
-
-    /* Inversa según data-end-rotate del logo final móvil */
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
     const sx = clientX - cx;
     const sy = clientY - cy;
-    const rot = Number(transformed.dataset?.endRotate || 90);
-    const rootLocalX = (rot < 0 ? sy : -sy) + rw / 2;
-    const rootLocalY = (rot < 0 ? -sx : sx) + rh / 2;
 
-    if (transformed === panel) {
-      return { x: rootLocalX, y: rootLocalY };
+    /* Inversa de rotate(±90deg) alrededor del centro de la letra */
+    if (rot < 0) {
+      return { x: sy + w / 2, y: -sx + h / 2 };
     }
-
-    const { x: left, y: top } = offsetRelativeTo(panel, transformed);
-    return { x: rootLocalX - left, y: rootLocalY - top };
+    return { x: -sy + w / 2, y: sx + h / 2 };
   }
 
   function setTargetFromEvent(event) {
     const local = clientToLocal(event.clientX, event.clientY);
     target.x = local.x;
     target.y = local.y;
+  }
+
+  function hasRotatedEndAncestor() {
+    return Boolean(panel.closest("[data-end-rotate]"));
   }
 
   function paintGlyphMask(alpha, rgb = "255,255,255") {
@@ -332,10 +297,10 @@ export function initBrandNeuralHover(panel, canvas, options = {}) {
     let y = ascent + yNudge;
 
     /*
-     * Con ancestros rotados (logo final móvil), getBoundingClientRect es AABB
-     * y desalinea la máscara. Usar coords locales del canvas.
+     * Con logo final rotado, getBoundingClientRect es AABB y desalinea la máscara.
+     * Usar coords locales del canvas (igual óptica que el título, sin AABB).
      */
-    if (!findTransformedAncestor(panel)) {
+    if (!hasRotatedEndAncestor()) {
       try {
         const panelRect = panel.getBoundingClientRect();
         const range = document.createRange();
@@ -500,7 +465,7 @@ export function initBrandNeuralHover(panel, canvas, options = {}) {
     panel.addEventListener("pointerleave", deactivate);
   }
 
-  if (enableTouch) {
+  if (enableTouch && !externalControl) {
     panel.addEventListener(
       "pointerdown",
       (event) => {
@@ -551,4 +516,30 @@ export function initBrandNeuralHover(panel, canvas, options = {}) {
     panel.classList.add(hoverClass);
     startLoop();
   }
+
+  /* API para re-sincronizar tras fitEndLogo / resize del logo final */
+  panel.__brandNeural = {
+    rebuild: rebuildScene,
+    activateAt(clientX, clientY) {
+      clearLinger();
+      rebuildScene();
+      const local = clientToLocal(clientX, clientY);
+      target.x = local.x;
+      target.y = local.y;
+      animating = true;
+      panel.classList.add(hoverClass);
+      startLoop();
+    },
+    moveAt(clientX, clientY) {
+      const local = clientToLocal(clientX, clientY);
+      target.x = local.x;
+      target.y = local.y;
+      if (!animating) {
+        animating = true;
+        panel.classList.add(hoverClass);
+        startLoop();
+      }
+    },
+    deactivate,
+  };
 }

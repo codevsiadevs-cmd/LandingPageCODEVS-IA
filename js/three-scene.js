@@ -753,6 +753,8 @@ function fitEndLogoToWidth() {
     panel.style.maxWidth = maxWidth;
     if (isMobile) panel.style.transform = transform;
   });
+
+  window.dispatchEvent(new CustomEvent("end-logo-fitted"));
 }
 
 /** Spline cachea getBoundingClientRect(); refrescarlo si el wrap se mueve o rota. */

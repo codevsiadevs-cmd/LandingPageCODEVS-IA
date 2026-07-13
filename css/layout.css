@@ -1641,6 +1641,9 @@ html.theme-invert .footer__emoji {
   padding: clamp(1rem, 3vw, 2rem) clamp(1.25rem, 4vw, 2.5rem);
   background: #000000;
   overflow: visible;
+  /* Necesario para el proxy táctil del efecto neuronal (móvil) */
+  pointer-events: auto;
+  touch-action: manipulation;
 }
 
 .end-logo__pair {
@@ -1809,6 +1812,8 @@ html.theme-invert .footer__emoji {
   }
 
   .nav__brand-panel--end .hero__brand-letter {
+    /* Misma área táctil holgada que el título hero en móvil */
+    padding: 0.06em 0.04em;
     pointer-events: auto;
   }
 }

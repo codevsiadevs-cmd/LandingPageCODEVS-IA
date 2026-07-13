@@ -1,5 +1,6 @@
 /**
  * Título hero + logo final: red neuronal recortada dentro de cada letra.
+ * En móvil, los logos finales usan el mismo efecto táctil que el título principal.
  */
 import { initBrandNeuralHover } from "./brand-neural-hover.js";
 
@@ -63,40 +64,124 @@ function wrapBrandLetters(root, segmentSelector) {
   }
 }
 
+/** Opciones idénticas al título principal CODEVS IA (móvil / desktop). */
+function getHeroNeuralOptions(glyph) {
+  const isMobile = window.matchMedia("(max-width: 900px)").matches;
+  return {
+    hoverClass: "hero__brand-letter--neural",
+    clipGlyph: glyph,
+    enableTouch: true,
+    gridDiv: isMobile ? 9 : 10,
+    linkCount: isMobile ? 4 : 5,
+    wander: isMobile ? 10 : 14,
+    colorRgb: "255,255,255",
+    reachScale: isMobile ? 0.38 : 0.42,
+    nodeRadiusMin: isMobile ? 0.7 : 1.6,
+    nodeRadiusMax: isMobile ? 1.35 : 3.4,
+    spotlightLineWidth: isMobile ? 0.7 : 1.65,
+    lineWidth: isMobile ? 0.55 : 1,
+    glyphBaseAlpha: 0,
+    mouseSpotlight: true,
+    spotlightRadius: isMobile ? 0.5 : 0.58,
+    lingerMs: 5000,
+    fadeOutSpeed: 0.012,
+    glyphNudgeY: GLYPH_NUDGE_Y[glyph] ?? 0.27,
+  };
+}
+
 function initLetterNeural(root) {
   if (!root) return;
 
-  const isMobile = window.matchMedia("(max-width: 900px)").matches;
+  const isEndLogo = root.classList?.contains("nav__brand-panel--end");
   const letters = [...root.querySelectorAll("[data-hero-letter]")];
   for (const letter of letters) {
+    if (letter.__brandNeural) continue;
     const canvas = letter.querySelector("canvas.hero__brand-letter-neural");
     const face = letter.querySelector(".hero__brand-letter-face");
     const glyph = letter.dataset.heroLetter || "";
     if (!canvas || !glyph) continue;
 
-    /* Mismas opciones que el título principal CODEVS IA */
-    initBrandNeuralHover(letter, canvas, {
-      hoverClass: "hero__brand-letter--neural",
-      clipGlyph: glyph,
-      clipFontEl: face,
-      enableTouch: true,
-      gridDiv: isMobile ? 9 : 10,
-      linkCount: isMobile ? 4 : 5,
-      wander: isMobile ? 10 : 14,
-      colorRgb: "255,255,255",
-      reachScale: isMobile ? 0.38 : 0.42,
-      nodeRadiusMin: isMobile ? 0.7 : 1.6,
-      nodeRadiusMax: isMobile ? 1.35 : 3.4,
-      spotlightLineWidth: isMobile ? 0.7 : 1.65,
-      lineWidth: isMobile ? 0.55 : 1,
-      glyphBaseAlpha: 0,
-      mouseSpotlight: true,
-      spotlightRadius: isMobile ? 0.5 : 0.58,
-      lingerMs: 5000,
-      fadeOutSpeed: 0.012,
-      glyphNudgeY: GLYPH_NUDGE_Y[glyph] ?? 0.27,
-    });
+    const opts = getHeroNeuralOptions(glyph);
+    opts.clipFontEl = face;
+    /* Logos finales: proxy de .end-logo maneja el touch (rotación ±90°) */
+    if (isEndLogo) {
+      opts.enableTouch = false;
+      opts.externalControl = true;
+    }
+    initBrandNeuralHover(letter, canvas, opts);
   }
+}
+
+function rebuildEndLogoNeural() {
+  document.querySelectorAll(".nav__brand-panel--end [data-hero-letter]").forEach((letter) => {
+    letter.__brandNeural?.rebuild?.();
+  });
+}
+
+/**
+ * Proxy táctil del logo final (móvil): el contenedor rotado no recibe bien el hit-test,
+ * así que resolvemos la letra con elementsFromPoint — mismo feeling que el título.
+ */
+function bindEndLogoTouchProxy() {
+  const section = document.querySelector(".end-logo");
+  if (!section || section.dataset.neuralProxyBound === "1") return;
+  section.dataset.neuralProxyBound = "1";
+
+  let activeLetter = null;
+
+  function letterFromPoint(clientX, clientY) {
+    const stack = document.elementsFromPoint(clientX, clientY);
+    for (const el of stack) {
+      const letter = el.closest?.("[data-hero-letter]");
+      if (letter?.closest(".nav__brand-panel--end") && letter.__brandNeural) {
+        return letter;
+      }
+    }
+    return null;
+  }
+
+  function onDown(event) {
+    if (event.pointerType === "mouse" && window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+      return;
+    }
+    const letter = letterFromPoint(event.clientX, event.clientY);
+    if (!letter?.__brandNeural) return;
+    activeLetter = letter;
+    letter.__brandNeural.activateAt(event.clientX, event.clientY);
+    try {
+      section.setPointerCapture?.(event.pointerId);
+    } catch {
+      /* ignore */
+    }
+  }
+
+  function onMove(event) {
+    if (!activeLetter?.__brandNeural) return;
+    const letter = letterFromPoint(event.clientX, event.clientY);
+    if (letter && letter !== activeLetter) {
+      activeLetter.__brandNeural.deactivate();
+      activeLetter = letter;
+      letter.__brandNeural.activateAt(event.clientX, event.clientY);
+      return;
+    }
+    activeLetter.__brandNeural.moveAt(event.clientX, event.clientY);
+  }
+
+  function onUp(event) {
+    if (!activeLetter?.__brandNeural) return;
+    activeLetter.__brandNeural.deactivate();
+    activeLetter = null;
+    try {
+      section.releasePointerCapture?.(event.pointerId);
+    } catch {
+      /* ignore */
+    }
+  }
+
+  section.addEventListener("pointerdown", onDown, { passive: true, capture: true });
+  section.addEventListener("pointermove", onMove, { passive: true, capture: true });
+  section.addEventListener("pointerup", onUp, { passive: true, capture: true });
+  section.addEventListener("pointercancel", onUp, { passive: true, capture: true });
 }
 
 function initHeroBrandNeural() {
@@ -113,10 +198,16 @@ function initHeroBrandNeural() {
     );
   });
 
-  /* Esperar tipografía para que la máscara del glifo coincida con la letra visible */
   const start = () => {
     initLetterNeural(heroRoot);
     endRoots.forEach((endRoot) => initLetterNeural(endRoot));
+    bindEndLogoTouchProxy();
+    /* Tras el fit del logo (tamaño real), reconstruir la red como en el título */
+    rebuildEndLogoNeural();
+    requestAnimationFrame(() => {
+      rebuildEndLogoNeural();
+      bindEndLogoTouchProxy();
+    });
   };
 
   if (document.fonts?.ready) {
@@ -124,6 +215,15 @@ function initHeroBrandNeural() {
   } else {
     start();
   }
+
+  window.addEventListener("end-logo-fitted", () => {
+    rebuildEndLogoNeural();
+  });
+
+  window.addEventListener("load", () => {
+    rebuildEndLogoNeural();
+    bindEndLogoTouchProxy();
+  });
 }
 
 if (document.readyState === "loading") {
