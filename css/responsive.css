@@ -595,19 +595,17 @@
     height: calc((var(--proceso-steps) - 1) * 110svh + 130svh);
   }
 
-  .proceso__heading-wrap {
-    margin-bottom: 1rem;
-    text-align: center;
-    padding: 0 1.15rem;
-  }
-
-  .proceso__title {
-    font-size: clamp(1.65rem, 7vw, 2rem);
+  .proceso__heading-wrap,
+  .why__heading-wrap {
+    padding-top: calc(var(--nav-height) + 1.1rem);
+    padding-inline: 1.15rem;
+    margin: 0;
     text-align: center;
   }
 
+  .proceso__title,
   .why__title {
-    font-size: clamp(1.65rem, 7vw, 2rem);
+    font-size: clamp(1.55rem, 5.5vw, 2rem);
     text-align: center;
   }
 

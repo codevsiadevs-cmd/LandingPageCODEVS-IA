@@ -1226,7 +1226,7 @@ main > section:not(.hero) {
   scroll-margin-top: var(--nav-height);
   position: relative;
   isolation: isolate;
-  padding: clamp(2rem, 5vw, 3rem) 0 0;
+  padding: 0;
   background: #000000;
   color: #f6f5f2;
 }
@@ -1244,10 +1244,14 @@ main > section:not(.hero) {
 }
 
 .why__heading-wrap {
-  max-width: 72rem;
-  margin: 0 auto clamp(1.5rem, 3vw, 2.25rem);
+  position: relative;
+  z-index: 6;
+  flex-shrink: 0;
+  max-width: none;
+  margin: 0;
   text-align: center;
-  padding: 0 clamp(1.25rem, 4vw, 3rem);
+  padding: calc(var(--nav-height) + 1.5rem) clamp(1.25rem, 4vw, 3rem) 0.75rem;
+  pointer-events: none;
 }
 
 .why__title {
@@ -1287,6 +1291,8 @@ main > section:not(.hero) {
   height: 100vh;
   width: 100%;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
   background: #000000;
   pointer-events: none;
 }
@@ -1306,11 +1312,13 @@ main > section:not(.hero) {
 .why__slider {
   position: relative;
   z-index: 1;
-  height: 100%;
+  flex: 1;
+  min-height: 0;
+  height: auto;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: calc(var(--nav-height) + 1rem) clamp(1.25rem, 4vw, 2.125rem) 2.5rem;
+  padding: 0.5rem clamp(1.25rem, 4vw, 2.125rem) 2.5rem;
   background: #000000;
   pointer-events: auto;
   overflow: hidden;

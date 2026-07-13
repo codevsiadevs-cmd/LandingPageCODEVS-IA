@@ -9,17 +9,20 @@
   scroll-margin-top: var(--nav-height);
   position: relative;
   height: auto;
-  padding: clamp(2rem, 5vw, 3rem) 0 0;
+  padding: 0;
   background: #000000;
   color: var(--proceso-ink);
   overflow: visible;
 }
 
 .proceso__heading-wrap {
-  max-width: 72rem;
-  margin: 0 auto clamp(1.5rem, 3vw, 2.25rem);
+  position: relative;
+  z-index: 6;
+  flex-shrink: 0;
+  max-width: none;
+  margin: 0;
   text-align: center;
-  padding: 0 clamp(1.25rem, 4vw, 3rem);
+  padding: calc(var(--nav-height) + 1.5rem) clamp(1.25rem, 4vw, 3rem) 0.75rem;
 }
 
 .proceso__title {
@@ -45,6 +48,8 @@
   z-index: 1;
   height: 100svh;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
   background: #000000;
   font-family: var(--font-body);
 }
