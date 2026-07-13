@@ -1107,12 +1107,14 @@ main > section:not(.hero) {
 .projects__row-inner {
   position: relative;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  max-width: 56rem;
+  gap: 0;
+  max-width: 48rem;
   width: 100%;
   margin: 0 auto;
-  min-height: clamp(4.5rem, 8vw, 6.5rem);
+  min-height: 0;
   padding: 0;
 }
 
@@ -1120,57 +1122,52 @@ main > section:not(.hero) {
   display: block;
   flex: 0 1 auto;
   max-width: min(42rem, 92%);
-  margin: 0;
+  margin: 0 auto;
   padding: 0;
   text-align: center;
   z-index: 1;
-  transform: translateX(clamp(-9.5rem, -14vw, -5.5rem));
+  transform: none;
 }
 
 .projects__row-preview {
   --preview-x: 0;
   --preview-y: 0;
   --preview-rot: 0deg;
-  position: absolute;
-  left: calc(50% + min(16rem, 30vw));
-  top: 50%;
-  width: min(17.5rem, 28vw);
-  margin: 0;
+  position: relative;
+  left: auto;
+  top: auto;
+  width: min(22rem, 52vw);
+  margin: 0 auto;
+  max-height: 0;
+  overflow: hidden;
   opacity: 0;
   visibility: hidden;
-  transform: translate(var(--preview-x), calc(-50% + var(--preview-y) + 14px))
-    rotate(var(--preview-rot)) scale(0.96);
+  transform: translate3d(0, 0.85rem, 0) scale(0.97);
   transform-origin: center center;
   transition:
-    opacity 0.38s ease,
-    transform 0.42s cubic-bezier(0.22, 1, 0.36, 1),
-    visibility 0.38s;
+    opacity 0.48s ease,
+    transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+    visibility 0.48s,
+    max-height 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+    margin-top 0.55s cubic-bezier(0.22, 1, 0.36, 1);
   pointer-events: none;
   z-index: 2;
 }
 
 .projects__row:nth-child(1) .projects__row-preview {
-  --preview-x: -0.35rem;
-  --preview-y: -0.65rem;
-  --preview-rot: -7deg;
+  --preview-rot: -5deg;
 }
 
 .projects__row:nth-child(2) .projects__row-preview {
-  --preview-x: 0.65rem;
-  --preview-y: 0.9rem;
-  --preview-rot: 5.5deg;
+  --preview-rot: 4.5deg;
 }
 
 .projects__row:nth-child(3) .projects__row-preview {
-  --preview-x: 1rem;
-  --preview-y: -0.8rem;
-  --preview-rot: -4deg;
+  --preview-rot: -3.5deg;
 }
 
 .projects__row:nth-child(4) .projects__row-preview {
-  --preview-x: 0.2rem;
-  --preview-y: 0.7rem;
-  --preview-rot: 8deg;
+  --preview-rot: 6deg;
 }
 
 .projects__row-preview-frame {
@@ -1184,6 +1181,7 @@ main > section:not(.hero) {
   box-shadow:
     0 0 0 1px rgba(255, 255, 255, 0.04) inset,
     0 24px 48px rgba(0, 0, 0, 0.45);
+  transform: rotate(var(--preview-rot));
 }
 
 .projects__row-preview-img {
@@ -1197,7 +1195,7 @@ main > section:not(.hero) {
   --p: 0;
   position: relative;
   margin: 0;
-  padding: clamp(1.75rem, 4vw, 2.75rem) 0;
+  padding: clamp(2rem, 4.5vw, 3.25rem) 0;
   border: none;
   cursor: default;
 }
@@ -1221,6 +1219,7 @@ main > section:not(.hero) {
   letter-spacing: -0.03em;
   text-transform: none;
   color: #ffffff;
+  text-align: center;
   text-wrap: balance;
 }
 
@@ -1240,39 +1239,24 @@ main > section:not(.hero) {
   text-align: center;
   color: #adadb4;
   transition:
-    opacity 0.35s ease,
-    max-height 0.4s ease,
-    margin 0.35s ease;
+    opacity 0.45s ease,
+    max-height 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+    margin 0.5s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .projects__row.is-preview-active .projects__row-desc {
   max-height: 6.5rem;
   opacity: 1;
-  margin-top: 0.55rem;
+  margin-top: 0.65rem;
 }
 
 .projects__row.is-preview-active .projects__row-preview {
+  max-height: 15rem;
+  overflow: hidden;
   opacity: 1;
   visibility: visible;
-  transform: translate(var(--preview-x), calc(-50% + var(--preview-y))) rotate(var(--preview-rot));
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .projects__row:hover {
-    background: rgba(255, 255, 255, 0.03);
-  }
-
-  .projects__row:hover .projects__row-desc {
-    max-height: 6.5rem;
-    opacity: 1;
-    margin-top: 0.55rem;
-  }
-
-  .projects__row:hover .projects__row-preview {
-    opacity: 1;
-    visibility: visible;
-    transform: translate(var(--preview-x), calc(-50% + var(--preview-y))) rotate(var(--preview-rot));
-  }
+  margin-top: 1.15rem;
+  transform: translate3d(0, 0, 0) scale(1);
 }
 
 @media (prefers-reduced-motion: reduce) {

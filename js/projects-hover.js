@@ -57,10 +57,10 @@ function initProjectsPreview() {
   const rows = [...section.querySelectorAll("[data-projects-row]")];
   if (!rows.length) return;
 
-  const canHover = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
-  const isMobileLayout = window.matchMedia("(max-width: 1023px)").matches;
-
   function setExpanded(row, expanded) {
+    const wasActive = row.classList.contains("is-preview-active");
+    if (wasActive === expanded) return;
+
     const preview = row.querySelector(".projects__row-preview");
     const img = row.querySelector(".projects__row-preview-img");
     row.classList.toggle("is-preview-active", expanded);
@@ -68,51 +68,64 @@ function initProjectsPreview() {
     if (expanded && img) restartGif(img);
   }
 
-  if (canHover && !isMobileLayout) {
-    rows.forEach((row) => {
-      const img = row.querySelector(".projects__row-preview-img");
-      const preview = row.querySelector(".projects__row-preview");
-      if (!img || !preview) return;
+  /* Desktop + móvil: al bajar, cada solución se abre sola
+   * (descripción + GIF debajo). Solo una activa a la vez. */
+  let activeRow = null;
+  let rafId = null;
+  const SWITCH_GAP = 72;
 
-      row.addEventListener("mouseenter", () => {
-        preview.setAttribute("aria-hidden", "false");
-        restartGif(img);
-      });
+  function pickActive() {
+    rafId = null;
+    const vh = window.innerHeight;
+    const focusY = vh * 0.42;
+    let best = null;
+    let bestDist = Infinity;
 
-      row.addEventListener("mouseleave", () => {
-        preview.setAttribute("aria-hidden", "true");
-      });
-    });
-  } else {
-    /* Móvil: al bajar, cada solución se despliega sola (desc + GIF). */
-    const seen = new WeakSet();
-
-    if ("IntersectionObserver" in window) {
-      const observer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            const row = entry.target;
-            const shouldOpen = entry.isIntersecting && entry.intersectionRatio >= 0.42;
-
-            if (shouldOpen) {
-              setExpanded(row, true);
-              if (!seen.has(row)) seen.add(row);
-            } else if (!entry.isIntersecting) {
-              setExpanded(row, false);
-            }
-          });
-        },
-        {
-          threshold: [0.25, 0.42, 0.6],
-          rootMargin: "-12% 0px -18% 0px",
-        }
-      );
-
-      rows.forEach((row) => observer.observe(row));
-    } else {
-      rows.forEach((row) => setExpanded(row, true));
+    for (const row of rows) {
+      const rect = row.getBoundingClientRect();
+      if (rect.bottom < vh * 0.08 || rect.top > vh * 0.92) continue;
+      const anchor = rect.top + Math.min(rect.height * 0.25, 80);
+      const dist = Math.abs(anchor - focusY);
+      if (dist < bestDist) {
+        bestDist = dist;
+        best = row;
+      }
     }
+
+    if (!best) {
+      if (activeRow) {
+        setExpanded(activeRow, false);
+        activeRow = null;
+      }
+      return;
+    }
+
+    if (activeRow && activeRow !== best) {
+      const activeRect = activeRow.getBoundingClientRect();
+      if (activeRect.bottom > vh * 0.1 && activeRect.top < vh * 0.9) {
+        const activeAnchor = activeRect.top + Math.min(activeRect.height * 0.25, 80);
+        const activeDist = Math.abs(activeAnchor - focusY);
+        if (activeDist - bestDist < SWITCH_GAP) {
+          best = activeRow;
+        }
+      }
+    }
+
+    if (best === activeRow) return;
+
+    if (activeRow) setExpanded(activeRow, false);
+    setExpanded(best, true);
+    activeRow = best;
   }
+
+  function onScroll() {
+    if (rafId) return;
+    rafId = requestAnimationFrame(pickActive);
+  }
+
+  window.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener("resize", onScroll, { passive: true });
+  pickActive();
 
   if ("IntersectionObserver" in window) {
     const imgs = rows
