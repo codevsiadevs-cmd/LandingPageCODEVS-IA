@@ -135,7 +135,7 @@ const translations = {
     "footer.copyright": "© 2026 CODEVS IA. Todos los derechos reservados.",
     "footer.made.before": "Hecho con",
     "footer.made.mid": "y mucho",
-    "whatsapp.label": "Escríbenos por WhatsApp al +57 305 350 9190",
+    "whatsapp.label": "Escríbenos por WhatsApp al +57 302 7261612",
     "whatsapp.title": "WhatsApp",
   },
   en: {
@@ -253,7 +253,7 @@ const translations = {
     "footer.copyright": "© 2026 CODEVS IA. All rights reserved.",
     "footer.made.before": "Made with",
     "footer.made.mid": "and lots of",
-    "whatsapp.label": "Message us on WhatsApp at +57 305 350 9190",
+    "whatsapp.label": "Message us on WhatsApp at +57 302 7261612",
     "whatsapp.title": "WhatsApp",
   },
 };
