@@ -58,13 +58,14 @@ function initProjectsPreview() {
   if (!rows.length) return;
 
   const canHover = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+  const isCompact = window.matchMedia("(max-width: 1023px)").matches;
 
-  rows.forEach((row) => {
-    const img = row.querySelector(".projects__row-preview-img");
-    const preview = row.querySelector(".projects__row-preview");
-    if (!img || !preview) return;
+  if (canHover && !isCompact) {
+    rows.forEach((row) => {
+      const img = row.querySelector(".projects__row-preview-img");
+      const preview = row.querySelector(".projects__row-preview");
+      if (!img || !preview) return;
 
-    if (canHover) {
       row.addEventListener("mouseenter", () => {
         preview.setAttribute("aria-hidden", "false");
         restartGif(img);
@@ -73,32 +74,50 @@ function initProjectsPreview() {
       row.addEventListener("mouseleave", () => {
         preview.setAttribute("aria-hidden", "true");
       });
-    } else {
-      row.addEventListener(
-        "click",
-        (event) => {
-          event.preventDefault();
-          const isActive = row.classList.toggle("is-preview-active");
-          rows.forEach((item) => {
-            if (item !== row) item.classList.remove("is-preview-active");
-          });
-          preview.setAttribute("aria-hidden", isActive ? "false" : "true");
-          if (isActive) restartGif(img);
-        },
-        { passive: false }
-      );
-    }
-  });
-
-  if (!canHover) {
-    document.addEventListener("click", (event) => {
-      if (event.target.closest(".projects__row")) return;
-      rows.forEach((row) => {
-        row.classList.remove("is-preview-active");
-        const preview = row.querySelector(".projects__row-preview");
-        if (preview) preview.setAttribute("aria-hidden", "true");
-      });
     });
+  } else {
+    /* Móvil / touch: el GIF aparece con el scroll, uno a uno. */
+    const seen = new WeakSet();
+
+    if ("IntersectionObserver" in window) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            const row = entry.target;
+            const preview = row.querySelector(".projects__row-preview");
+            const img = row.querySelector(".projects__row-preview-img");
+            if (!preview || !img) return;
+
+            if (entry.isIntersecting && entry.intersectionRatio >= 0.35) {
+              row.classList.add("is-preview-active");
+              preview.setAttribute("aria-hidden", "false");
+              if (!seen.has(row)) {
+                seen.add(row);
+                restartGif(img);
+              }
+            }
+          });
+        },
+        {
+          threshold: [0.2, 0.35, 0.55],
+          rootMargin: "0px 0px -8% 0px",
+        }
+      );
+
+      rows.forEach((row) => {
+        const preview = row.querySelector(".projects__row-preview");
+        if (preview) preview.setAttribute("aria-hidden", "false");
+        observer.observe(row);
+      });
+    } else {
+      rows.forEach((row) => {
+        row.classList.add("is-preview-active");
+        const preview = row.querySelector(".projects__row-preview");
+        const img = row.querySelector(".projects__row-preview-img");
+        if (preview) preview.setAttribute("aria-hidden", "false");
+        if (img) restartGif(img);
+      });
+    }
   }
 
   if ("IntersectionObserver" in window) {
@@ -106,18 +125,18 @@ function initProjectsPreview() {
       .map((row) => row.querySelector(".projects__row-preview-img"))
       .filter(Boolean);
 
-    const observer = new IntersectionObserver(
+    const preloadObserver = new IntersectionObserver(
       (entries) => {
         if (!entries.some((entry) => entry.isIntersecting)) return;
         imgs.forEach((img) => {
           const preload = new Image();
           preload.src = img.getAttribute("src");
         });
-        observer.disconnect();
+        preloadObserver.disconnect();
       },
       { rootMargin: "240px" }
     );
-    observer.observe(section);
+    preloadObserver.observe(section);
   }
 }
 

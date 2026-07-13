@@ -1202,21 +1202,18 @@ main > section:not(.hero) {
   color: #adadb4;
 }
 
-@media (hover: hover) {
-  .projects__row:hover,
-  .projects__row.is-preview-active {
+@media (hover: hover) and (pointer: fine) {
+  .projects__row:hover {
     background: rgba(255, 255, 255, 0.03);
   }
 
-  .projects__row:hover .projects__row-preview,
-  .projects__row.is-preview-active .projects__row-preview {
+  .projects__row:hover .projects__row-preview {
     opacity: 1;
     visibility: visible;
     transform: translate(var(--preview-x), var(--preview-y)) rotate(var(--preview-rot));
   }
 
-  .projects__row:hover .projects__row-name,
-  .projects__row.is-preview-active .projects__row-name {
+  .projects__row:hover .projects__row-name {
     color: #ffffff;
   }
 }
