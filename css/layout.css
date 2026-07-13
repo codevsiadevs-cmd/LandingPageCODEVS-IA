@@ -1100,7 +1100,7 @@ main > section:not(.hero) {
 .projects__list {
   width: 100%;
   margin: 0;
-  padding: 8vh 0 18vh;
+  padding: 2vh 0 0;
   border: none;
 }
 
@@ -1108,13 +1108,24 @@ main > section:not(.hero) {
   --p: 0;
   position: relative;
   margin: 0;
-  min-height: min(72vh, 42rem);
-  padding: clamp(2.5rem, 6vh, 4.5rem) 0;
+  min-height: 0;
+  padding: clamp(1.75rem, 3.5vw, 2.75rem) 0;
   display: flex;
   align-items: center;
   border: none;
-  cursor: default;
+  cursor: pointer;
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Espacio extra para que la última (API Gateway) complete el mismo reveal. */
+.projects__row:last-child {
+  padding-bottom: clamp(8rem, 28vh, 16rem);
+}
+
+.projects__row.is-interactive:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.35);
+  outline-offset: 0.35rem;
 }
 
 .projects__row-inner {

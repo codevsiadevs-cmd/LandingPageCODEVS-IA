@@ -23,6 +23,7 @@ function initProjectsReveal() {
   function tick() {
     rafId = null;
     const vh = window.innerHeight;
+    /* Mismo efecto para todas (como Páginas Web). */
     const start = vh * 0.9;
     const end = vh * 0.42;
 
@@ -68,12 +69,6 @@ function initProjectsPreview() {
   }
 
   let activeRow = null;
-  let rafId = null;
-  let switchLocked = false;
-  let unlockTimer = null;
-  let closeTimer = null;
-  let lastScrollY = window.scrollY || 0;
-  let scrollDir = 0;
 
   function setExpanded(row, expanded) {
     const wasActive = row.classList.contains("is-preview-active");
@@ -82,91 +77,38 @@ function initProjectsPreview() {
     const preview = row.querySelector(".projects__row-preview");
     const img = row.querySelector(".projects__row-preview-img");
     row.classList.toggle("is-preview-active", expanded);
+    row.setAttribute("aria-expanded", expanded ? "true" : "false");
     if (preview) preview.setAttribute("aria-hidden", expanded ? "false" : "true");
     if (expanded && img) restartGif(img);
   }
 
-  function applyActive(next) {
-    if (next === activeRow) return;
-
-    switchLocked = true;
-    if (unlockTimer) clearTimeout(unlockTimer);
-    unlockTimer = setTimeout(() => {
-      switchLocked = false;
-      pickActive();
-    }, 650);
-
-    if (activeRow && activeRow !== next) {
-      setExpanded(activeRow, false);
-    }
-    if (next) setExpanded(next, true);
-    activeRow = next;
-  }
-
-  function pickActive() {
-    rafId = null;
-    if (switchLocked) return;
-
-    const y = window.scrollY || 0;
-    scrollDir = y === lastScrollY ? scrollDir : y > lastScrollY ? 1 : -1;
-    lastScrollY = y;
-
-    const vh = window.innerHeight;
-    const focusY = vh * (scrollDir < 0 ? 0.48 : 0.4);
-    const switchGap = scrollDir < 0 ? 160 : 110;
-    let best = null;
-    let bestDist = Infinity;
-
-    for (const row of rows) {
-      const title = row.querySelector(".projects__row-name");
-      const rect = (title || row).getBoundingClientRect();
-      if (rect.bottom < vh * 0.08 || rect.top > vh * 0.86) continue;
-      const mid = rect.top + rect.height * 0.5;
-      const dist = Math.abs(mid - focusY);
-      if (dist < bestDist) {
-        bestDist = dist;
-        best = row;
-      }
-    }
-
-    if (!best) {
-      if (!activeRow) return;
-      if (closeTimer) return;
-      closeTimer = setTimeout(() => {
-        closeTimer = null;
-        applyActive(null);
-      }, scrollDir < 0 ? 320 : 180);
+  function toggleRow(row) {
+    if (activeRow === row) {
+      setExpanded(row, false);
+      activeRow = null;
       return;
     }
 
-    if (closeTimer) {
-      clearTimeout(closeTimer);
-      closeTimer = null;
-    }
-
-    if (activeRow && activeRow !== best) {
-      const activeTitle = activeRow.querySelector(".projects__row-name");
-      const activeRect = (activeTitle || activeRow).getBoundingClientRect();
-      if (activeRect.bottom > vh * 0.06 && activeRect.top < vh * 0.9) {
-        const activeMid = activeRect.top + activeRect.height * 0.5;
-        const activeDist = Math.abs(activeMid - focusY);
-        if (activeDist - bestDist < switchGap) {
-          best = activeRow;
-        }
-      }
-    }
-
-    applyActive(best);
+    if (activeRow) setExpanded(activeRow, false);
+    setExpanded(row, true);
+    activeRow = row;
   }
 
-  function onScroll() {
-    if (rafId) return;
-    rafId = requestAnimationFrame(pickActive);
-  }
+  rows.forEach((row) => {
+    row.setAttribute("tabindex", "0");
+    row.setAttribute("aria-expanded", "false");
+    row.classList.add("is-interactive");
 
-  window.addEventListener("scroll", onScroll, { passive: true });
-  window.addEventListener("resize", onScroll, { passive: true });
-  pickActive();
+    row.addEventListener("click", () => {
+      toggleRow(row);
+    });
+
+    row.addEventListener("keydown", (event) => {
+      if (event.key !== "Enter" && event.key !== " ") return;
+      event.preventDefault();
+      toggleRow(row);
+    });
+  });
 
   if ("IntersectionObserver" in window) {
     const imgs = rows

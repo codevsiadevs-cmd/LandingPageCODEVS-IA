@@ -497,8 +497,9 @@
   }
 
   .projects__row {
-    min-height: min(78vh, 36rem);
-    padding: clamp(2.25rem, 7vh, 3.5rem) 0;
+    min-height: 0;
+    padding: clamp(1.5rem, 4vw, 2.25rem) 0;
+    cursor: pointer;
   }
 
   .projects__row-preview {
@@ -531,14 +532,18 @@
     max-width: none;
     margin: 0;
     padding-inline: 0;
-    padding-top: 6vh;
-    padding-bottom: 16vh;
+    padding-top: 1vh;
+    padding-bottom: 0;
   }
 
   .projects__row {
-    min-height: min(82vh, 34rem);
-    padding: clamp(2rem, 8vh, 3.25rem) 0;
-    cursor: default;
+    min-height: 0;
+    padding: 1.5rem 0;
+    cursor: pointer;
+  }
+
+  .projects__row:last-child {
+    padding-bottom: clamp(6.5rem, 26vh, 12rem);
   }
 
   .projects__row-name {
