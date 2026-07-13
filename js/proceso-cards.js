@@ -67,7 +67,24 @@ function initProcesoPhases() {
     if (progress <= introHold) {
       currentF = 0;
     } else {
-      currentF = ((progress - introHold) / (1 - introHold)) * (total - 1);
+      /* Última fase (Soporte) ocupa menos scroll que el resto */
+      const t = (progress - introHold) / (1 - introHold);
+      const segments = total - 1;
+      const lastWeight = 0.55;
+      const weights = Array.from({ length: segments }, (_, i) =>
+        i === segments - 1 ? lastWeight : 1
+      );
+      const sum = weights.reduce((a, b) => a + b, 0);
+      const target = t * sum;
+      let acc = 0;
+      currentF = segments;
+      for (let i = 0; i < segments; i += 1) {
+        if (target <= acc + weights[i]) {
+          currentF = i + (target - acc) / weights[i];
+          break;
+        }
+        acc += weights[i];
+      }
     }
 
     phases.forEach((el, i) => {

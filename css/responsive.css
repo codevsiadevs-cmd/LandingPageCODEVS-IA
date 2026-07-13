@@ -592,7 +592,8 @@
   }
 
   .proceso__track {
-    height: calc((var(--proceso-steps) - 1) * 110svh + 130svh);
+    /* Último tramo (Soporte) más corto en móvil */
+    height: calc((var(--proceso-steps) - 2) * 100svh + 55svh + 100svh);
   }
 
   .proceso__heading-wrap,

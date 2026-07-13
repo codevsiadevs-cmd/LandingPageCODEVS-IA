@@ -38,7 +38,8 @@
 .proceso__track {
   --proceso-steps: 6;
   position: relative;
-  height: calc((var(--proceso-steps) - 1) * 90vh + 100vh);
+  /* Último tramo (Soporte) más corto: 50vh en vez de 90vh */
+  height: calc((var(--proceso-steps) - 2) * 90vh + 50vh + 100vh);
   background: #000000;
 }
 
