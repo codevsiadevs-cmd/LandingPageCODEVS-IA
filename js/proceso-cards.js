@@ -49,22 +49,30 @@ function initProcesoPhases() {
 
   function paint() {
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop || 0;
+    sw = stage.clientWidth;
 
-    if (sw < 900) {
-      const nextTop = track.getBoundingClientRect().top + scrollTop;
-      const nextLen = Math.max(track.offsetHeight - stage.offsetHeight, 1);
-      if (Math.abs(nextTop - trackTop) > 1 || Math.abs(nextLen - trackLen) > 1) {
-        trackTop = nextTop;
-        trackLen = nextLen;
-      }
+    const trackRect = track.getBoundingClientRect();
+    const nextTop = trackRect.top + scrollTop;
+    const nextLen = Math.max(track.offsetHeight - stage.offsetHeight, 1);
+    if (Math.abs(nextTop - trackTop) > 1 || Math.abs(nextLen - trackLen) > 1) {
+      trackTop = nextTop;
+      trackLen = nextLen;
     }
 
-    let progress = trackLen > 0 ? (scrollTop - trackTop) / trackLen : 0;
-    progress = clamp(progress, 0, 1);
+    /*
+     * Solo activar el scroll de fases cuando la sección ya está “dentro”
+     * (track pegado arriba). Antes de entrar, quedarse en la primera fase.
+     */
+    const pinned = trackRect.top <= 1;
+    let progress = 0;
+    if (pinned && trackLen > 0) {
+      progress = clamp((scrollTop - trackTop) / trackLen, 0, 1);
+    }
 
-    const introHold = sw < 900 ? 0.04 : 0.08;
+    /* Hold al entrar: primera fase estable antes de empezar a deslizar */
+    const introHold = sw < 900 ? 0.14 : 0.2;
     let currentF;
-    if (progress <= introHold) {
+    if (!pinned || progress <= introHold) {
       currentF = 0;
     } else {
       /* Última fase (Soporte) ocupa menos scroll que el resto */
