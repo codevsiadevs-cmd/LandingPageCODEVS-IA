@@ -48,14 +48,18 @@ const translations = {
     "tech.aria": "Stack tecnológico",
     "tech.title": "Tecnologías",
     "projects.title": "Soluciones",
-    "projects.1":
-      "Páginas Web — Sitios corporativos, landings y experiencias digitales de alto impacto con diseño moderno y rendimiento optimizado",
-    "projects.2":
-      "Agentes IA — Sistemas autónomos que planifican, ejecutan y resuelven flujos de trabajo con modelos de lenguaje",
-    "projects.3":
-      "Chatbot IA — Asistente conversacional para atención al cliente, soporte y respuestas inteligentes 24/7",
-    "projects.4":
-      "API Gateway — Infraestructura escalable para conectar, proteger y orquestar microservicios empresariales",
+    "projects.1.title": "Páginas Web",
+    "projects.1.desc":
+      "Sitios corporativos, landings y experiencias digitales de alto impacto con diseño moderno y rendimiento optimizado",
+    "projects.2.title": "Agentes IA",
+    "projects.2.desc":
+      "Sistemas autónomos que planifican, ejecutan y resuelven flujos de trabajo con modelos de lenguaje",
+    "projects.3.title": "Chatbot IA",
+    "projects.3.desc":
+      "Asistente conversacional para atención al cliente, soporte y respuestas inteligentes 24/7",
+    "projects.4.title": "API Gateway",
+    "projects.4.desc":
+      "Infraestructura escalable para conectar, proteger y orquestar microservicios empresariales",
     "process.title": "Cómo trabajamos",
     "process.punch.badge": "Cómo trabajamos",
     "process.carouselAria": "Pasos de cómo trabajamos",
@@ -162,14 +166,18 @@ const translations = {
     "tech.aria": "Technology stack",
     "tech.title": "Technologies",
     "projects.title": "Solutions",
-    "projects.1":
-      "Web Pages — Corporate sites, landings, and high-impact digital experiences with modern design and optimized performance",
-    "projects.2":
-      "AI Agents — Autonomous systems that plan, execute, and solve workflows with language models",
-    "projects.3":
-      "AI Chatbot — Conversational assistant for customer support and intelligent 24/7 responses",
-    "projects.4":
-      "API Gateway — Scalable infrastructure to connect, secure, and orchestrate enterprise microservices",
+    "projects.1.title": "Web Pages",
+    "projects.1.desc":
+      "Corporate sites, landings, and high-impact digital experiences with modern design and optimized performance",
+    "projects.2.title": "AI Agents",
+    "projects.2.desc":
+      "Autonomous systems that plan, execute, and solve workflows with language models",
+    "projects.3.title": "AI Chatbot",
+    "projects.3.desc":
+      "Conversational assistant for customer support and intelligent 24/7 responses",
+    "projects.4.title": "API Gateway",
+    "projects.4.desc":
+      "Scalable infrastructure to connect, secure, and orchestrate enterprise microservices",
     "process.title": "How We Work",
     "process.punch.badge": "How we work",
     "process.carouselAria": "How we work steps",

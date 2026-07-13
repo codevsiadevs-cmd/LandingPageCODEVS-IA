@@ -491,11 +491,19 @@
 
 /* Fan deck en prefers-reduced-motion: cards visibles, sin transitions ni
  * abanico (todas en posición center, apiladas). Lo mínimo para no animar. */
+@media (max-width: 1023px) {
+  .projects__row-inner {
+    display: block;
+  }
+
+  .projects__row-preview {
+    display: none;
+  }
+}
+
 @media (max-width: 767px) {
   .projects {
-    padding-top: 1.25rem;
     padding-bottom: 2rem;
-    --projects-thumb-size: clamp(4.25rem, 22vw, 5.5rem);
   }
 
   .projects__heading-wrap {
@@ -509,17 +517,27 @@
     text-align: center;
   }
 
-  .projects__row-inner {
-    padding: 1.15rem;
+  .projects__list {
+    max-width: min(100%, 36rem);
+    margin-right: auto;
+    padding-inline: 1.15rem;
+    padding-bottom: 8vh;
   }
 
-  .projects__row-title {
-    font-size: clamp(0.78rem, 3.4vw, 0.95rem);
+  .projects__row {
+    padding: 2rem 0;
+  }
+
+  .projects__row-grid {
+    grid-template-columns: auto 1fr;
+    gap: 0.85rem 1rem;
+  }
+
+  .projects__row-name,
+  .projects__row-sep,
+  .projects__row-desc {
+    font-size: clamp(0.85rem, 3.5vw, 1rem);
     line-height: 1.4;
-  }
-
-  .projects__row-arrow {
-    font-size: 1.1rem;
   }
 
   .proceso__phase {

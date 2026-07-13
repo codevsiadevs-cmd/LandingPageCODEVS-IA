@@ -9,7 +9,8 @@ html[data-slide-font] :is(
   .tech__title,
   .projects__title,
   .proceso__title,
-  .projects__row-title,
+  .projects__row-name,
+  .projects__row-desc,
   .contact__title,
   .tech-metric__value
 ) {
@@ -22,7 +23,8 @@ html[data-slide-font] :is(
   .tech__title,
   .projects__title,
   .proceso__title,
-  .projects__row-title,
+  .projects__row-name,
+  .projects__row-desc,
   .contact__title
 ) {
   font-weight: var(--slide-font-weight, revert);
@@ -72,13 +74,15 @@ html[data-slide-font] :is(
 }
 
 html[data-slide-font-category="script"] :is(
-  .projects__row-title
+  .projects__row-name,
+  .projects__row-desc
 ) {
   line-height: 1.12;
 }
 
 html[data-slide-font-category="exotic"] :is(
-  .projects__row-title
+  .projects__row-name,
+  .projects__row-desc
 ) {
   line-height: 0.92;
 }
@@ -92,7 +96,8 @@ html[data-slide-font="press-start"] :is(
 }
 
 html[data-slide-font="press-start"] :is(
-  .projects__row-title
+  .projects__row-name,
+  .projects__row-desc
 ) {
   font-size: clamp(0.72rem, 2vw, 0.95rem);
   line-height: 1.55;

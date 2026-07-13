@@ -49,9 +49,6 @@
   font-family: var(--font-body);
 }
 
-.proceso__stage .section-neural-canvas {
-  z-index: 2;
-}
 
 .proceso__phases {
   position: absolute;
@@ -75,16 +72,6 @@
   transform: translate(-50%, -50%);
   opacity: 0;
   pointer-events: none;
-}
-
-.proceso__phase-index {
-  margin: 0;
-  font-family: var(--font-body);
-  font-size: clamp(0.75rem, 1.4vw, 0.85rem);
-  font-weight: 500;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.45);
 }
 
 .proceso__phase-title {

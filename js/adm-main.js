@@ -8,7 +8,6 @@ import { updateBackgroundCanvasSize, initParticles } from "./background.js";
 import "./three-scene.js";
 import "./nav-brand-neural.js";
 import "./hero-brand-neural.js";
-import "./section-neural.js";
 import "./interactions.js";
 import "./nav-mobile.js";
 import "./tech-stack.js";
