@@ -46,7 +46,7 @@
   select,
   textarea,
   label,
-  .projects__panel,
+  .projects__row,
   .nav__lang-toggle,
   .nav__lang-option,
   .hero__canvas-wrap canvas,
@@ -489,16 +489,14 @@
   }
 }
 
-/* Soluciones — lista vertical móvil */
+/* Soluciones scroll pin — móvil */
 @media (max-width: 1023px) {
   .projects {
-    padding-top: clamp(9.5rem, 30vw, 14rem);
-    padding-bottom: 2.5rem;
+    --projects-step-vh: 70;
   }
 
   .projects__heading-wrap {
-    margin-top: 2rem;
-    margin-bottom: 1.5rem;
+    padding-top: calc(var(--nav-height) + 1.1rem);
   }
 
   .projects__title {
@@ -506,29 +504,19 @@
   }
 
   .projects__list {
-    width: min(36rem, 94%);
+    padding-inline: 1.15rem;
+    padding-bottom: 1.75rem;
+    gap: 0.1rem;
   }
 
-  .projects__panel {
-    padding: 1.25rem 0;
-  }
-
-  .projects__panel-title {
-    font-size: clamp(1.85rem, 8vw, 2.85rem);
-  }
-
-  .projects__panel.is-open .projects__panel-title {
-    margin-bottom: 0.55rem;
-  }
-
-  .projects__panel-desc {
+  .projects__row-desc {
     font-size: clamp(0.88rem, 3.4vw, 1rem);
     max-width: 22rem;
-    margin-bottom: 0.95rem;
+    margin-bottom: 0.75rem;
   }
 
-  .projects__panel-media {
-    width: min(16.5rem, 78vw);
+  .projects__row-media {
+    width: min(15.5rem, 78vw);
   }
 }
 
