@@ -491,8 +491,13 @@
 
 /* Soluciones AG · Corriente — ajustes móvil */
 @media (max-width: 1023px) {
+  .projects {
+    padding-top: clamp(9.5rem, 30vw, 14rem);
+  }
+
   .projects__heading-wrap {
-    margin-bottom: 1rem;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
   }
 
   .projects__title {
