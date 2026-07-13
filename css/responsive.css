@@ -493,11 +493,18 @@
  * abanico (todas en posición center, apiladas). Lo mínimo para no animar. */
 @media (max-width: 1023px) {
   .projects__row-inner {
-    display: block;
+    display: flex;
+    justify-content: center;
+  }
+
+  .projects__row-grid {
+    max-width: min(36rem, 100%);
+    text-align: center;
   }
 
   .projects__row-preview {
     display: none;
+    width: 0;
   }
 }
 
@@ -518,7 +525,7 @@
   }
 
   .projects__body {
-    padding: 0 1.5rem;
+    padding: 0 1.25rem;
   }
 
   .projects__list {
