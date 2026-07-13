@@ -67,7 +67,9 @@ const translations = {
     "projects.5.title": "API Gateway",
     "projects.5.desc":
       "Infraestructura escalable para conectar, proteger y orquestar microservicios empresariales",
-    "projects.6.title": "+ Soluciones a la medida",
+    "projects.6.title": "¿Necesitas algo diferente?",
+    "projects.6.desc":
+      "Desarrollamos soluciones personalizadas para las necesidades específicas de tu empresa.",
     "process.title": "Cómo trabajamos",
     "process.punch.badge": "Cómo trabajamos",
     "process.carouselAria": "Pasos de cómo trabajamos",
@@ -192,7 +194,9 @@ const translations = {
     "projects.5.title": "API Gateway",
     "projects.5.desc":
       "Scalable infrastructure to connect, secure, and orchestrate enterprise microservices",
-    "projects.6.title": "+ Custom solutions",
+    "projects.6.title": "Need something different?",
+    "projects.6.desc":
+      "We build custom solutions tailored to your company's specific needs.",
     "process.title": "How We Work",
     "process.punch.badge": "How we work",
     "process.carouselAria": "How we work steps",
