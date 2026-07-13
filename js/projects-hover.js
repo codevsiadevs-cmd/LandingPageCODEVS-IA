@@ -57,70 +57,38 @@ function initProjectsPreview() {
   const rows = [...section.querySelectorAll("[data-projects-row]")];
   if (!rows.length) return;
 
-  const canHover = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
-  const isCompact = window.matchMedia("(max-width: 1023px)").matches;
+  const seen = new WeakSet();
 
-  if (canHover && !isCompact) {
-    rows.forEach((row) => {
-      const img = row.querySelector(".projects__row-preview-img");
-      const preview = row.querySelector(".projects__row-preview");
-      if (!img || !preview) return;
-
-      row.addEventListener("mouseenter", () => {
-        preview.setAttribute("aria-hidden", "false");
-        restartGif(img);
-      });
-
-      row.addEventListener("mouseleave", () => {
-        preview.setAttribute("aria-hidden", "true");
-      });
-    });
-  } else {
-    /* Móvil / touch: el GIF aparece con el scroll, uno a uno. */
-    const seen = new WeakSet();
-
-    if ("IntersectionObserver" in window) {
-      const observer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            const row = entry.target;
-            const preview = row.querySelector(".projects__row-preview");
-            const img = row.querySelector(".projects__row-preview-img");
-            if (!preview || !img) return;
-
-            if (entry.isIntersecting && entry.intersectionRatio >= 0.35) {
-              row.classList.add("is-preview-active");
-              preview.setAttribute("aria-hidden", "false");
-              if (!seen.has(row)) {
-                seen.add(row);
-                restartGif(img);
-              }
-            }
-          });
-        },
-        {
-          threshold: [0.2, 0.35, 0.55],
-          rootMargin: "0px 0px -8% 0px",
-        }
-      );
-
-      rows.forEach((row) => {
-        const preview = row.querySelector(".projects__row-preview");
-        if (preview) preview.setAttribute("aria-hidden", "false");
-        observer.observe(row);
-      });
-    } else {
-      rows.forEach((row) => {
-        row.classList.add("is-preview-active");
-        const preview = row.querySelector(".projects__row-preview");
-        const img = row.querySelector(".projects__row-preview-img");
-        if (preview) preview.setAttribute("aria-hidden", "false");
-        if (img) restartGif(img);
-      });
-    }
-  }
+  rows.forEach((row) => {
+    const preview = row.querySelector(".projects__row-preview");
+    if (preview) preview.setAttribute("aria-hidden", "false");
+  });
 
   if ("IntersectionObserver" in window) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const row = entry.target;
+          const img = row.querySelector(".projects__row-preview-img");
+          if (!img) return;
+
+          if (entry.isIntersecting && entry.intersectionRatio >= 0.3) {
+            row.classList.add("is-preview-active");
+            if (!seen.has(row)) {
+              seen.add(row);
+              restartGif(img);
+            }
+          }
+        });
+      },
+      {
+        threshold: [0.2, 0.3, 0.5],
+        rootMargin: "0px 0px -6% 0px",
+      }
+    );
+
+    rows.forEach((row) => observer.observe(row));
+
     const imgs = rows
       .map((row) => row.querySelector(".projects__row-preview-img"))
       .filter(Boolean);
@@ -137,6 +105,12 @@ function initProjectsPreview() {
       { rootMargin: "240px" }
     );
     preloadObserver.observe(section);
+  } else {
+    rows.forEach((row) => {
+      row.classList.add("is-preview-active");
+      const img = row.querySelector(".projects__row-preview-img");
+      if (img) restartGif(img);
+    });
   }
 }
 

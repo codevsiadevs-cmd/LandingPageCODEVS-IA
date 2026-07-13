@@ -1103,14 +1103,12 @@ main > section:not(.hero) {
   top: auto;
   width: min(18rem, 30%);
   margin: 0;
-  opacity: 0;
-  visibility: hidden;
-  transform: translate(var(--preview-x), calc(var(--preview-y) + 14px)) rotate(var(--preview-rot)) scale(0.96);
+  opacity: var(--p);
+  visibility: visible;
+  transform: translate(var(--preview-x), calc(var(--preview-y) + (1 - var(--p)) * 18px))
+    rotate(var(--preview-rot))
+    scale(calc(0.94 + var(--p) * 0.06));
   transform-origin: center center;
-  transition:
-    opacity 0.38s ease,
-    transform 0.42s cubic-bezier(0.22, 1, 0.36, 1),
-    visibility 0.38s;
   pointer-events: none;
   z-index: 2;
 }
@@ -1205,12 +1203,6 @@ main > section:not(.hero) {
 @media (hover: hover) and (pointer: fine) {
   .projects__row:hover {
     background: rgba(255, 255, 255, 0.03);
-  }
-
-  .projects__row:hover .projects__row-preview {
-    opacity: 1;
-    visibility: visible;
-    transform: translate(var(--preview-x), var(--preview-y)) rotate(var(--preview-rot));
   }
 
   .projects__row:hover .projects__row-name {

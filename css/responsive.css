@@ -516,36 +516,6 @@
     flex: 0 0 auto;
     width: min(16.5rem, 78vw);
     margin: 0 auto;
-    opacity: var(--p);
-    visibility: visible;
-    transform: translate(var(--preview-x), calc(var(--preview-y) + (1 - var(--p)) * 20px))
-      rotate(var(--preview-rot))
-      scale(calc(0.92 + var(--p) * 0.08));
-    transition: none;
-  }
-
-  .projects__row:nth-child(1) .projects__row-preview {
-    --preview-x: -0.2rem;
-    --preview-y: 0;
-    --preview-rot: -6deg;
-  }
-
-  .projects__row:nth-child(2) .projects__row-preview {
-    --preview-x: 0.35rem;
-    --preview-y: 0.2rem;
-    --preview-rot: 5deg;
-  }
-
-  .projects__row:nth-child(3) .projects__row-preview {
-    --preview-x: 0.55rem;
-    --preview-y: -0.15rem;
-    --preview-rot: -3.5deg;
-  }
-
-  .projects__row:nth-child(4) .projects__row-preview {
-    --preview-x: 0.15rem;
-    --preview-y: 0.25rem;
-    --preview-rot: 7deg;
   }
 }
 
