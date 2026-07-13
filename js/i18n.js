@@ -20,9 +20,8 @@ const LANG_META = Object.fromEntries(LANGUAGES.map((lang) => [lang.code, lang]))
 
 const translations = {
   es: {
-    "meta.title": "CODEVS IA — Software e inteligencia artificial",
-    "meta.description":
-      "CODEVS IA — Desarrollo de software a medida potenciado con inteligencia artificial.",
+    "meta.title": "Codevs IA",
+    "meta.description": "",
     "preloader.loading": "Cargando sitio",
     "nav.brand": "CODEVS IA — Inicio",
     "nav.main": "Principal",
@@ -148,8 +147,8 @@ const translations = {
     "whatsapp.title": "WhatsApp",
   },
   en: {
-    "meta.title": "CODEVS IA — Software and artificial intelligence",
-    "meta.description": "CODEVS IA — Custom software development powered by artificial intelligence.",
+    "meta.title": "Codevs IA",
+    "meta.description": "",
     "preloader.loading": "Loading site",
     "nav.brand": "CODEVS IA — Home",
     "nav.main": "Main",
@@ -355,6 +354,18 @@ export function applyTranslations() {
 
   const metaDesc = document.querySelector('meta[name="description"]');
   if (metaDesc) metaDesc.setAttribute("content", t("meta.description"));
+
+  const ogTitle = document.querySelector('meta[property="og:title"]');
+  if (ogTitle) ogTitle.setAttribute("content", t("meta.title"));
+
+  const ogDesc = document.querySelector('meta[property="og:description"]');
+  if (ogDesc) ogDesc.setAttribute("content", t("meta.description"));
+
+  const twTitle = document.querySelector('meta[name="twitter:title"]');
+  if (twTitle) twTitle.setAttribute("content", t("meta.title"));
+
+  const twDesc = document.querySelector('meta[name="twitter:description"]');
+  if (twDesc) twDesc.setAttribute("content", t("meta.description"));
 
   document.querySelectorAll("[data-i18n]").forEach((el) => {
     const key = el.dataset.i18n;
