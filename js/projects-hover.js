@@ -40,8 +40,10 @@ function paintProjectsScroll() {
     const titleColor = `rgba(255,255,255,${(0.42 + open * 0.58).toFixed(3)})`;
     /* altura del panel solo cuando ya se ve (evita huecos vacíos) */
     const panelOp = clamp((open - 0.28) / 0.72, 0, 1);
-    const panelMax =
-      panelOp * (window.innerWidth <= 1023 ? 280 : 340);
+    const titleOnly = row.hasAttribute("data-projects-title-only");
+    const panelMax = titleOnly
+      ? 0
+      : panelOp * (window.innerWidth <= 1023 ? 280 : 340);
 
     row.style.setProperty("--open", open.toFixed(4));
     row.style.setProperty("--title-size", `${titleSize.toFixed(1)}px`);
@@ -65,7 +67,7 @@ function initProjectsScroll() {
   const section = document.querySelector(".projects");
   if (!section) return;
 
-  const count = Number(section.dataset.projectsCount) || 4;
+  const count = Number(section.dataset.projectsCount) || 6;
   section.style.setProperty("--projects-count", String(count));
 
   let rafId = null;
