@@ -494,31 +494,15 @@
 @media (max-width: 1023px) {
   .projects__row-inner {
     max-width: none;
-    gap: 0;
-  }
-
-  .projects__row-grid {
-    max-width: min(36rem, 100%);
   }
 
   .projects__row {
-    padding: clamp(2rem, 6vw, 2.75rem) 0;
+    padding: clamp(1.65rem, 5vw, 2.4rem) 0;
   }
 
   .projects__row-preview {
     width: min(16.5rem, 78vw);
-  }
-
-  .projects__row.is-preview-active .projects__row-preview {
-    max-height: 12rem;
-    margin-top: 1.1rem;
-  }
-
-  .projects__row-desc {
-    transition:
-      opacity 0.4s ease,
-      max-height 0.45s ease,
-      margin 0.4s ease;
+    margin-top: 1.15rem;
   }
 }
 
@@ -549,13 +533,8 @@
     padding-bottom: 8vh;
   }
 
-  .projects__row-grid {
-    max-width: none;
-    padding-left: 0;
-  }
-
   .projects__row {
-    padding: 2rem 0;
+    padding: 1.75rem 0;
     cursor: default;
   }
 

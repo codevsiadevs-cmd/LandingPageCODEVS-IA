@@ -27,7 +27,8 @@ function initProjectsReveal() {
     const end = vh * 0.42;
 
     rows.forEach((row) => {
-      const top = row.getBoundingClientRect().top;
+      const title = row.querySelector(".projects__row-name");
+      const top = (title || row).getBoundingClientRect().top;
       const raw = clamp01((start - top) / (start - end));
       row.style.setProperty("--p", easeInOutCubic(raw).toFixed(4));
     });
@@ -57,6 +58,28 @@ function initProjectsPreview() {
   const rows = [...section.querySelectorAll("[data-projects-row]")];
   if (!rows.length) return;
 
+  if (prefersReducedMotionGlobal) {
+    rows.forEach((row) => {
+      row.classList.add("is-preview-active");
+      const preview = row.querySelector(".projects__row-preview");
+      if (preview) preview.setAttribute("aria-hidden", "false");
+    });
+    return;
+  }
+
+  const canHover = window.matchMedia(
+    "(hover: hover) and (pointer: fine) and (min-width: 1024px)"
+  ).matches;
+
+  let activeRow = null;
+  let hoveredRow = null;
+  let rafId = null;
+  let switchLocked = false;
+  let unlockTimer = null;
+  let closeTimer = null;
+  let lastScrollY = window.scrollY || 0;
+  let scrollDir = 0;
+
   function setExpanded(row, expanded) {
     const wasActive = row.classList.contains("is-preview-active");
     if (wasActive === expanded) return;
@@ -68,24 +91,53 @@ function initProjectsPreview() {
     if (expanded && img) restartGif(img);
   }
 
-  /* Desktop + móvil: al bajar, cada solución se abre sola
-   * (descripción + GIF debajo). Solo una activa a la vez. */
-  let activeRow = null;
-  let rafId = null;
-  const SWITCH_GAP = 72;
+  function applyActive(next) {
+    if (next === activeRow) return;
+
+    switchLocked = true;
+    if (unlockTimer) clearTimeout(unlockTimer);
+    unlockTimer = setTimeout(() => {
+      switchLocked = false;
+      pickActive();
+    }, 420);
+
+    if (activeRow && activeRow !== next && activeRow !== hoveredRow) {
+      setExpanded(activeRow, false);
+    }
+    if (next) setExpanded(next, true);
+    activeRow = next;
+  }
 
   function pickActive() {
     rafId = null;
+    if (switchLocked) return;
+
+    /* Si hay hover en desktop, ese gana y el scroll no lo cierra. */
+    if (hoveredRow) {
+      if (closeTimer) {
+        clearTimeout(closeTimer);
+        closeTimer = null;
+      }
+      applyActive(hoveredRow);
+      return;
+    }
+
+    const y = window.scrollY || 0;
+    scrollDir = y === lastScrollY ? scrollDir : y > lastScrollY ? 1 : -1;
+    lastScrollY = y;
+
     const vh = window.innerHeight;
-    const focusY = vh * 0.42;
+    const focusY = vh * (scrollDir < 0 ? 0.46 : 0.38);
+    const switchGap = scrollDir < 0 ? 120 : 78;
     let best = null;
     let bestDist = Infinity;
 
     for (const row of rows) {
-      const rect = row.getBoundingClientRect();
-      if (rect.bottom < vh * 0.08 || rect.top > vh * 0.92) continue;
-      const anchor = rect.top + Math.min(rect.height * 0.25, 80);
-      const dist = Math.abs(anchor - focusY);
+      const title = row.querySelector(".projects__row-name");
+      const rect = (title || row).getBoundingClientRect();
+      if (rect.bottom < vh * 0.1 || rect.top > vh * 0.82) continue;
+      const mid = rect.top + rect.height * 0.5;
+      const dist = Math.abs(mid - focusY);
       if (dist < bestDist) {
         bestDist = dist;
         best = row;
@@ -93,29 +145,34 @@ function initProjectsPreview() {
     }
 
     if (!best) {
-      if (activeRow) {
-        setExpanded(activeRow, false);
-        activeRow = null;
-      }
+      if (!activeRow) return;
+      if (closeTimer) return;
+      /* Al subir/salir: cierra con un pequeño delay para no cortar el fade. */
+      closeTimer = setTimeout(() => {
+        closeTimer = null;
+        if (!hoveredRow) applyActive(null);
+      }, scrollDir < 0 ? 220 : 120);
       return;
     }
 
+    if (closeTimer) {
+      clearTimeout(closeTimer);
+      closeTimer = null;
+    }
+
     if (activeRow && activeRow !== best) {
-      const activeRect = activeRow.getBoundingClientRect();
-      if (activeRect.bottom > vh * 0.1 && activeRect.top < vh * 0.9) {
-        const activeAnchor = activeRect.top + Math.min(activeRect.height * 0.25, 80);
-        const activeDist = Math.abs(activeAnchor - focusY);
-        if (activeDist - bestDist < SWITCH_GAP) {
+      const activeTitle = activeRow.querySelector(".projects__row-name");
+      const activeRect = (activeTitle || activeRow).getBoundingClientRect();
+      if (activeRect.bottom > vh * 0.08 && activeRect.top < vh * 0.88) {
+        const activeMid = activeRect.top + activeRect.height * 0.5;
+        const activeDist = Math.abs(activeMid - focusY);
+        if (activeDist - bestDist < switchGap) {
           best = activeRow;
         }
       }
     }
 
-    if (best === activeRow) return;
-
-    if (activeRow) setExpanded(activeRow, false);
-    setExpanded(best, true);
-    activeRow = best;
+    applyActive(best);
   }
 
   function onScroll() {
@@ -125,6 +182,26 @@ function initProjectsPreview() {
 
   window.addEventListener("scroll", onScroll, { passive: true });
   window.addEventListener("resize", onScroll, { passive: true });
+
+  if (canHover) {
+    rows.forEach((row) => {
+      row.addEventListener("mouseenter", () => {
+        hoveredRow = row;
+        if (closeTimer) {
+          clearTimeout(closeTimer);
+          closeTimer = null;
+        }
+        applyActive(row);
+      });
+
+      row.addEventListener("mouseleave", () => {
+        if (hoveredRow === row) hoveredRow = null;
+        /* Vuelve al que indica el scroll, sin cerrar en seco. */
+        pickActive();
+      });
+    });
+  }
+
   pickActive();
 
   if ("IntersectionObserver" in window) {
