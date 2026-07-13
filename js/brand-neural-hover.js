@@ -219,10 +219,79 @@ export function initBrandNeuralHover(panel, canvas, options = {}) {
     }
   }
 
+  function findTransformedAncestor(el) {
+    for (let n = el; n; n = n.parentElement) {
+      const t = getComputedStyle(n).transform;
+      if (t && t !== "none") return n;
+    }
+    return null;
+  }
+
+  function offsetRelativeTo(el, ancestor) {
+    let x = 0;
+    let y = 0;
+    let n = el;
+    while (n && n !== ancestor) {
+      x += n.offsetLeft;
+      y += n.offsetTop;
+      const next = n.offsetParent;
+      if (!next || next === ancestor) {
+        if (next === ancestor) return { x, y };
+        break;
+      }
+      /* Si el offsetParent salta por encima, seguir por parentElement */
+      if (ancestor.contains && !ancestor.contains(next)) break;
+      n = next;
+    }
+    if (n === ancestor) return { x, y };
+
+    x = 0;
+    y = 0;
+    n = el;
+    while (n && n !== ancestor) {
+      x += n.offsetLeft;
+      y += n.offsetTop;
+      n = n.parentElement;
+    }
+    return { x, y };
+  }
+
+  /**
+   * Viewport → coords locales del panel.
+   * Respeta rotate(-90deg) CCW del logo final móvil (C abajo → © arriba).
+   */
+  function clientToLocal(clientX, clientY) {
+    const transformed = findTransformedAncestor(panel);
+    if (!transformed) {
+      const rect = panel.getBoundingClientRect();
+      return { x: clientX - rect.left, y: clientY - rect.top };
+    }
+
+    const rootRect = transformed.getBoundingClientRect();
+    const rw = transformed.offsetWidth || 1;
+    const rh = transformed.offsetHeight || 1;
+    const cx = rootRect.left + rootRect.width / 2;
+    const cy = rootRect.top + rootRect.height / 2;
+
+    /* Inversa según data-end-rotate del logo final móvil */
+    const sx = clientX - cx;
+    const sy = clientY - cy;
+    const rot = Number(transformed.dataset?.endRotate || 90);
+    const rootLocalX = (rot < 0 ? sy : -sy) + rw / 2;
+    const rootLocalY = (rot < 0 ? -sx : sx) + rh / 2;
+
+    if (transformed === panel) {
+      return { x: rootLocalX, y: rootLocalY };
+    }
+
+    const { x: left, y: top } = offsetRelativeTo(panel, transformed);
+    return { x: rootLocalX - left, y: rootLocalY - top };
+  }
+
   function setTargetFromEvent(event) {
-    const rect = panel.getBoundingClientRect();
-    target.x = event.clientX - rect.left;
-    target.y = event.clientY - rect.top;
+    const local = clientToLocal(event.clientX, event.clientY);
+    target.x = local.x;
+    target.y = local.y;
   }
 
   function paintGlyphMask(alpha, rgb = "255,255,255") {
@@ -256,24 +325,30 @@ export function initBrandNeuralHover(panel, canvas, options = {}) {
     /* Syne: nudge por letra (glyphNudgeY, + = bajar) */
     const yNudge = fontPx * glyphNudgeY;
 
-    const panelRect = panel.getBoundingClientRect();
     let x = width / 2;
     let y = ascent + yNudge;
 
-    try {
-      const range = document.createRange();
-      range.selectNodeContents(face);
-      const ink = range.getBoundingClientRect();
-      if (ink.width > 0.5 && ink.height > 0.5) {
-        x = ink.left - panelRect.left + ink.width / 2;
-        y = ink.top - panelRect.top + ascent + yNudge;
-      } else {
-        const faceRect = face.getBoundingClientRect();
-        x = faceRect.left - panelRect.left + faceRect.width / 2;
-        y = faceRect.top - panelRect.top + ascent + yNudge;
+    /*
+     * Con ancestros rotados (logo final móvil), getBoundingClientRect es AABB
+     * y desalinea la máscara. Usar coords locales del canvas.
+     */
+    if (!findTransformedAncestor(panel)) {
+      try {
+        const panelRect = panel.getBoundingClientRect();
+        const range = document.createRange();
+        range.selectNodeContents(face);
+        const ink = range.getBoundingClientRect();
+        if (ink.width > 0.5 && ink.height > 0.5) {
+          x = ink.left - panelRect.left + ink.width / 2;
+          y = ink.top - panelRect.top + ascent + yNudge;
+        } else {
+          const faceRect = face.getBoundingClientRect();
+          x = faceRect.left - panelRect.left + faceRect.width / 2;
+          y = faceRect.top - panelRect.top + ascent + yNudge;
+        }
+      } catch {
+        /* fallback local */
       }
-    } catch {
-      /* fallback */
     }
 
     ctx.fillText(clipGlyph, x, y);

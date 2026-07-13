@@ -24,14 +24,17 @@ const NAV_BRAIN_BASE_ROT_Y = Math.PI * 0.5;
 const navWrap = document.getElementById("nav-brain-wrap");
 const footerWrap = document.getElementById("footer-brain-wrap");
 const endLogoWrap = document.getElementById("end-logo-brain-wrap");
+const endLogoMirrorWrap = document.getElementById("end-logo-brain-wrap-mirror");
 const heroWrap = document.getElementById("hero-brain-wrap");
 const hasNavBrain = Boolean(navWrap);
 const hasFooterBrain = Boolean(footerWrap);
 const hasEndLogoBrain = Boolean(endLogoWrap);
+const hasEndLogoMirrorBrain = Boolean(endLogoMirrorWrap);
 const hasHeroBrain = Boolean(heroWrap);
 /** Logos usan el cerebro Spline del hero; ya no el GLB Three.js. */
 const hasBrandBrain = false;
-const hasLogoSplineBrain = hasNavBrain || hasFooterBrain || hasEndLogoBrain;
+const hasLogoSplineBrain =
+  hasNavBrain || hasFooterBrain || hasEndLogoBrain || hasEndLogoMirrorBrain;
 const hasBrainScene = hasHeroBrain || hasLogoSplineBrain;
 
 /** Tamaño y zoom del hero Spline fijados al valor inicial (no cambian con el scroll). */
@@ -72,6 +75,7 @@ if (hasBrainScene && typeof ResizeObserver !== "undefined") {
   if (navWrap) wrapResizeObserver.observe(navWrap);
   if (footerWrap) wrapResizeObserver.observe(footerWrap);
   if (endLogoWrap) wrapResizeObserver.observe(endLogoWrap);
+  if (endLogoMirrorWrap) wrapResizeObserver.observe(endLogoMirrorWrap);
   if (heroWrap) wrapResizeObserver.observe(heroWrap);
 }
 window.addEventListener("resize", refreshWrapRects, { passive: true });
@@ -698,29 +702,39 @@ if (hasHeroBrain) {
 if (hasNavBrain) createLogoSplineBrain(navWrap, "nav");
 if (hasFooterBrain) createLogoSplineBrain(footerWrap, "footer");
 if (hasEndLogoBrain) createLogoSplineBrain(endLogoWrap, "end");
+if (hasEndLogoMirrorBrain) createLogoSplineBrain(endLogoMirrorWrap, "end");
 
-/** Escala el logo final para llenar el ancho disponible (desktop y móvil). */
+/** Escala cada logo final al ancho original (mismo tamaño que cuando había uno solo). */
 function fitEndLogoToWidth() {
-  const section = document.querySelector(".end-logo");
-  const panel = document.querySelector(".nav__brand-panel--end");
-  if (!section || !panel) return;
+  const isMobile = window.matchMedia("(max-width: 768px)").matches;
+  const panels = document.querySelectorAll(".nav__brand-panel--end");
 
-  const styles = getComputedStyle(section);
-  const padX =
-    (parseFloat(styles.paddingLeft) || 0) + (parseFloat(styles.paddingRight) || 0);
-  const available = Math.max(section.clientWidth - padX, 1) * 0.97;
+  panels.forEach((panel) => {
+    const section = panel.closest(".end-logo");
+    if (!section) return;
+    if (!isMobile && panel.classList.contains("nav__brand-panel--end-mirror")) return;
 
-  const prevMax = panel.style.maxWidth;
-  panel.style.maxWidth = "none";
+    const styles = getComputedStyle(section);
+    const padX =
+      (parseFloat(styles.paddingLeft) || 0) + (parseFloat(styles.paddingRight) || 0);
+    /* Mismo factor que el logo único original */
+    const available = Math.max(section.clientWidth - padX, 1) * 0.97;
 
-  const probe = 100;
-  panel.style.setProperty("--nav-brand-mark", `${probe}px`);
-  void panel.offsetWidth;
-  const natural = Math.max(panel.scrollWidth, panel.getBoundingClientRect().width, 1);
-  const mark = Math.max((available / natural) * probe, 28);
+    const prevMax = panel.style.maxWidth;
+    const prevTransform = panel.style.transform;
+    panel.style.maxWidth = "none";
+    if (isMobile) panel.style.transform = "none";
 
-  panel.style.setProperty("--nav-brand-mark", `${mark}px`);
-  panel.style.maxWidth = prevMax;
+    const probe = 100;
+    panel.style.setProperty("--nav-brand-mark", `${probe}px`);
+    void panel.offsetWidth;
+    const natural = Math.max(panel.scrollWidth, panel.offsetWidth, 1);
+    const mark = Math.max((available / natural) * probe, 28);
+
+    panel.style.setProperty("--nav-brand-mark", `${mark}px`);
+    panel.style.maxWidth = prevMax;
+    if (isMobile) panel.style.transform = prevTransform;
+  });
 }
 
 /** Spline cachea getBoundingClientRect(); refrescarlo si el wrap se mueve o rota. */

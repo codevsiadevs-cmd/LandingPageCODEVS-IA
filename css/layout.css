@@ -1643,6 +1643,14 @@ html.theme-invert .footer__emoji {
   overflow: visible;
 }
 
+.end-logo__pair {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  width: 100%;
+}
+
 .nav__brand-panel.nav__brand-panel--end {
   --nav-brand-mark: clamp(3.5rem, 12vw, 8rem);
   display: inline-flex;
@@ -1729,16 +1737,48 @@ html.theme-invert .footer__emoji {
 
 @media (max-width: 768px) {
   .end-logo {
-    padding: 1rem 0.45rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6vh 0.45rem 0;
+    overflow: visible;
   }
 
-  /* Mismo logo a ancho completo; no heredar estilos del navbar móvil */
+  /* Las dos versiones juntas al centro */
+  .end-logo__pair {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    width: 100%;
+    overflow: visible;
+  }
+
+  /* Tamaños originales del logo móvil */
   .nav__brand-panel.nav__brand-panel--end {
     --nav-brand-mark: 2.5rem;
+    position: relative;
+    left: auto;
+    top: auto;
+    flex: 0 0 auto;
     height: auto !important;
     min-height: 0 !important;
     padding: 0 !important;
     max-width: none;
+    transform-origin: center center;
+  }
+
+  /* Espejo: C abajo → © arriba (margen acerca al centro) */
+  .nav__brand-panel--end-mirror {
+    transform: rotate(-90deg);
+    margin-right: -40vw;
+  }
+
+  /* Como antes: C arriba → © abajo */
+  .nav__brand-panel--end-natural {
+    transform: rotate(90deg);
+    margin-left: -40vw;
   }
 
   .nav__brand-panel--end .nav__brand-o.logo-brain {
@@ -1759,6 +1799,28 @@ html.theme-invert .footer__emoji {
 
   .nav__brand-panel--end .nav__brand-group--ia {
     margin-left: 0.18em;
+  }
+
+  .nav__brand-panel--end .hero__brand-letter {
+    pointer-events: auto;
+  }
+}
+
+/* Desktop: una sola marca horizontal al final (como antes) */
+@media (min-width: 769px) {
+  .nav__brand-panel.nav__brand-panel--end-mirror {
+    display: none !important;
+  }
+
+  .nav__brand-panel.nav__brand-panel--end-natural {
+    transform: none;
+    margin: 0;
+  }
+
+  .end-logo__pair {
+    display: flex;
+    justify-content: center;
+    width: auto;
   }
 }
 

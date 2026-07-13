@@ -100,22 +100,22 @@ function initLetterNeural(root) {
 
 function initHeroBrandNeural() {
   const heroRoot = document.getElementById("hero-heading");
-  const endRoot = document.querySelector(".nav__brand-panel--end");
+  const endRoots = [...document.querySelectorAll(".nav__brand-panel--end")];
 
   if (heroRoot) {
     wrapBrandLetters(heroRoot, ".hero__brand-accent, .hero__brand-plain");
   }
-  if (endRoot) {
+  endRoots.forEach((endRoot) => {
     wrapBrandLetters(
       endRoot,
       ".nav__brand-segment.nav__brand-accent, .nav__brand-segment.nav__brand-plain"
     );
-  }
+  });
 
   /* Esperar tipografía para que la máscara del glifo coincida con la letra visible */
   const start = () => {
     initLetterNeural(heroRoot);
-    initLetterNeural(endRoot);
+    endRoots.forEach((endRoot) => initLetterNeural(endRoot));
   };
 
   if (document.fonts?.ready) {
