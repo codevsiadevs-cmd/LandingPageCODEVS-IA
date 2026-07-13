@@ -74,6 +74,7 @@ function initLetterNeural(root) {
     const glyph = letter.dataset.heroLetter || "";
     if (!canvas || !glyph) continue;
 
+    /* Mismas opciones que el título principal CODEVS IA */
     initBrandNeuralHover(letter, canvas, {
       hoverClass: "hero__brand-letter--neural",
       clipGlyph: glyph,

@@ -36,6 +36,8 @@ export function initBrandNeuralHover(panel, canvas, options = {}) {
     glyphNudgeY = 0.14,
     /** Velocidad de fade-out del blend (más bajo = más suave). */
     fadeOutSpeed = 0.06,
+    /** Efecto siempre activo (logo final móvil: los 2 paneles). */
+    ambient = false,
   } = options;
 
   if (!canHover && !enableTouch) return;
@@ -50,6 +52,7 @@ export function initBrandNeuralHover(panel, canvas, options = {}) {
   let hoverBlend = 0;
   let rafId = null;
   let lingerTimer = null;
+  let ambientAngle = Math.random() * Math.PI * 2;
 
   function easeInOutCubic(t) {
     return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
@@ -427,6 +430,15 @@ export function initBrandNeuralHover(panel, canvas, options = {}) {
   }
 
   function tick() {
+    if (ambient) {
+      animating = true;
+      ambientAngle += 0.02;
+      if (width > 1 && height > 1) {
+        target.x = width * (0.5 + 0.3 * Math.sin(ambientAngle));
+        target.y = height * (0.48 + 0.3 * Math.cos(ambientAngle * 0.9));
+      }
+    }
+
     if (animating) {
       hoverBlend = Math.min(1, hoverBlend + 0.09);
     } else {
@@ -470,6 +482,7 @@ export function initBrandNeuralHover(panel, canvas, options = {}) {
   }
 
   function deactivate() {
+    if (ambient) return;
     if (lingerMs > 0) {
       clearLinger();
       lingerTimer = setTimeout(() => {
@@ -528,4 +541,14 @@ export function initBrandNeuralHover(panel, canvas, options = {}) {
   }
 
   resize();
+
+  if (ambient) {
+    rebuildScene();
+    target.x = Math.max(width * 0.5, 1);
+    target.y = Math.max(height * 0.48, 1);
+    animating = true;
+    hoverBlend = 1;
+    panel.classList.add(hoverClass);
+    startLoop();
+  }
 }

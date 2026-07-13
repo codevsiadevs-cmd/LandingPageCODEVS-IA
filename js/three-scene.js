@@ -568,7 +568,8 @@ const NAV_LOGO_BRAIN_ZOOM_MOBILE = 0.08;
 const FOOTER_LOGO_BRAIN_ZOOM_DESKTOP = NAV_LOGO_BRAIN_ZOOM_DESKTOP;
 const FOOTER_LOGO_BRAIN_ZOOM_MOBILE = NAV_LOGO_BRAIN_ZOOM_MOBILE;
 const END_LOGO_BRAIN_ZOOM_DESKTOP = 0.55;
-const END_LOGO_BRAIN_ZOOM_MOBILE = 0.16;
+/** Móvil: sube con el logo agrandado para que el cerebro no se vea chico. */
+const END_LOGO_BRAIN_ZOOM_MOBILE = 0.24;
 
 /** @type {{ wrap: HTMLElement, canvas: HTMLCanvasElement, app: *, ready: boolean, kind: "nav" | "footer" | "end" }[]} */
 const logoSplineTargets = [];
@@ -704,36 +705,53 @@ if (hasFooterBrain) createLogoSplineBrain(footerWrap, "footer");
 if (hasEndLogoBrain) createLogoSplineBrain(endLogoWrap, "end");
 if (hasEndLogoMirrorBrain) createLogoSplineBrain(endLogoMirrorWrap, "end");
 
-/** Escala cada logo final al ancho original (mismo tamaño que cuando había uno solo). */
+/** Escala ambos logos finales en paralelo (mismo mark + cerebro). */
 function fitEndLogoToWidth() {
   const isMobile = window.matchMedia("(max-width: 768px)").matches;
-  const panels = document.querySelectorAll(".nav__brand-panel--end");
+  const panels = [...document.querySelectorAll(".nav__brand-panel--end")];
+  if (!panels.length) return;
+
+  const section = panels[0].closest(".end-logo");
+  if (!section) return;
+
+  const styles = getComputedStyle(section);
+  const padX =
+    (parseFloat(styles.paddingLeft) || 0) + (parseFloat(styles.paddingRight) || 0);
+  const available = Math.max(section.clientWidth - padX, 1) * 0.97;
+  /* Móvil: agranda letras y cerebro juntos; desktop sin cambio */
+  const scale = isMobile ? 1.42 : 1;
+
+  const probePanel =
+    panels.find((p) => p.classList.contains("nav__brand-panel--end-natural")) ||
+    panels[0];
+
+  const saved = panels.map((panel) => ({
+    panel,
+    maxWidth: panel.style.maxWidth,
+    transform: panel.style.transform,
+  }));
 
   panels.forEach((panel) => {
-    const section = panel.closest(".end-logo");
-    if (!section) return;
     if (!isMobile && panel.classList.contains("nav__brand-panel--end-mirror")) return;
-
-    const styles = getComputedStyle(section);
-    const padX =
-      (parseFloat(styles.paddingLeft) || 0) + (parseFloat(styles.paddingRight) || 0);
-    /* Mismo factor que el logo único original */
-    const available = Math.max(section.clientWidth - padX, 1) * 0.97;
-
-    const prevMax = panel.style.maxWidth;
-    const prevTransform = panel.style.transform;
     panel.style.maxWidth = "none";
     if (isMobile) panel.style.transform = "none";
+  });
 
-    const probe = 100;
-    panel.style.setProperty("--nav-brand-mark", `${probe}px`);
-    void panel.offsetWidth;
-    const natural = Math.max(panel.scrollWidth, panel.offsetWidth, 1);
-    const mark = Math.max((available / natural) * probe, 28);
+  const probe = 100;
+  probePanel.style.setProperty("--nav-brand-mark", `${probe}px`);
+  void probePanel.offsetWidth;
+  const natural = Math.max(probePanel.scrollWidth, probePanel.offsetWidth, 1);
+  const mark = Math.max((available / natural) * probe * scale, 28);
 
+  /* Mismo tamaño en los dos a la vez */
+  panels.forEach((panel) => {
+    if (!isMobile && panel.classList.contains("nav__brand-panel--end-mirror")) return;
     panel.style.setProperty("--nav-brand-mark", `${mark}px`);
-    panel.style.maxWidth = prevMax;
-    if (isMobile) panel.style.transform = prevTransform;
+  });
+
+  saved.forEach(({ panel, maxWidth, transform }) => {
+    panel.style.maxWidth = maxWidth;
+    if (isMobile) panel.style.transform = transform;
   });
 }
 

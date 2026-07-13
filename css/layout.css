@@ -1661,11 +1661,14 @@ html.theme-invert .footer__emoji {
   user-select: none;
   width: max-content;
   max-width: none;
+  /* Igual que .hero__brand: solo las letras capturan el efecto neuronal */
+  pointer-events: none;
 }
 
 .nav__brand-panel--end .nav__brand-group {
   gap: 0;
   position: relative;
+  pointer-events: none;
 }
 
 .nav__brand-panel--end .nav__brand-group:not(.nav__brand-group--ia) {
@@ -1700,6 +1703,9 @@ html.theme-invert .footer__emoji {
   line-height: 0.87;
   color: #ffffff;
   pointer-events: auto;
+  cursor: default;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .nav__brand-panel--end .hero__brand-letter-face {
@@ -1767,18 +1773,19 @@ html.theme-invert .footer__emoji {
     padding: 0 !important;
     max-width: none;
     transform-origin: center center;
+    pointer-events: none;
   }
 
   /* Espejo: C abajo → © arriba (margen acerca al centro) */
   .nav__brand-panel--end-mirror {
     transform: rotate(-90deg);
-    margin-right: -40vw;
+    margin-right: -54vw;
   }
 
   /* Como antes: C arriba → © abajo */
   .nav__brand-panel--end-natural {
     transform: rotate(90deg);
-    margin-left: -40vw;
+    margin-left: -54vw;
   }
 
   .nav__brand-panel--end .nav__brand-o.logo-brain {
