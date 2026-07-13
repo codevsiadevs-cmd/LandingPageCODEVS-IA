@@ -57,38 +57,64 @@ function initProjectsPreview() {
   const rows = [...section.querySelectorAll("[data-projects-row]")];
   if (!rows.length) return;
 
-  const seen = new WeakSet();
+  const canHover = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+  const isMobileLayout = window.matchMedia("(max-width: 1023px)").matches;
 
-  rows.forEach((row) => {
+  function setExpanded(row, expanded) {
     const preview = row.querySelector(".projects__row-preview");
-    if (preview) preview.setAttribute("aria-hidden", "false");
-  });
+    const img = row.querySelector(".projects__row-preview-img");
+    row.classList.toggle("is-preview-active", expanded);
+    if (preview) preview.setAttribute("aria-hidden", expanded ? "false" : "true");
+    if (expanded && img) restartGif(img);
+  }
+
+  if (canHover && !isMobileLayout) {
+    rows.forEach((row) => {
+      const img = row.querySelector(".projects__row-preview-img");
+      const preview = row.querySelector(".projects__row-preview");
+      if (!img || !preview) return;
+
+      row.addEventListener("mouseenter", () => {
+        preview.setAttribute("aria-hidden", "false");
+        restartGif(img);
+      });
+
+      row.addEventListener("mouseleave", () => {
+        preview.setAttribute("aria-hidden", "true");
+      });
+    });
+  } else {
+    /* Móvil: al bajar, cada solución se despliega sola (desc + GIF). */
+    const seen = new WeakSet();
+
+    if ("IntersectionObserver" in window) {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            const row = entry.target;
+            const shouldOpen = entry.isIntersecting && entry.intersectionRatio >= 0.42;
+
+            if (shouldOpen) {
+              setExpanded(row, true);
+              if (!seen.has(row)) seen.add(row);
+            } else if (!entry.isIntersecting) {
+              setExpanded(row, false);
+            }
+          });
+        },
+        {
+          threshold: [0.25, 0.42, 0.6],
+          rootMargin: "-12% 0px -18% 0px",
+        }
+      );
+
+      rows.forEach((row) => observer.observe(row));
+    } else {
+      rows.forEach((row) => setExpanded(row, true));
+    }
+  }
 
   if ("IntersectionObserver" in window) {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          const row = entry.target;
-          const img = row.querySelector(".projects__row-preview-img");
-          if (!img) return;
-
-          if (entry.isIntersecting && entry.intersectionRatio >= 0.3) {
-            row.classList.add("is-preview-active");
-            if (!seen.has(row)) {
-              seen.add(row);
-              restartGif(img);
-            }
-          }
-        });
-      },
-      {
-        threshold: [0.2, 0.3, 0.5],
-        rootMargin: "0px 0px -6% 0px",
-      }
-    );
-
-    rows.forEach((row) => observer.observe(row));
-
     const imgs = rows
       .map((row) => row.querySelector(".projects__row-preview-img"))
       .filter(Boolean);
@@ -105,12 +131,6 @@ function initProjectsPreview() {
       { rootMargin: "240px" }
     );
     preloadObserver.observe(section);
-  } else {
-    rows.forEach((row) => {
-      row.classList.add("is-preview-active");
-      const img = row.querySelector(".projects__row-preview-img");
-      if (img) restartGif(img);
-    });
   }
 }
 

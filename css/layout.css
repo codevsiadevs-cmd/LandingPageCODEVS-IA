@@ -1105,43 +1105,46 @@ main > section:not(.hero) {
 }
 
 .projects__row-inner {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: clamp(1.25rem, 3vw, 2.5rem);
   max-width: 56rem;
   width: 100%;
   margin: 0 auto;
-  min-height: clamp(7.5rem, 14vw, 11rem);
+  min-height: clamp(4.5rem, 8vw, 6.5rem);
   padding: 0;
 }
 
 .projects__row-grid {
   display: block;
   flex: 0 1 auto;
-  max-width: min(30rem, 48%);
+  max-width: min(42rem, 92%);
   margin: 0;
   padding: 0;
-  text-align: left;
+  text-align: center;
   z-index: 1;
+  transform: translateX(clamp(-9.5rem, -14vw, -5.5rem));
 }
 
 .projects__row-preview {
   --preview-x: 0;
   --preview-y: 0;
   --preview-rot: 0deg;
-  position: relative;
-  flex: 0 0 auto;
-  left: auto;
-  top: auto;
-  width: min(18rem, 30%);
+  position: absolute;
+  left: calc(50% + min(16rem, 30vw));
+  top: 50%;
+  width: min(17.5rem, 28vw);
   margin: 0;
-  opacity: var(--p);
-  visibility: visible;
-  transform: translate(var(--preview-x), calc(var(--preview-y) + (1 - var(--p)) * 18px))
-    rotate(var(--preview-rot))
-    scale(calc(0.94 + var(--p) * 0.06));
+  opacity: 0;
+  visibility: hidden;
+  transform: translate(var(--preview-x), calc(-50% + var(--preview-y) + 14px))
+    rotate(var(--preview-rot)) scale(0.96);
   transform-origin: center center;
+  transition:
+    opacity 0.38s ease,
+    transform 0.42s cubic-bezier(0.22, 1, 0.36, 1),
+    visibility 0.38s;
   pointer-events: none;
   z-index: 2;
 }
@@ -1194,7 +1197,7 @@ main > section:not(.hero) {
   --p: 0;
   position: relative;
   margin: 0;
-  padding: clamp(2.5rem, 5.5vw, 4.625rem) 0;
+  padding: clamp(1.75rem, 4vw, 2.75rem) 0;
   border: none;
   cursor: default;
 }
@@ -1209,28 +1212,49 @@ main > section:not(.hero) {
   will-change: clip-path;
 }
 
-.projects__row-name,
-.projects__row-sep,
-.projects__row-desc {
-  font-family: var(--font-heading);
-  font-size: clamp(0.92rem, 1.55vw, 1.2rem);
-  line-height: 1.35;
-  letter-spacing: 0.04em;
-}
-
 .projects__row-name {
-  font-weight: 700;
-  text-transform: uppercase;
+  display: block;
+  font-family: var(--font-title);
+  font-weight: 800;
+  font-size: clamp(2.4rem, 7vw, 5.5rem);
+  line-height: 0.98;
+  letter-spacing: -0.03em;
+  text-transform: none;
   color: #ffffff;
+  text-wrap: balance;
 }
 
-.projects__row-sep,
 .projects__row-desc {
+  display: block;
+  max-width: 28rem;
+  margin: 0 auto;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
   font-family: var(--font-body);
   font-weight: 500;
-  text-transform: none;
+  font-size: clamp(0.92rem, 1.4vw, 1.05rem);
+  line-height: 1.45;
   letter-spacing: 0.01em;
+  text-transform: none;
+  text-align: center;
   color: #adadb4;
+  transition:
+    opacity 0.35s ease,
+    max-height 0.4s ease,
+    margin 0.35s ease;
+}
+
+.projects__row.is-preview-active .projects__row-desc {
+  max-height: 6.5rem;
+  opacity: 1;
+  margin-top: 0.55rem;
+}
+
+.projects__row.is-preview-active .projects__row-preview {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(var(--preview-x), calc(-50% + var(--preview-y))) rotate(var(--preview-rot));
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -1238,8 +1262,16 @@ main > section:not(.hero) {
     background: rgba(255, 255, 255, 0.03);
   }
 
-  .projects__row:hover .projects__row-name {
-    color: #ffffff;
+  .projects__row:hover .projects__row-desc {
+    max-height: 6.5rem;
+    opacity: 1;
+    margin-top: 0.55rem;
+  }
+
+  .projects__row:hover .projects__row-preview {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(var(--preview-x), calc(-50% + var(--preview-y))) rotate(var(--preview-rot));
   }
 }
 
