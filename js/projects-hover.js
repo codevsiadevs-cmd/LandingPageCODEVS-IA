@@ -67,12 +67,7 @@ function initProjectsPreview() {
     return;
   }
 
-  const canHover = window.matchMedia(
-    "(hover: hover) and (pointer: fine) and (min-width: 1024px)"
-  ).matches;
-
   let activeRow = null;
-  let hoveredRow = null;
   let rafId = null;
   let switchLocked = false;
   let unlockTimer = null;
@@ -99,9 +94,9 @@ function initProjectsPreview() {
     unlockTimer = setTimeout(() => {
       switchLocked = false;
       pickActive();
-    }, 420);
+    }, 650);
 
-    if (activeRow && activeRow !== next && activeRow !== hoveredRow) {
+    if (activeRow && activeRow !== next) {
       setExpanded(activeRow, false);
     }
     if (next) setExpanded(next, true);
@@ -112,30 +107,20 @@ function initProjectsPreview() {
     rafId = null;
     if (switchLocked) return;
 
-    /* Si hay hover en desktop, ese gana y el scroll no lo cierra. */
-    if (hoveredRow) {
-      if (closeTimer) {
-        clearTimeout(closeTimer);
-        closeTimer = null;
-      }
-      applyActive(hoveredRow);
-      return;
-    }
-
     const y = window.scrollY || 0;
     scrollDir = y === lastScrollY ? scrollDir : y > lastScrollY ? 1 : -1;
     lastScrollY = y;
 
     const vh = window.innerHeight;
-    const focusY = vh * (scrollDir < 0 ? 0.46 : 0.38);
-    const switchGap = scrollDir < 0 ? 120 : 78;
+    const focusY = vh * (scrollDir < 0 ? 0.48 : 0.4);
+    const switchGap = scrollDir < 0 ? 160 : 110;
     let best = null;
     let bestDist = Infinity;
 
     for (const row of rows) {
       const title = row.querySelector(".projects__row-name");
       const rect = (title || row).getBoundingClientRect();
-      if (rect.bottom < vh * 0.1 || rect.top > vh * 0.82) continue;
+      if (rect.bottom < vh * 0.08 || rect.top > vh * 0.86) continue;
       const mid = rect.top + rect.height * 0.5;
       const dist = Math.abs(mid - focusY);
       if (dist < bestDist) {
@@ -147,11 +132,10 @@ function initProjectsPreview() {
     if (!best) {
       if (!activeRow) return;
       if (closeTimer) return;
-      /* Al subir/salir: cierra con un pequeño delay para no cortar el fade. */
       closeTimer = setTimeout(() => {
         closeTimer = null;
-        if (!hoveredRow) applyActive(null);
-      }, scrollDir < 0 ? 220 : 120);
+        applyActive(null);
+      }, scrollDir < 0 ? 320 : 180);
       return;
     }
 
@@ -163,7 +147,7 @@ function initProjectsPreview() {
     if (activeRow && activeRow !== best) {
       const activeTitle = activeRow.querySelector(".projects__row-name");
       const activeRect = (activeTitle || activeRow).getBoundingClientRect();
-      if (activeRect.bottom > vh * 0.08 && activeRect.top < vh * 0.88) {
+      if (activeRect.bottom > vh * 0.06 && activeRect.top < vh * 0.9) {
         const activeMid = activeRect.top + activeRect.height * 0.5;
         const activeDist = Math.abs(activeMid - focusY);
         if (activeDist - bestDist < switchGap) {
@@ -182,26 +166,6 @@ function initProjectsPreview() {
 
   window.addEventListener("scroll", onScroll, { passive: true });
   window.addEventListener("resize", onScroll, { passive: true });
-
-  if (canHover) {
-    rows.forEach((row) => {
-      row.addEventListener("mouseenter", () => {
-        hoveredRow = row;
-        if (closeTimer) {
-          clearTimeout(closeTimer);
-          closeTimer = null;
-        }
-        applyActive(row);
-      });
-
-      row.addEventListener("mouseleave", () => {
-        if (hoveredRow === row) hoveredRow = null;
-        /* Vuelve al que indica el scroll, sin cerrar en seco. */
-        pickActive();
-      });
-    });
-  }
-
   pickActive();
 
   if ("IntersectionObserver" in window) {

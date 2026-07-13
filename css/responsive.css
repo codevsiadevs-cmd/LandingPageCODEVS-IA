@@ -497,7 +497,8 @@
   }
 
   .projects__row {
-    padding: clamp(1.65rem, 5vw, 2.4rem) 0;
+    min-height: min(78vh, 36rem);
+    padding: clamp(2.25rem, 7vh, 3.5rem) 0;
   }
 
   .projects__row-preview {
@@ -530,11 +531,13 @@
     max-width: none;
     margin: 0;
     padding-inline: 0;
-    padding-bottom: 8vh;
+    padding-top: 6vh;
+    padding-bottom: 16vh;
   }
 
   .projects__row {
-    padding: 1.75rem 0;
+    min-height: min(82vh, 34rem);
+    padding: clamp(2rem, 8vh, 3.25rem) 0;
     cursor: default;
   }
 
