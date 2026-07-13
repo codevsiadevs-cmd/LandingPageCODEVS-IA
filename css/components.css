@@ -1019,16 +1019,6 @@ textarea.contact__control:not(:placeholder-shown) ~ .contact__label {
   transform: translateY(0.04em);
 }
 
-.footer__tagline {
-  margin: 0;
-  padding: 0;
-  color: var(--text-secondary);
-  font-size: 0.9rem;
-  max-width: 20rem;
-  line-height: 1.45;
-  text-align: center;
-}
-
 .footer__brand-title {
   font-family: var(--font-body);
   font-weight: 700;
