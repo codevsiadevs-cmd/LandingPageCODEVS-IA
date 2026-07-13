@@ -46,7 +46,7 @@
   select,
   textarea,
   label,
-  .projects__row,
+  .projects__panel,
   .nav__lang-toggle,
   .nav__lang-option,
   .hero__canvas-wrap canvas,
@@ -489,77 +489,37 @@
   }
 }
 
-/* Fan deck en prefers-reduced-motion: cards visibles, sin transitions ni
- * abanico (todas en posición center, apiladas). Lo mínimo para no animar. */
+/* Soluciones AG · Corriente — ajustes móvil */
 @media (max-width: 1023px) {
-  .projects__row-inner {
-    max-width: none;
+  .projects__heading-wrap {
+    margin-bottom: 1rem;
   }
 
-  .projects__row {
-    min-height: 0;
-    padding: clamp(1.5rem, 4vw, 2.25rem) 0;
-    cursor: pointer;
+  .projects__title {
+    font-size: clamp(1.55rem, 5.5vw, 2rem);
   }
 
-  .projects__row-preview {
+  .projects__panel {
+    top: 50%;
+  }
+
+  .projects__panel-title {
+    font-size: clamp(1.85rem, 8vw, 2.85rem);
+    margin-bottom: 0.55rem;
+  }
+
+  .projects__panel-desc {
+    font-size: clamp(0.88rem, 3.4vw, 1rem);
+    max-width: 22rem;
+    margin-bottom: 0.95rem;
+  }
+
+  .projects__panel-media {
     width: min(16.5rem, 78vw);
-    margin-top: 1.15rem;
   }
 }
 
 @media (max-width: 767px) {
-  .projects {
-    padding-bottom: 2rem;
-  }
-
-  .projects__heading-wrap {
-    margin-bottom: 1rem;
-    text-align: center;
-    padding: 0 1.15rem;
-  }
-
-  .projects__title {
-    font-size: clamp(1.65rem, 7vw, 2rem);
-    text-align: center;
-  }
-
-  .projects__body {
-    padding: 0 1.25rem;
-  }
-
-  .projects__list {
-    max-width: none;
-    margin: 0;
-    padding-inline: 0;
-    padding-top: 1vh;
-    padding-bottom: 0;
-  }
-
-  .projects__row {
-    min-height: 0;
-    padding: 1.5rem 0;
-    cursor: pointer;
-  }
-
-  .projects__row:last-child {
-    padding-bottom: clamp(6.5rem, 26vh, 12rem);
-  }
-
-  .projects__row-name {
-    font-size: clamp(1.55rem, 7.2vw, 2.35rem);
-    letter-spacing: -0.02em;
-    line-height: 1.12;
-    font-weight: 800;
-    overflow-wrap: anywhere;
-  }
-
-  .projects__row-desc {
-    font-size: clamp(0.9rem, 3.5vw, 1rem);
-    max-width: 22rem;
-    margin-inline: auto;
-  }
-
   .proceso__phase {
     width: min(94vw, 42rem);
     padding: 0 0.35rem;

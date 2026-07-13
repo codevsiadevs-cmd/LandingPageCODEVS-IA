@@ -1,120 +1,67 @@
 import { prefersReducedMotionGlobal } from "./scroll.js";
 
-function clamp01(v) {
-  return v < 0 ? 0 : v > 1 ? 1 : v;
+function clamp01(x) {
+  return Math.max(0, Math.min(1, x));
 }
 
-function easeInOutCubic(t) {
-  return t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+function paintProjectsCorriente() {
+  const vh = window.innerHeight;
+
+  document.querySelectorAll(".projects[data-section]").forEach((sec) => {
+    const N = Number(sec.dataset.count) || 4;
+    const track = sec.querySelector(".projects__track") || sec;
+    const r = track.getBoundingClientRect();
+    const total = r.height - vh;
+    const p = clamp01(total > 0 ? -r.top / total : 0);
+    const f = p * (N - 1);
+
+    sec.querySelectorAll("[data-panel]").forEach((panel, i) => {
+      const d = i - f;
+      const ad = Math.abs(d);
+
+      if (prefersReducedMotionGlobal) {
+        const active = Math.round(f) === i || (f >= N - 1 && i === N - 1);
+        panel.style.transform = "translate(-50%, -50%)";
+        panel.style.opacity = active ? "1" : "0";
+        panel.style.filter = "none";
+        panel.style.zIndex = active ? "20" : "1";
+        return;
+      }
+
+      const tf = `translate(-50%, -50%) translateY(${d * 90}vh) skewY(${d * 4}deg)`;
+      const op = clamp01(1 - ad * 0.85);
+      const blur = Math.min(12, ad * 5);
+
+      panel.style.transform = tf;
+      panel.style.opacity = String(op);
+      panel.style.filter = `blur(${blur}px)`;
+      panel.style.zIndex = String(600 - Math.round(ad * 10));
+    });
+  });
 }
 
-function initProjectsReveal() {
-  const section = document.querySelector(".projects");
-  const rows = section ? [...section.querySelectorAll("[data-projects-row]")] : [];
-  if (!rows.length) return;
+function initProjectsCorriente() {
+  const section = document.querySelector(".projects[data-section]");
+  if (!section) return;
 
-  if (prefersReducedMotionGlobal) {
-    rows.forEach((row) => row.style.setProperty("--p", "1"));
-    return;
-  }
+  const count = Number(section.dataset.count) || 4;
+  section.style.setProperty("--projects-steps", String(count));
 
   let rafId = null;
-
-  function tick() {
-    rafId = null;
-    const vh = window.innerHeight;
-    /* Mismo efecto para todas (como Páginas Web). */
-    const start = vh * 0.9;
-    const end = vh * 0.42;
-
-    rows.forEach((row) => {
-      const title = row.querySelector(".projects__row-name");
-      const top = (title || row).getBoundingClientRect().top;
-      const raw = clamp01((start - top) / (start - end));
-      row.style.setProperty("--p", easeInOutCubic(raw).toFixed(4));
-    });
-  }
-
   function onScroll() {
     if (rafId) return;
-    rafId = requestAnimationFrame(tick);
+    rafId = requestAnimationFrame(() => {
+      rafId = null;
+      paintProjectsCorriente();
+    });
   }
 
   window.addEventListener("scroll", onScroll, { passive: true });
   window.addEventListener("resize", onScroll, { passive: true });
-  tick();
-}
-
-function restartGif(img) {
-  const src = img.getAttribute("src");
-  if (!src) return;
-  img.src = "";
-  img.src = src;
-}
-
-function initProjectsPreview() {
-  const section = document.querySelector(".projects");
-  if (!section) return;
-
-  const rows = [...section.querySelectorAll("[data-projects-row]")];
-  if (!rows.length) return;
-
-  if (prefersReducedMotionGlobal) {
-    rows.forEach((row) => {
-      row.classList.add("is-preview-active");
-      const preview = row.querySelector(".projects__row-preview");
-      if (preview) preview.setAttribute("aria-hidden", "false");
-    });
-    return;
-  }
-
-  let activeRow = null;
-
-  function setExpanded(row, expanded) {
-    const wasActive = row.classList.contains("is-preview-active");
-    if (wasActive === expanded) return;
-
-    const preview = row.querySelector(".projects__row-preview");
-    const img = row.querySelector(".projects__row-preview-img");
-    row.classList.toggle("is-preview-active", expanded);
-    row.setAttribute("aria-expanded", expanded ? "true" : "false");
-    if (preview) preview.setAttribute("aria-hidden", expanded ? "false" : "true");
-    if (expanded && img) restartGif(img);
-  }
-
-  function toggleRow(row) {
-    if (activeRow === row) {
-      setExpanded(row, false);
-      activeRow = null;
-      return;
-    }
-
-    if (activeRow) setExpanded(activeRow, false);
-    setExpanded(row, true);
-    activeRow = row;
-  }
-
-  rows.forEach((row) => {
-    row.setAttribute("tabindex", "0");
-    row.setAttribute("aria-expanded", "false");
-    row.classList.add("is-interactive");
-
-    row.addEventListener("click", () => {
-      toggleRow(row);
-    });
-
-    row.addEventListener("keydown", (event) => {
-      if (event.key !== "Enter" && event.key !== " ") return;
-      event.preventDefault();
-      toggleRow(row);
-    });
-  });
+  paintProjectsCorriente();
 
   if ("IntersectionObserver" in window) {
-    const imgs = rows
-      .map((row) => row.querySelector(".projects__row-preview-img"))
-      .filter(Boolean);
-
+    const imgs = [...section.querySelectorAll(".projects__panel-gif")];
     const preloadObserver = new IntersectionObserver(
       (entries) => {
         if (!entries.some((entry) => entry.isIntersecting)) return;
@@ -130,13 +77,8 @@ function initProjectsPreview() {
   }
 }
 
-function initProjects() {
-  initProjectsReveal();
-  initProjectsPreview();
-}
-
 if (document.readyState === "loading") {
-  document.addEventListener("DOMContentLoaded", initProjects);
+  document.addEventListener("DOMContentLoaded", initProjectsCorriente);
 } else {
-  initProjects();
+  initProjectsCorriente();
 }

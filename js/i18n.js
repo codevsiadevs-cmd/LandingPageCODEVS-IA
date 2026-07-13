@@ -48,6 +48,10 @@ const translations = {
     "tech.aria": "Stack tecnológico",
     "tech.title": "Tecnologías",
     "projects.title": "Soluciones",
+    "projects.step.1": "01",
+    "projects.step.2": "02",
+    "projects.step.3": "03",
+    "projects.step.4": "04",
     "projects.1.title": "Páginas Web",
     "projects.1.desc":
       "Sitios corporativos, landings y experiencias digitales de alto impacto con diseño moderno y rendimiento optimizado",
@@ -165,6 +169,10 @@ const translations = {
     "tech.aria": "Technology stack",
     "tech.title": "Technologies",
     "projects.title": "Solutions",
+    "projects.step.1": "01",
+    "projects.step.2": "02",
+    "projects.step.3": "03",
+    "projects.step.4": "04",
     "projects.1.title": "Web Pages",
     "projects.1.desc":
       "Corporate sites, landings, and high-impact digital experiences with modern design and optimized performance",
