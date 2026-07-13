@@ -489,27 +489,35 @@
   }
 }
 
-/* Soluciones AG · Corriente — ajustes móvil */
+/* Soluciones — lista vertical móvil */
 @media (max-width: 1023px) {
   .projects {
     padding-top: clamp(9.5rem, 30vw, 14rem);
+    padding-bottom: 2.5rem;
   }
 
   .projects__heading-wrap {
     margin-top: 2rem;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
   }
 
   .projects__title {
     font-size: clamp(1.55rem, 5.5vw, 2rem);
   }
 
+  .projects__list {
+    width: min(36rem, 94%);
+  }
+
   .projects__panel {
-    top: 50%;
+    padding: 1.25rem 0;
   }
 
   .projects__panel-title {
     font-size: clamp(1.85rem, 8vw, 2.85rem);
+  }
+
+  .projects__panel.is-open .projects__panel-title {
     margin-bottom: 0.55rem;
   }
 

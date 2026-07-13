@@ -1062,15 +1062,14 @@ main > section:not(.hero) {
   opacity: 0.92;
 }
 
-/* ——— Soluciones (AG · Corriente: sticky + skew) ——— */
+/* ——— Soluciones (lista vertical + click/touch) ——— */
 .projects {
-  --projects-steps: 4;
   scroll-margin-top: var(--nav-height);
   position: relative;
-  padding: clamp(6.5rem, 14vw, 10rem) 0 0;
+  padding: clamp(6.5rem, 14vw, 10rem) 0 clamp(3rem, 8vw, 5rem);
   background: #000000;
   color: #ffffff;
-  overflow: visible;
+  overflow-x: hidden;
   font-family: var(--font-body);
 }
 
@@ -1093,37 +1092,26 @@ main > section:not(.hero) {
   margin: 0;
 }
 
-.projects__track {
-  position: relative;
-  height: calc((var(--projects-steps) - 1) * 100vh + 100vh);
-}
-
-.projects__pin {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  overflow: hidden;
+.projects__list {
+  width: min(48rem, 92%);
+  margin: 0 auto;
+  padding: 0 0 4vh;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center;
+  gap: 0;
 }
 
 .projects__panel {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: min(92vw, 72rem);
-  transform: translate(-50%, -50%);
-  will-change: transform, opacity, filter;
-  backface-visibility: hidden;
-  pointer-events: auto;
+  width: 100%;
+  position: relative;
+  margin: 0;
+  padding: clamp(1.35rem, 3vw, 2.25rem) 0;
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
 }
 
 .projects__panel-inner {
-  position: relative;
-  z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1228,21 +1216,15 @@ main > section:not(.hero) {
 
 .projects__panel:focus-visible {
   outline: 2px solid rgba(255, 255, 255, 0.35);
-  outline-offset: 0.4rem;
+  outline-offset: 0.35rem;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .projects__panel,
   .projects__panel-details,
   .projects__panel-desc,
   .projects__panel-media,
   .projects__panel-title {
     transition: none;
-  }
-
-  .projects__panel {
-    will-change: auto;
-    filter: none !important;
   }
 }
 
