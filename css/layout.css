@@ -1747,24 +1747,30 @@ html.theme-invert .footer__emoji {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 6vh 0.45rem 0;
+    padding: clamp(1rem, 4vh, 2rem) clamp(0.75rem, 3vw, 1.25rem);
     overflow: visible;
   }
 
-  /* Las dos versiones juntas al centro */
   .end-logo__pair {
     display: flex;
-    flex-direction: row;
-    align-items: center;
     justify-content: center;
-    gap: 0;
-    width: 100%;
+    width: auto;
+    max-width: 100%;
     overflow: visible;
   }
 
-  /* Tamaños originales del logo móvil */
+  /* Igual que web: un solo CodevsIA horizontal (sin el espejo duplicado) */
+  .nav__brand-panel.nav__brand-panel--end-mirror {
+    display: none !important;
+  }
+
+  .nav__brand-panel.nav__brand-panel--end-natural {
+    transform: none;
+    margin: 0;
+  }
+
   .nav__brand-panel.nav__brand-panel--end {
-    --nav-brand-mark: 2.5rem;
+    --nav-brand-mark: clamp(2.25rem, 12vw, 3.5rem);
     position: relative;
     left: auto;
     top: auto;
@@ -1775,38 +1781,6 @@ html.theme-invert .footer__emoji {
     max-width: none;
     transform-origin: center center;
     pointer-events: none;
-  }
-
-  /* Espejo: C abajo → © arriba (margen acerca al centro) */
-  .nav__brand-panel--end-mirror {
-    transform: rotate(-90deg);
-    margin-right: -54vw;
-  }
-
-  /* Como antes: C arriba → © abajo */
-  .nav__brand-panel--end-natural {
-    transform: rotate(90deg);
-    margin-left: -54vw;
-  }
-
-  .nav__brand-panel--end .nav__brand-o.logo-brain {
-    width: calc(var(--nav-brand-mark) * 1.35);
-    height: calc(var(--nav-brand-mark) * 1.35);
-    margin-left: -0.62em;
-    margin-right: -0.52em;
-    transform: translateY(0.04em);
-  }
-
-  .nav__brand-panel--end .nav__brand-group:not(.nav__brand-group--ia) > .hero__brand-letter.hero__brand-accent {
-    margin-right: -0.1em;
-  }
-
-  .nav__brand-panel--end .nav__brand-group:not(.nav__brand-group--ia) > .hero__brand-letter--lead {
-    margin-left: -0.06em;
-  }
-
-  .nav__brand-panel--end .nav__brand-group--ia {
-    margin-left: 0.18em;
   }
 
   .nav__brand-panel--end .hero__brand-letter {

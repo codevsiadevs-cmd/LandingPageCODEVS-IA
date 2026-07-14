@@ -93,8 +93,6 @@ function initLetterNeural(root) {
   if (!root) return;
 
   const isEndLogo = root.classList?.contains("nav__brand-panel--end");
-  const isMobileEnd =
-    isEndLogo && window.matchMedia("(max-width: 768px)").matches;
   const letters = [...root.querySelectorAll("[data-hero-letter]")];
   for (const letter of letters) {
     if (letter.__brandNeural) continue;
@@ -105,8 +103,8 @@ function initLetterNeural(root) {
 
     const opts = getHeroNeuralOptions(glyph);
     opts.clipFontEl = face;
-    /* Solo en móvil el proxy de .end-logo controla el touch (logos rotados) */
-    if (isMobileEnd) {
+    /* End-logo móvil: proxy táctil en .end-logo (hit-test más fiable en touch) */
+    if (isEndLogo && window.matchMedia("(max-width: 768px)").matches) {
       opts.enableTouch = false;
       opts.externalControl = true;
     }
@@ -121,8 +119,7 @@ function rebuildEndLogoNeural() {
 }
 
 /**
- * Proxy táctil del logo final (móvil): el contenedor rotado no recibe bien el hit-test,
- * así que resolvemos la letra con elementsFromPoint — mismo feeling que el título.
+ * Proxy táctil del logo final (móvil): hit-test fiable con elementsFromPoint.
  */
 function bindEndLogoTouchProxy() {
   /* Desktop: hover normal en letras, sin proxy */
@@ -138,7 +135,10 @@ function bindEndLogoTouchProxy() {
     const stack = document.elementsFromPoint(clientX, clientY);
     for (const el of stack) {
       const letter = el.closest?.("[data-hero-letter]");
-      if (letter?.closest(".nav__brand-panel--end") && letter.__brandNeural) {
+      if (
+        letter?.closest(".nav__brand-panel--end-natural") &&
+        letter.__brandNeural
+      ) {
         return letter;
       }
     }
@@ -191,7 +191,7 @@ function bindEndLogoTouchProxy() {
 
 function initHeroBrandNeural() {
   const heroRoot = document.getElementById("hero-heading");
-  const endRoots = [...document.querySelectorAll(".nav__brand-panel--end")];
+  const endRoots = [...document.querySelectorAll(".nav__brand-panel--end-natural")];
 
   if (heroRoot) {
     wrapBrandLetters(heroRoot, ".hero__brand-accent, .hero__brand-plain");
@@ -205,15 +205,10 @@ function initHeroBrandNeural() {
 
   const start = () => {
     initLetterNeural(heroRoot);
-    const isMobile = window.matchMedia("(max-width: 768px)").matches;
     endRoots.forEach((endRoot) => {
-      /* Desktop: no inicializar el espejo (oculto) */
-      if (!isMobile && endRoot.classList.contains("nav__brand-panel--end-mirror")) {
-        return;
-      }
       initLetterNeural(endRoot);
     });
-    if (isMobile) {
+    if (window.matchMedia("(max-width: 768px)").matches) {
       bindEndLogoTouchProxy();
       rebuildEndLogoNeural();
       requestAnimationFrame(() => {
@@ -238,7 +233,6 @@ function initHeroBrandNeural() {
   window.addEventListener("load", () => {
     if (window.matchMedia("(max-width: 768px)").matches) {
       rebuildEndLogoNeural();
-      bindEndLogoTouchProxy();
     }
   });
 }
