@@ -1800,28 +1800,27 @@ html.theme-invert .footer__emoji {
   }
 
   /*
-   * Móvil: caja ancha para partículas completas (sin recorte cuadrado).
-   * Márgenes negativos compactan el layout; letras sin entrar al núcleo del cerebro.
+   * Móvil = tamaño OK (como imagen 2) + cerebro completo sin recorte.
+   * Caja un poco mayor + zoom más abierto = misma presencia, partículas enteras.
    */
   .nav__brand-panel--end .nav__brand-o.logo-brain {
-    width: calc(var(--nav-brand-mark) * 2.15);
-    height: calc(var(--nav-brand-mark) * 2.15);
-    margin-left: calc(var(--nav-brand-mark) * -0.46);
-    margin-right: calc(var(--nav-brand-mark) * -0.42);
-    transform: translateY(calc(var(--nav-brand-mark) * 0.08));
+    width: calc(var(--nav-brand-mark) * 1.55);
+    height: calc(var(--nav-brand-mark) * 1.55);
+    margin-left: 0;
+    margin-right: 0;
+    transform: translateY(calc(var(--nav-brand-mark) * 0.04));
     overflow: visible;
     background: transparent;
-    /* Suaviza el borde del canvas sin cortar el cerebro */
-    mask-image: radial-gradient(closest-side, #000 62%, transparent 100%);
-    -webkit-mask-image: radial-gradient(closest-side, #000 62%, transparent 100%);
+    mask-image: none;
+    -webkit-mask-image: none;
   }
 
   .nav__brand-panel--end .nav__brand-group:not(.nav__brand-group--ia) > .hero__brand-letter.hero__brand-accent {
-    margin-right: calc(var(--nav-brand-mark) * -0.22) !important;
+    margin-right: calc(var(--nav-brand-mark) * -0.1) !important;
   }
 
   .nav__brand-panel--end .nav__brand-group:not(.nav__brand-group--ia) > .hero__brand-letter--lead {
-    margin-left: calc(var(--nav-brand-mark) * -0.2) !important;
+    margin-left: calc(var(--nav-brand-mark) * -0.09) !important;
   }
 }
 

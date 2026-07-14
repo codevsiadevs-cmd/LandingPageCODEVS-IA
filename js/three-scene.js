@@ -567,8 +567,8 @@ const NAV_LOGO_BRAIN_ZOOM_MOBILE = 0.08;
 const FOOTER_LOGO_BRAIN_ZOOM_DESKTOP = NAV_LOGO_BRAIN_ZOOM_DESKTOP;
 const FOOTER_LOGO_BRAIN_ZOOM_MOBILE = NAV_LOGO_BRAIN_ZOOM_MOBILE;
 const END_LOGO_BRAIN_ZOOM_DESKTOP = 0.55;
-/** Móvil: zoom en caja grande para ver partículas sin recorte cuadrado. */
-const END_LOGO_BRAIN_ZOOM_MOBILE = 0.48;
+/** Móvil: zoom más abierto para que el mesh+partículas entren enteros en la caja. */
+const END_LOGO_BRAIN_ZOOM_MOBILE = 0.18;
 
 /** @type {{ wrap: HTMLElement, canvas: HTMLCanvasElement, app: *, ready: boolean, kind: "nav" | "footer" | "end" }[]} */
 const logoSplineTargets = [];
