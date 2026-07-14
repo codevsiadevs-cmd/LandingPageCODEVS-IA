@@ -1761,8 +1761,7 @@ html.theme-invert .footer__emoji {
       max(1.25rem, env(safe-area-inset-top, 0px))
       clamp(0.85rem, 4vw, 1.25rem)
       max(1.75rem, env(safe-area-inset-bottom, 0px));
-    overflow-x: clip;
-    overflow-y: visible;
+    overflow: visible;
   }
 
   .end-logo__pair {
@@ -1801,24 +1800,28 @@ html.theme-invert .footer__emoji {
   }
 
   /*
-   * Móvil: C | cerebro(o) | d sin solape.
-   * Espacio positivo entre letras y cerebro (no márgenes negativos de desktop).
+   * Móvil: caja ancha para partículas completas (sin recorte cuadrado).
+   * Márgenes negativos compactan el layout; letras sin entrar al núcleo del cerebro.
    */
   .nav__brand-panel--end .nav__brand-o.logo-brain {
-    width: calc(var(--nav-brand-mark) * 1.08);
-    height: calc(var(--nav-brand-mark) * 1.08);
-    margin-left: calc(var(--nav-brand-mark) * 0.12);
-    margin-right: calc(var(--nav-brand-mark) * 0.12);
-    transform: translateY(calc(var(--nav-brand-mark) * 0.04));
-    overflow: hidden;
+    width: calc(var(--nav-brand-mark) * 2.15);
+    height: calc(var(--nav-brand-mark) * 2.15);
+    margin-left: calc(var(--nav-brand-mark) * -0.46);
+    margin-right: calc(var(--nav-brand-mark) * -0.42);
+    transform: translateY(calc(var(--nav-brand-mark) * 0.08));
+    overflow: visible;
+    background: transparent;
+    /* Suaviza el borde del canvas sin cortar el cerebro */
+    mask-image: radial-gradient(closest-side, #000 62%, transparent 100%);
+    -webkit-mask-image: radial-gradient(closest-side, #000 62%, transparent 100%);
   }
 
   .nav__brand-panel--end .nav__brand-group:not(.nav__brand-group--ia) > .hero__brand-letter.hero__brand-accent {
-    margin-right: 0 !important;
+    margin-right: calc(var(--nav-brand-mark) * -0.22) !important;
   }
 
   .nav__brand-panel--end .nav__brand-group:not(.nav__brand-group--ia) > .hero__brand-letter--lead {
-    margin-left: 0 !important;
+    margin-left: calc(var(--nav-brand-mark) * -0.2) !important;
   }
 }
 
