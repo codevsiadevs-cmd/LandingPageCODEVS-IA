@@ -1201,6 +1201,10 @@ main > section:not(.hero) {
   object-fit: cover;
 }
 
+video.projects__row-gif {
+  pointer-events: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .projects__row,
   .projects__row-title,

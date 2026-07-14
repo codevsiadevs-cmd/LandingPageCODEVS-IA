@@ -1,0 +1,14 @@
+# Auditorías locales (Unlighthouse / Lighthouse)
+.unlighthouse/
+
+# Dependencias
+node_modules/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+
+# Logs
+*.log
+npm-debug.log*

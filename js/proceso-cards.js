@@ -30,6 +30,9 @@ function initProcesoPhases() {
   let trackLen = 1;
   let sw = 1;
   let lastIdx = -1;
+  let rafId = null;
+  let needsPaint = true;
+  let sectionNear = false;
 
   function measure() {
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop || 0;
@@ -58,6 +61,12 @@ function initProcesoPhases() {
       trackTop = nextTop;
       trackLen = nextLen;
     }
+
+    const near =
+      trackRect.bottom > -window.innerHeight * 0.25 &&
+      trackRect.top < window.innerHeight * 1.25;
+    sectionNear = near;
+    if (!near) return;
 
     /*
      * Solo activar el scroll de fases cuando la sección ya está “dentro”
@@ -113,12 +122,18 @@ function initProcesoPhases() {
     announce(idx);
   }
 
-  function tick() {
-    paint();
-    requestAnimationFrame(tick);
+  function schedulePaint() {
+    needsPaint = true;
+    if (rafId != null) return;
+    rafId = requestAnimationFrame(() => {
+      rafId = null;
+      if (!needsPaint) return;
+      needsPaint = false;
+      paint();
+    });
   }
 
-    if (prefersReducedMotionGlobal) {
+  if (prefersReducedMotionGlobal) {
     root.classList.add("proceso--static");
     phases.forEach((el) => {
       el.style.transform = "none";
@@ -129,10 +144,15 @@ function initProcesoPhases() {
   }
 
   window.addEventListener(
+    "scroll",
+    schedulePaint,
+    { passive: true }
+  );
+  window.addEventListener(
     "resize",
     () => {
       measure();
-      paint();
+      schedulePaint();
     },
     { passive: true }
   );
@@ -140,13 +160,24 @@ function initProcesoPhases() {
     "resize",
     () => {
       measure();
-      paint();
+      schedulePaint();
     },
     { passive: true }
   );
 
+  if ("IntersectionObserver" in window) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        sectionNear = entries.some((e) => e.isIntersecting);
+        if (sectionNear) schedulePaint();
+      },
+      { rootMargin: "25% 0px", threshold: 0 }
+    );
+    io.observe(track);
+  }
+
   measure();
-  tick();
+  schedulePaint();
 }
 
 initProcesoPhases();

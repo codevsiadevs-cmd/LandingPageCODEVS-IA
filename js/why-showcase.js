@@ -48,7 +48,12 @@ function initWhyShowcase() {
 
   if (!showcase || panels.length !== STEP_COUNT) return;
 
+  let rafId = null;
+  let sectionNear = true;
+
   function paint() {
+    if (!sectionNear) return;
+
     const vh = window.innerHeight;
     const rect = showcase.getBoundingClientRect();
     const total = rect.height - vh;
@@ -94,6 +99,14 @@ function initWhyShowcase() {
     document.documentElement.style.setProperty("--why-exit-fade", fadeValue);
   }
 
+  function schedulePaint() {
+    if (rafId != null) return;
+    rafId = requestAnimationFrame(() => {
+      rafId = null;
+      paint();
+    });
+  }
+
   if (prefersReducedMotionGlobal) {
     section.classList.add("why--static");
     if (slider) slider.style.opacity = "1";
@@ -111,8 +124,19 @@ function initWhyShowcase() {
   }
 
   paint();
-  window.addEventListener("scroll", paint, { passive: true });
-  window.addEventListener("resize", paint, { passive: true });
+  window.addEventListener("scroll", schedulePaint, { passive: true });
+  window.addEventListener("resize", schedulePaint, { passive: true });
+
+  if ("IntersectionObserver" in window) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        sectionNear = entries.some((e) => e.isIntersecting);
+        if (sectionNear) schedulePaint();
+      },
+      { rootMargin: "20% 0px", threshold: 0 }
+    );
+    io.observe(showcase);
+  }
 }
 
 if (document.readyState === "loading") {

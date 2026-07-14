@@ -4,11 +4,47 @@ function clamp(v, a, b) {
   return Math.min(b, Math.max(a, v));
 }
 
-function restartGif(img) {
-  const src = img.getAttribute("src");
-  if (!src) return;
-  img.src = "";
-  img.src = src;
+function ensureVideoSources(video) {
+  if (!(video instanceof HTMLVideoElement) || video.dataset.sourcesReady === "1") return;
+  const webm = video.dataset.srcWebm;
+  const mp4 = video.dataset.srcMp4;
+  if (!webm && !mp4) return;
+
+  if (webm) {
+    const source = document.createElement("source");
+    source.src = webm;
+    source.type = "video/webm";
+    video.appendChild(source);
+  }
+  if (mp4) {
+    const source = document.createElement("source");
+    source.src = mp4;
+    source.type = "video/mp4";
+    video.appendChild(source);
+  }
+  video.dataset.sourcesReady = "1";
+  video.load();
+}
+
+function restartProjectMedia(media) {
+  if (media instanceof HTMLVideoElement) {
+    ensureVideoSources(media);
+    try {
+      media.currentTime = 0;
+      const play = media.play();
+      if (play?.catch) play.catch(() => {});
+    } catch {
+      /* ignore autoplay/seek errors */
+    }
+    return;
+  }
+
+  if (media instanceof HTMLImageElement) {
+    const src = media.getAttribute("src");
+    if (!src) return;
+    media.src = "";
+    media.src = src;
+  }
 }
 
 function paintProjectsScroll() {
@@ -38,7 +74,6 @@ function paintProjectsScroll() {
 
     const titleSize = 42 + open * 26;
     const titleColor = `rgba(255,255,255,${(0.42 + open * 0.58).toFixed(3)})`;
-    /* altura del panel solo cuando ya se ve (evita huecos vacíos) */
     const panelOp = clamp((open - 0.28) / 0.72, 0, 1);
     const titleOnly = row.hasAttribute("data-projects-title-only");
     const panelMax = titleOnly
@@ -50,15 +85,17 @@ function paintProjectsScroll() {
     row.style.setProperty("--title-color", titleColor);
     row.style.setProperty("--panel-max", `${panelMax.toFixed(1)}px`);
     row.style.setProperty("--panel-op", panelOp.toFixed(3));
-    /* padding fijo para que las 4 títulos no se separen */
     row.style.setProperty("--row-pad", "0.45rem");
     row.style.setProperty("--panel-mt", `${(panelOp * 10).toFixed(1)}px`);
 
     row.classList.toggle("is-open", isOpen);
 
-    if (isOpen && !wasOpen) {
-      const img = row.querySelector(".projects__row-gif");
-      if (img) restartGif(img);
+    const media = row.querySelector(".projects__row-gif");
+    if (isOpen && !wasOpen && media) {
+      restartProjectMedia(media);
+    }
+    if (!isOpen && media instanceof HTMLVideoElement && !media.paused) {
+      media.pause();
     }
   });
 }
@@ -83,20 +120,21 @@ function initProjectsScroll() {
   window.addEventListener("resize", onScroll, { passive: true });
   paintProjectsScroll();
 
-  if ("IntersectionObserver" in window) {
-    const imgs = [...section.querySelectorAll(".projects__row-gif")];
-    const preloadObserver = new IntersectionObserver(
+  const videos = [...section.querySelectorAll("video.projects__row-gif")];
+  if ("IntersectionObserver" in window && videos.length) {
+    const mediaObserver = new IntersectionObserver(
       (entries) => {
-        if (!entries.some((entry) => entry.isIntersecting)) return;
-        imgs.forEach((img) => {
-          const preload = new Image();
-          preload.src = img.getAttribute("src");
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          ensureVideoSources(entry.target);
+          mediaObserver.unobserve(entry.target);
         });
-        preloadObserver.disconnect();
       },
-      { rootMargin: "240px" }
+      { rootMargin: "320px 0px" }
     );
-    preloadObserver.observe(section);
+    videos.forEach((video) => mediaObserver.observe(video));
+  } else {
+    videos.forEach(ensureVideoSources);
   }
 }
 

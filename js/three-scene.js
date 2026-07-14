@@ -603,6 +603,14 @@ function resizeLogoSpline(target) {
   syncSplineDomRect(target);
 }
 
+function setSplinePlaying(target, playing) {
+  if (!target?.ready || !target.app) return;
+  if (target._playing === playing) return;
+  target._playing = playing;
+  if (playing) target.app.play?.();
+  else target.app.stop?.();
+}
+
 function captureNavLogoOrbitBaseline(target) {
   if (!target?.ready) return;
   const orbit = getHeroBrainOrbit(target);
@@ -646,7 +654,8 @@ function resizeAllLogoSplines() {
 }
 
 function createLogoSplineBrain(wrap, kind = "nav") {
-  if (!wrap) return null;
+  if (!wrap || wrap.dataset.splineMounted === "1") return null;
+  wrap.dataset.splineMounted = "1";
 
   wrap.classList.add("logo-brain");
 
@@ -656,22 +665,24 @@ function createLogoSplineBrain(wrap, kind = "nav") {
   wrap.appendChild(canvas);
 
   const app = new Application(canvas);
-  const target = { wrap, canvas, app, ready: false, kind };
+  const target = { wrap, canvas, app, ready: false, kind, _playing: false, _visible: false };
   logoSplineTargets.push(target);
 
   app
     .load(SPLINE_SCENE_URL)
     .then(() => {
       target.ready = true;
-      app.play?.();
       applyLogoBrainZoom(target);
       setHeroBrainOrbit(target, false);
       if (kind === "nav") {
         captureNavLogoOrbitBaseline(target);
-        applyNavLogoSplineScrollSpin(0);
+        const docMaxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
+        const docProgress = Math.min(Math.max(latestScrollY / docMaxScroll, 0), 1);
+        applyNavLogoSplineScrollSpin(docProgress * Math.PI * 2.75);
       }
       patchSplineScrollFlags(target);
       resizeLogoSpline(target);
+      setSplinePlaying(target, target._visible);
       requestAnimationFrame(() => {
         resizeLogoSpline(target);
         applyLogoBrainZoom(target);
@@ -682,17 +693,45 @@ function createLogoSplineBrain(wrap, kind = "nav") {
   if (typeof IntersectionObserver !== "undefined") {
     const io = new IntersectionObserver(
       (entries) => {
-        if (entries.some((e) => e.isIntersecting)) {
+        const visible = entries.some((e) => e.isIntersecting);
+        target._visible = visible;
+        setSplinePlaying(target, visible);
+        if (visible) {
           resizeLogoSpline(target);
           applyLogoBrainZoom(target);
         }
       },
-      { threshold: 0.05 }
+      { threshold: 0.05, rootMargin: "80px 0px" }
     );
     io.observe(wrap);
+  } else {
+    target._visible = true;
+    setSplinePlaying(target, true);
   }
 
   return target;
+}
+
+/** Lazy-load de cerebros logo al acercarse al viewport. */
+function scheduleLogoSplineBrain(wrap, kind = "nav") {
+  if (!wrap) return;
+
+  const mount = () => createLogoSplineBrain(wrap, kind);
+
+  if (typeof IntersectionObserver === "undefined") {
+    mount();
+    return;
+  }
+
+  const io = new IntersectionObserver(
+    (entries) => {
+      if (!entries.some((e) => e.isIntersecting)) return;
+      io.disconnect();
+      mount();
+    },
+    { rootMargin: "280px 0px", threshold: 0.01 }
+  );
+  io.observe(wrap);
 }
 
 if (hasHeroBrain) {
@@ -700,10 +739,10 @@ if (hasHeroBrain) {
   createHeroSplineBrain();
 }
 
-if (hasNavBrain) createLogoSplineBrain(navWrap, "nav");
-if (hasFooterBrain) createLogoSplineBrain(footerWrap, "footer");
-if (hasEndLogoBrain) createLogoSplineBrain(endLogoWrap, "end");
-if (hasEndLogoMirrorBrain) createLogoSplineBrain(endLogoMirrorWrap, "end");
+if (hasNavBrain) scheduleLogoSplineBrain(navWrap, "nav");
+if (hasFooterBrain) scheduleLogoSplineBrain(footerWrap, "footer");
+if (hasEndLogoBrain) scheduleLogoSplineBrain(endLogoWrap, "end");
+if (hasEndLogoMirrorBrain) scheduleLogoSplineBrain(endLogoMirrorWrap, "end");
 
 /** Escala ambos logos finales en paralelo (mismo mark + cerebro). */
 function fitEndLogoToWidth() {
@@ -849,6 +888,26 @@ if (!prefersReducedMotionGlobal) {
 let glowLevel = 0;
 let elapsed = 0;
 let lastFrameTime = performance.now();
+let lastAnimatedScrollY = -1;
+let rectsDirty = true;
+let heroSyncDirty = true;
+
+window.addEventListener(
+  "scroll",
+  () => {
+    rectsDirty = true;
+    heroSyncDirty = true;
+  },
+  { passive: true }
+);
+window.addEventListener(
+  "resize",
+  () => {
+    rectsDirty = true;
+    heroSyncDirty = true;
+  },
+  { passive: true }
+);
 
 function animate(now) {
   requestAnimationFrame(animate);
@@ -858,11 +917,19 @@ function animate(now) {
 
   const docMaxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
   const docProgress = Math.min(Math.max(latestScrollY / docMaxScroll, 0), 1);
-  syncHeroBrainWithScroll();
-  refreshWrapRects();
+  const scrollChanged = latestScrollY !== lastAnimatedScrollY;
+  lastAnimatedScrollY = latestScrollY;
+
+  if (heroSyncDirty || scrollChanged) {
+    syncHeroBrainWithScroll();
+    heroSyncDirty = false;
+  }
+  if (rectsDirty || scrollChanged) {
+    refreshWrapRects();
+    rectsDirty = false;
+  }
 
   const scrollRot = docProgress * Math.PI * 2.75;
-  const scrollBlend = Math.min(Math.max(latestScrollY / 320, 0), 1);
 
   if (splineTargets.length || logoSplineTargets.length) {
     if (!prefersReducedMotionGlobal) {
@@ -877,18 +944,26 @@ function animate(now) {
   const targetGlow = docProgress > 0.5 ? (docProgress - 0.5) * 2 : 0;
   glowLevel += (targetGlow - glowLevel) * 0.06;
 
-  applyNavLogoSplineScrollSpin(scrollRot);
+  const navVisible = logoSplineTargets.some((t) => t.kind === "nav" && t.ready && t._visible);
+  if (navVisible && scrollChanged) {
+    applyNavLogoSplineScrollSpin(scrollRot);
+  }
 
   if (!prefersReducedMotionGlobal) {
     sceneMotion.sharedPulse += (pulse - sceneMotion.sharedPulse) * 0.22;
   }
 
-  splineTargets.forEach((target) => {
-    syncHeroSplineFrame(target);
-  });
+  /* Sync DOM rect del hero solo cuando el scroll/layout cambia. */
+  if (scrollChanged) {
+    splineTargets.forEach((target) => {
+      syncHeroSplineFrame(target);
+    });
+  }
 
-  drawPerspectiveGrid(docProgress);
-  drawParticles(docProgress, elapsed);
+  if (!isMobileBg) {
+    drawPerspectiveGrid(docProgress);
+    drawParticles(docProgress, elapsed);
+  }
   drawNeuralNetwork();
   updateNebula(docProgress, currentMouseX * 0.02, currentMouseY * 0.02);
 }

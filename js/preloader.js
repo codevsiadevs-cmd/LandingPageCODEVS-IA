@@ -1,5 +1,10 @@
-const MIN_DURATION_MS = 2200;
+const DESKTOP_MIN_DURATION_MS = 2200;
+const MOBILE_MIN_DURATION_MS = 1300;
 const EXIT_MS = 900;
+
+function isMobileViewport() {
+  return window.matchMedia("(max-width: 768px)").matches;
+}
 
 function initPreloader() {
   const preloader = document.getElementById("preloader");
@@ -17,6 +22,7 @@ function initPreloader() {
     return;
   }
 
+  const minDurationMs = isMobileViewport() ? MOBILE_MIN_DURATION_MS : DESKTOP_MIN_DURATION_MS;
   let displayValue = 0;
   let loadDone = false;
   let imagesLoaded = 0;
@@ -33,8 +39,19 @@ function initPreloader() {
     preloader.setAttribute("aria-valuenow", String(Math.round(clamped)));
   }
 
+  function isBelowFoldCritical(img) {
+    /* Media diferida de Soluciones / videos no bloquean el preloader. */
+    if (img.closest("#soluciones") || img.closest(".projects")) return true;
+    if (img.tagName === "VIDEO") return true;
+    if (img.hasAttribute("data-src") || img.hasAttribute("data-src-mp4")) return true;
+    if (img.loading === "lazy") return true;
+    return false;
+  }
+
   function trackImages() {
-    const images = [...document.images].filter((img) => !img.closest("#preloader"));
+    const images = [...document.images].filter(
+      (img) => !img.closest("#preloader") && !isBelowFoldCritical(img)
+    );
     imagesTotal = Math.max(images.length, 1);
 
     images.forEach((img) => {
@@ -60,7 +77,7 @@ function initPreloader() {
 
   function getTargetProgress() {
     const elapsed = performance.now() - startTime;
-    const timeRatio = Math.min(1, elapsed / MIN_DURATION_MS);
+    const timeRatio = Math.min(1, elapsed / minDurationMs);
     const loadRatio = getLoadRatio();
 
     if (loadDone) {
@@ -103,17 +120,33 @@ function initPreloader() {
     fontsReady = true;
   }
 
-  if (document.readyState === "complete") {
-    loadDone = true;
-  } else {
-    window.addEventListener(
-      "load",
-      () => {
-        loadDone = true;
-      },
-      { once: true }
-    );
+  /*
+   * Móvil: no esperar window.load (GIFs/videos/Spline restantes).
+   * Cerrar con DOM interactivo + fuentes + tiempo mínimo.
+   */
+  function markReadySoon() {
+    const finalize = () => {
+      loadDone = true;
+    };
+
+    if (isMobileViewport()) {
+      const waitFonts = document.fonts?.ready ?? Promise.resolve();
+      waitFonts.finally(() => {
+        window.setTimeout(finalize, Math.max(0, minDurationMs - (performance.now() - startTime)));
+      });
+      /* Fallback si fuentes se demoran en red mala */
+      window.setTimeout(finalize, minDurationMs + 1800);
+      return;
+    }
+
+    if (document.readyState === "complete") {
+      finalize();
+    } else {
+      window.addEventListener("load", finalize, { once: true });
+    }
   }
+
+  markReadySoon();
 
   setCounter(0);
   requestAnimationFrame(tick);
