@@ -1689,14 +1689,10 @@ html.theme-invert .footer__emoji {
   z-index: 0;
   width: calc(var(--nav-brand-mark) * 2.25);
   height: calc(var(--nav-brand-mark) * 2.25);
-  /*
-   * Márgenes proporcionales al mark (no em de 16px).
-   * Equivale al look desktop cuando mark≈100px: -2.35em/-2.1em ≈ -0.38/-0.34 mark.
-   * Así en móvil el cerebro queda como la 'o' entre C y d.
-   */
-  margin-left: calc(var(--nav-brand-mark) * -0.38);
-  margin-right: calc(var(--nav-brand-mark) * -0.34);
-  transform: translateY(calc(var(--nav-brand-mark) * 0.11));
+  /* Desktop original: em fijos (no escalar con mark) */
+  margin-left: -2.35em;
+  margin-right: -2.1em;
+  transform: translateY(0.14em);
   pointer-events: none;
 }
 
@@ -1720,13 +1716,11 @@ html.theme-invert .footer__emoji {
 }
 
 .nav__brand-panel--end .nav__brand-group:not(.nav__brand-group--ia) > .hero__brand-letter.hero__brand-accent {
-  /* C entra en la 'o'/cerebro — en unidades del mark (estable en móvil) */
-  margin-right: calc(var(--nav-brand-mark) * -0.62);
+  margin-right: -0.8em;
 }
 
 .nav__brand-panel--end .nav__brand-group:not(.nav__brand-group--ia) > .hero__brand-letter--lead {
-  /* d entra desde la derecha del cerebro */
-  margin-left: calc(var(--nav-brand-mark) * -0.585);
+  margin-left: -0.75em;
 }
 
 .nav__brand-panel--end .nav__brand-copy {
