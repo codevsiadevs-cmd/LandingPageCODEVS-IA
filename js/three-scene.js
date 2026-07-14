@@ -567,8 +567,8 @@ const NAV_LOGO_BRAIN_ZOOM_MOBILE = 0.08;
 const FOOTER_LOGO_BRAIN_ZOOM_DESKTOP = NAV_LOGO_BRAIN_ZOOM_DESKTOP;
 const FOOTER_LOGO_BRAIN_ZOOM_MOBILE = NAV_LOGO_BRAIN_ZOOM_MOBILE;
 const END_LOGO_BRAIN_ZOOM_DESKTOP = 0.55;
-/** Móvil: mismo layout horizontal que web → mismo zoom del cerebro. */
-const END_LOGO_BRAIN_ZOOM_MOBILE = 0.55;
+/** Móvil: zoom acorde a caja ~1.22×mark (como navbar, legible como 'o'). */
+const END_LOGO_BRAIN_ZOOM_MOBILE = 0.26;
 
 /** @type {{ wrap: HTMLElement, canvas: HTMLCanvasElement, app: *, ready: boolean, kind: "nav" | "footer" | "end" }[]} */
 const logoSplineTargets = [];
@@ -743,7 +743,7 @@ if (hasFooterBrain) scheduleLogoSplineBrain(footerWrap, "footer");
 if (hasEndLogoBrain) scheduleLogoSplineBrain(endLogoWrap, "end");
 /* El panel espejo queda oculto en CSS (móvil y web); no montar segundo Spline. */
 
-/** Escala el logo final horizontal para llenar el ancho (web y móvil). */
+/** Escala el logo final al ancho (mismas proporciones web/móvil). */
 function fitEndLogoToWidth() {
   const panels = [...document.querySelectorAll(".nav__brand-panel--end-natural")];
   if (!panels.length) return;
@@ -755,26 +755,26 @@ function fitEndLogoToWidth() {
   const styles = getComputedStyle(section);
   const padX =
     (parseFloat(styles.paddingLeft) || 0) + (parseFloat(styles.paddingRight) || 0);
-  /* Móvil: un poco menos de ancho para que respire y no toque bordes */
-  const fill = isMobile ? 0.88 : 0.97;
+  const fill = isMobile ? 0.9 : 0.97;
   const available = Math.max(section.clientWidth - padX, 1) * fill;
 
-  const probePanel = panels[0];
-  const savedMax = probePanel.style.maxWidth;
-
-  probePanel.style.maxWidth = "none";
+  const panel = panels[0];
+  const savedMax = panel.style.maxWidth;
+  panel.style.maxWidth = "none";
+  panel.style.removeProperty("transform");
 
   const probe = 100;
-  probePanel.style.setProperty("--nav-brand-mark", `${probe}px`);
-  void probePanel.offsetWidth;
-  const natural = Math.max(probePanel.scrollWidth, probePanel.offsetWidth, 1);
-  const mark = Math.max((available / natural) * probe, 28);
+  panel.style.setProperty("--nav-brand-mark", `${probe}px`);
+  void panel.offsetWidth;
+  const natural = Math.max(panel.scrollWidth, panel.offsetWidth, 1);
+  const mark = Math.max((available / natural) * probe, 24);
+  panel.style.setProperty("--nav-brand-mark", `${mark}px`);
 
-  panels.forEach((panel) => {
-    panel.style.setProperty("--nav-brand-mark", `${mark}px`);
+  panel.style.maxWidth = savedMax;
+
+  logoSplineTargets.forEach((target) => {
+    if (target.kind === "end") resizeLogoSpline(target);
   });
-
-  probePanel.style.maxWidth = savedMax;
 
   window.dispatchEvent(new CustomEvent("end-logo-fitted"));
 }

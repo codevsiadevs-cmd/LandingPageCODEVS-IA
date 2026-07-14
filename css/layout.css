@@ -1662,6 +1662,7 @@ html.theme-invert .footer__emoji {
   user-select: none;
   width: max-content;
   max-width: none;
+  white-space: nowrap;
   /* Igual que .hero__brand: solo las letras capturan el efecto neuronal */
   pointer-events: none;
 }
@@ -1688,9 +1689,14 @@ html.theme-invert .footer__emoji {
   z-index: 0;
   width: calc(var(--nav-brand-mark) * 2.25);
   height: calc(var(--nav-brand-mark) * 2.25);
-  margin-left: -2.35em;
-  margin-right: -2.1em;
-  transform: translateY(0.14em);
+  /*
+   * Márgenes proporcionales al mark (no em de 16px).
+   * Equivale al look desktop cuando mark≈100px: -2.35em/-2.1em ≈ -0.38/-0.34 mark.
+   * Así en móvil el cerebro queda como la 'o' entre C y d.
+   */
+  margin-left: calc(var(--nav-brand-mark) * -0.38);
+  margin-right: calc(var(--nav-brand-mark) * -0.34);
+  transform: translateY(calc(var(--nav-brand-mark) * 0.11));
   pointer-events: none;
 }
 
@@ -1714,11 +1720,13 @@ html.theme-invert .footer__emoji {
 }
 
 .nav__brand-panel--end .nav__brand-group:not(.nav__brand-group--ia) > .hero__brand-letter.hero__brand-accent {
-  margin-right: -0.8em;
+  /* C entra en la 'o'/cerebro — en unidades del mark (estable en móvil) */
+  margin-right: calc(var(--nav-brand-mark) * -0.62);
 }
 
 .nav__brand-panel--end .nav__brand-group:not(.nav__brand-group--ia) > .hero__brand-letter--lead {
-  margin-left: -0.75em;
+  /* d entra desde la derecha del cerebro */
+  margin-left: calc(var(--nav-brand-mark) * -0.585);
 }
 
 .nav__brand-panel--end .nav__brand-copy {
@@ -1744,39 +1752,38 @@ html.theme-invert .footer__emoji {
 
 @media (max-width: 768px) {
   .end-logo {
-    /* Antes 100svh dejaba un vacío enorme alrededor del logo único */
-    min-height: 0;
-    height: auto;
+    min-height: 100svh;
+    min-height: 100dvh;
     display: flex;
     align-items: center;
     justify-content: center;
     padding:
-      clamp(2.5rem, 6vh, 3.75rem)
-      clamp(1rem, 4.5vw, 1.5rem)
-      clamp(3.25rem, 8vh, 5rem);
-    overflow: visible;
+      max(1.25rem, env(safe-area-inset-top, 0px))
+      clamp(0.85rem, 4vw, 1.25rem)
+      max(1.75rem, env(safe-area-inset-bottom, 0px));
+    overflow-x: clip;
+    overflow-y: visible;
   }
 
   .end-logo__pair {
     display: flex;
     justify-content: center;
+    align-items: center;
     width: 100%;
     max-width: 100%;
     overflow: visible;
   }
 
-  /* Igual que web: un solo CodevsIA horizontal (sin el espejo duplicado) */
   .nav__brand-panel.nav__brand-panel--end-mirror {
     display: none !important;
   }
 
   .nav__brand-panel.nav__brand-panel--end-natural {
-    transform: none;
     margin: 0;
   }
 
   .nav__brand-panel.nav__brand-panel--end {
-    --nav-brand-mark: clamp(2rem, 10vw, 3.25rem);
+    --nav-brand-mark: clamp(2.5rem, 10vw, 4rem);
     position: relative;
     left: auto;
     top: auto;
@@ -1784,15 +1791,34 @@ html.theme-invert .footer__emoji {
     height: auto !important;
     min-height: 0 !important;
     padding: 0 !important;
-    max-width: 100%;
-    transform-origin: center center;
+    max-width: none;
     pointer-events: none;
   }
 
   .nav__brand-panel--end .hero__brand-letter {
-    /* Misma área táctil holgada que el título hero en móvil */
-    padding: 0.06em 0.04em;
+    padding: 0;
     pointer-events: auto;
+  }
+
+  /*
+   * Móvil: C | cerebro(o) | d sin solape.
+   * Espacio positivo entre letras y cerebro (no márgenes negativos de desktop).
+   */
+  .nav__brand-panel--end .nav__brand-o.logo-brain {
+    width: calc(var(--nav-brand-mark) * 1.08);
+    height: calc(var(--nav-brand-mark) * 1.08);
+    margin-left: calc(var(--nav-brand-mark) * 0.12);
+    margin-right: calc(var(--nav-brand-mark) * 0.12);
+    transform: translateY(calc(var(--nav-brand-mark) * 0.04));
+    overflow: hidden;
+  }
+
+  .nav__brand-panel--end .nav__brand-group:not(.nav__brand-group--ia) > .hero__brand-letter.hero__brand-accent {
+    margin-right: 0 !important;
+  }
+
+  .nav__brand-panel--end .nav__brand-group:not(.nav__brand-group--ia) > .hero__brand-letter--lead {
+    margin-left: 0 !important;
   }
 }
 
@@ -1803,7 +1829,6 @@ html.theme-invert .footer__emoji {
   }
 
   .nav__brand-panel.nav__brand-panel--end-natural {
-    transform: none;
     margin: 0;
   }
 
