@@ -1744,17 +1744,23 @@ html.theme-invert .footer__emoji {
 
 @media (max-width: 768px) {
   .end-logo {
+    /* Antes 100svh dejaba un vacío enorme alrededor del logo único */
+    min-height: 0;
+    height: auto;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: clamp(1rem, 4vh, 2rem) clamp(0.75rem, 3vw, 1.25rem);
+    padding:
+      clamp(2.5rem, 6vh, 3.75rem)
+      clamp(1rem, 4.5vw, 1.5rem)
+      clamp(3.25rem, 8vh, 5rem);
     overflow: visible;
   }
 
   .end-logo__pair {
     display: flex;
     justify-content: center;
-    width: auto;
+    width: 100%;
     max-width: 100%;
     overflow: visible;
   }
@@ -1770,7 +1776,7 @@ html.theme-invert .footer__emoji {
   }
 
   .nav__brand-panel.nav__brand-panel--end {
-    --nav-brand-mark: clamp(2.25rem, 12vw, 3.5rem);
+    --nav-brand-mark: clamp(2rem, 10vw, 3.25rem);
     position: relative;
     left: auto;
     top: auto;
@@ -1778,7 +1784,7 @@ html.theme-invert .footer__emoji {
     height: auto !important;
     min-height: 0 !important;
     padding: 0 !important;
-    max-width: none;
+    max-width: 100%;
     transform-origin: center center;
     pointer-events: none;
   }

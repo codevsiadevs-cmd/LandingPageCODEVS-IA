@@ -567,8 +567,8 @@ const NAV_LOGO_BRAIN_ZOOM_MOBILE = 0.08;
 const FOOTER_LOGO_BRAIN_ZOOM_DESKTOP = NAV_LOGO_BRAIN_ZOOM_DESKTOP;
 const FOOTER_LOGO_BRAIN_ZOOM_MOBILE = NAV_LOGO_BRAIN_ZOOM_MOBILE;
 const END_LOGO_BRAIN_ZOOM_DESKTOP = 0.55;
-/** Móvil: sube con el logo agrandado para que el cerebro no se vea chico. */
-const END_LOGO_BRAIN_ZOOM_MOBILE = 0.24;
+/** Móvil: mismo layout horizontal que web → mismo zoom del cerebro. */
+const END_LOGO_BRAIN_ZOOM_MOBILE = 0.55;
 
 /** @type {{ wrap: HTMLElement, canvas: HTMLCanvasElement, app: *, ready: boolean, kind: "nav" | "footer" | "end" }[]} */
 const logoSplineTargets = [];
@@ -751,10 +751,13 @@ function fitEndLogoToWidth() {
   const section = panels[0].closest(".end-logo");
   if (!section) return;
 
+  const isMobile = window.matchMedia("(max-width: 768px)").matches;
   const styles = getComputedStyle(section);
   const padX =
     (parseFloat(styles.paddingLeft) || 0) + (parseFloat(styles.paddingRight) || 0);
-  const available = Math.max(section.clientWidth - padX, 1) * 0.97;
+  /* Móvil: un poco menos de ancho para que respire y no toque bordes */
+  const fill = isMobile ? 0.88 : 0.97;
+  const available = Math.max(section.clientWidth - padX, 1) * fill;
 
   const probePanel = panels[0];
   const savedMax = probePanel.style.maxWidth;
