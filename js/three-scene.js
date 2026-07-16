@@ -779,6 +779,31 @@ function fitEndLogoToWidth() {
   window.dispatchEvent(new CustomEvent("end-logo-fitted"));
 }
 
+/** Ajusta el brand del hero para que nunca se recorte al entrar a la página. */
+function fitHeroBrandToViewport() {
+  const brand = document.getElementById("hero-heading");
+  if (!brand) return;
+
+  const isMobile = window.matchMedia("(max-width: 768px)").matches;
+  brand.style.removeProperty("font-size");
+  brand.style.removeProperty("transform");
+  void brand.offsetWidth;
+
+  const styles = getComputedStyle(brand);
+  const padLeft = parseFloat(styles.left) || 0;
+  const available = Math.max(window.innerWidth - padLeft * 2 - 8, 1);
+  const natural = Math.max(brand.scrollWidth, brand.offsetWidth, 1);
+  const baseSize = parseFloat(styles.fontSize) || 64;
+
+  if (natural > available) {
+    brand.style.fontSize = `${(baseSize * available) / natural}px`;
+  }
+
+  if (!isMobile) {
+    brand.style.transform = "translateY(-50%)";
+  }
+}
+
 /** Spline cachea getBoundingClientRect(); refrescarlo si el wrap se mueve o rota. */
 function syncSplineDomRect(target) {
   if (!target?.ready || !target.canvas) return;
@@ -807,6 +832,7 @@ function resizeHeroSpline() {
 }
 
 function resizeBrains() {
+  fitHeroBrandToViewport();
   fitEndLogoToWidth();
   updateNavRendererSize();
   updateFooterRendererSize();
@@ -835,6 +861,7 @@ if (hasBrainScene) {
 window.addEventListener(
   "load",
   () => {
+    fitHeroBrandToViewport();
     fitEndLogoToWidth();
     if (hasHeroBrain) {
       lockedHeroBrainPx = null;
@@ -850,6 +877,7 @@ window.addEventListener(
 
 if (document.fonts?.ready) {
   document.fonts.ready.then(() => {
+    fitHeroBrandToViewport();
     fitEndLogoToWidth();
     resizeAllLogoSplines();
   });
