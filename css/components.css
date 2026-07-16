@@ -1131,13 +1131,14 @@ textarea.contact__control:not(:placeholder-shown) ~ .contact__label {
 }
 
 /* ——— Toggle contraste (negro ↔ blanco) ——— */
+/* Oculto por el momento: la funcionalidad queda en el markup/JS para reactivar. */
 .theme-toggle {
   position: fixed;
   right: clamp(1rem, 3.5vw, 1.85rem);
   left: auto;
   bottom: calc(max(1.15rem, env(safe-area-inset-bottom, 0px)) + 3.4rem + 0.8rem);
   z-index: 161;
-  display: flex;
+  display: none !important;
   align-items: center;
   justify-content: center;
   width: 2.85rem;

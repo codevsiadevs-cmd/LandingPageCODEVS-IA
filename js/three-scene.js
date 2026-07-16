@@ -743,7 +743,7 @@ if (hasFooterBrain) scheduleLogoSplineBrain(footerWrap, "footer");
 if (hasEndLogoBrain) scheduleLogoSplineBrain(endLogoWrap, "end");
 /* El panel espejo queda oculto en CSS (móvil y web); no montar segundo Spline. */
 
-/** Escala el logo final al ancho (mismas proporciones web/móvil). */
+/** Escala el logo final al viewport (ancho y alto) para que nunca se recorte. */
 function fitEndLogoToWidth() {
   const panels = [...document.querySelectorAll(".nav__brand-panel--end-natural")];
   if (!panels.length) return;
@@ -755,8 +755,15 @@ function fitEndLogoToWidth() {
   const styles = getComputedStyle(section);
   const padX =
     (parseFloat(styles.paddingLeft) || 0) + (parseFloat(styles.paddingRight) || 0);
-  const fill = isMobile ? 0.9 : 0.97;
-  const available = Math.max(section.clientWidth - padX, 1) * fill;
+  const padY =
+    (parseFloat(styles.paddingTop) || 0) + (parseFloat(styles.paddingBottom) || 0);
+  /* Ancho casi full; alto con margen (nav + glifos fuera del line-box). */
+  const fillW = isMobile ? 0.9 : 0.97;
+  const fillH = isMobile ? 0.78 : 0.72;
+  const availableW = Math.max(section.clientWidth - padX, 1) * fillW;
+  const availableH =
+    Math.max(Math.min(section.clientHeight || window.innerHeight, window.innerHeight) - padY, 1) *
+    fillH;
 
   const panel = panels[0];
   const savedMax = panel.style.maxWidth;
@@ -766,8 +773,12 @@ function fitEndLogoToWidth() {
   const probe = 100;
   panel.style.setProperty("--nav-brand-mark", `${probe}px`);
   void panel.offsetWidth;
-  const natural = Math.max(panel.scrollWidth, panel.offsetWidth, 1);
-  const mark = Math.max((available / natural) * probe, 24);
+  const naturalW = Math.max(panel.scrollWidth, panel.offsetWidth, 1);
+  const naturalH = Math.max(panel.scrollHeight, panel.getBoundingClientRect().height, 1);
+  const mark = Math.max(
+    Math.min((availableW / naturalW) * probe, (availableH / naturalH) * probe),
+    24
+  );
   panel.style.setProperty("--nav-brand-mark", `${mark}px`);
 
   panel.style.maxWidth = savedMax;
@@ -777,6 +788,15 @@ function fitEndLogoToWidth() {
   });
 
   window.dispatchEvent(new CustomEvent("end-logo-fitted"));
+}
+
+/** Refit en el siguiente frame (tras wrap de letras / fuentes / spline). */
+function scheduleEndLogoFit() {
+  fitEndLogoToWidth();
+  requestAnimationFrame(() => {
+    fitEndLogoToWidth();
+    requestAnimationFrame(() => fitEndLogoToWidth());
+  });
 }
 
 /** Spline cachea getBoundingClientRect(); refrescarlo si el wrap se mueve o rota. */
@@ -835,7 +855,7 @@ if (hasBrainScene) {
 window.addEventListener(
   "load",
   () => {
-    fitEndLogoToWidth();
+    scheduleEndLogoFit();
     if (hasHeroBrain) {
       lockedHeroBrainPx = null;
       lockedHeroBrainZoom = null;
@@ -850,9 +870,37 @@ window.addEventListener(
 
 if (document.fonts?.ready) {
   document.fonts.ready.then(() => {
-    fitEndLogoToWidth();
+    scheduleEndLogoFit();
     resizeAllLogoSplines();
   });
+}
+
+/* Tras wrap neuronal del logo final (primer load suele llegar después del fit inicial). */
+window.addEventListener("end-logo-needs-fit", () => {
+  scheduleEndLogoFit();
+});
+
+/* Al llegar al cierre: re-medir por si el primer fit corrió antes de fuentes/letras. */
+{
+  const endSection = document.querySelector(".end-logo");
+  if (endSection && typeof IntersectionObserver !== "undefined") {
+    let fittedOnView = false;
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          scheduleEndLogoFit();
+          if (!fittedOnView) {
+            fittedOnView = true;
+            /* Segunda pasada cuando el layout ya estabilizó en viewport */
+            window.setTimeout(() => scheduleEndLogoFit(), 120);
+          }
+        }
+      },
+      { threshold: 0.05 }
+    );
+    io.observe(endSection);
+  }
 }
 
 initNeuralBackground();

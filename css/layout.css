@@ -1636,7 +1636,11 @@ html.theme-invert .footer__emoji {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: clamp(1rem, 3vw, 2rem) clamp(1.25rem, 4vw, 2.5rem);
+  /* Padding vertical amplio: evita que glifos/cerebro se recorten al pie del viewport */
+  padding:
+    clamp(2.5rem, 7vh, 4.5rem)
+    clamp(1.25rem, 4vw, 2.5rem)
+    clamp(3rem, 8vh, 5.5rem);
   background: #000000;
   overflow: visible;
   /* Necesario para el proxy táctil del efecto neuronal (móvil) */
@@ -1650,15 +1654,18 @@ html.theme-invert .footer__emoji {
   justify-content: center;
   gap: 0;
   width: 100%;
+  max-width: 100%;
+  overflow: visible;
 }
 
 .nav__brand-panel.nav__brand-panel--end {
   --nav-brand-mark: clamp(3.5rem, 12vw, 8rem);
   display: inline-flex;
-  height: auto;
-  min-height: 0;
+  align-items: center;
+  height: auto !important;
+  min-height: 0 !important;
   padding: 0;
-  overflow: visible;
+  overflow: visible !important;
   user-select: none;
   width: max-content;
   max-width: none;
@@ -1703,8 +1710,10 @@ html.theme-invert .footer__emoji {
   font-family: var(--font-logo);
   font-size: calc(var(--nav-brand-mark) * 0.78);
   font-weight: 800;
-  line-height: 0.87;
+  /* 1 evita que el glifo se pinte fuera del box y lo recorte main/overflow */
+  line-height: 1;
   color: #ffffff;
+  overflow: visible;
   pointer-events: auto;
   cursor: default;
   touch-action: manipulation;

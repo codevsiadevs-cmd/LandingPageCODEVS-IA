@@ -216,6 +216,8 @@ function initHeroBrandNeural() {
         bindEndLogoTouchProxy();
       });
     }
+    /* El fit del end-logo debe correr DESPUÉS del wrap de letras (primer load). */
+    window.dispatchEvent(new CustomEvent("end-logo-needs-fit"));
   };
 
   if (document.fonts?.ready) {
