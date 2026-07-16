@@ -348,9 +348,6 @@
     bottom: calc(var(--hero-brand-bottom) + env(safe-area-inset-bottom, 0px));
     z-index: 8;
     pointer-events: none;
-    transform: none;
-    transform-origin: left bottom;
-    max-width: calc(100vw - (2 * var(--hero-brand-left)) - 0.35rem);
   }
 
   .hero__brand-line--ia {

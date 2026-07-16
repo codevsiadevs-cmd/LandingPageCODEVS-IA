@@ -466,9 +466,9 @@
   overflow-y: visible;
   text-align: center;
   pointer-events: none;
-  --hero-brand-left: clamp(0.35rem, 1.2vw, 1rem);
-  --hero-title-size: clamp(3.2rem, 10.5vw, 6.75rem);
-  --hero-brand-top: 50%;
+  --hero-brand-left: clamp(0.2rem, 0.85vw, 0.65rem);
+  --hero-title-size: clamp(3.6rem, 12.5vw, 8rem);
+  --hero-brand-top: calc(50% - clamp(0.35rem, 1.1vh, 0.75rem) + 0.7cm);
 }
 
 .hero__bg-dots {
@@ -656,9 +656,7 @@ main > section:not(.hero) {
   top: var(--hero-brand-top);
   bottom: auto;
   left: var(--hero-brand-left);
-  right: auto;
   margin: 0;
-  max-width: calc(100vw - (2 * var(--hero-brand-left)) - 0.5rem);
   /* Solo las letras capturan eventos; el resto deja pasar el toque al cerebro */
   pointer-events: none;
   font-family: var(--font-logo);
@@ -669,8 +667,6 @@ main > section:not(.hero) {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   user-select: none;
-  transform: translateY(-50%);
-  transform-origin: left center;
 }
 
 .hero__brand-line {
