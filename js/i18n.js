@@ -21,7 +21,8 @@ const LANG_META = Object.fromEntries(LANGUAGES.map((lang) => [lang.code, lang]))
 const translations = {
   es: {
     "meta.title": "Codevs IA",
-    "meta.description": "",
+    "meta.description":
+      "Codevs IA diseña e implementa soluciones de inteligencia artificial, automatizaciones, agentes y experiencias digitales centradas en las personas.",
     "preloader.loading": "Cargando sitio",
     "nav.brand": "CODEVS IA — Inicio",
     "nav.main": "Principal",
@@ -148,7 +149,8 @@ const translations = {
   },
   en: {
     "meta.title": "Codevs IA",
-    "meta.description": "",
+    "meta.description":
+      "Codevs IA designs and ships artificial intelligence solutions, automations, agents, and people-centered digital experiences.",
     "preloader.loading": "Loading site",
     "nav.brand": "CODEVS IA — Home",
     "nav.main": "Main",

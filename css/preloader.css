@@ -96,3 +96,26 @@ body.is-preloading {
     overflow: auto;
   }
 }
+
+/* Sin JS: no bloquear la página detrás del preloader */
+html.no-js .preloader {
+  display: none !important;
+}
+
+html.no-js body.is-preloading,
+html.no-js body {
+  overflow: auto;
+}
+
+html.no-js .hero-intro__text,
+html.no-js .metrics__item,
+html.no-js .proceso__phase {
+  opacity: 1 !important;
+  transform: none !important;
+  visibility: visible !important;
+}
+
+.brain-failed {
+  visibility: hidden !important;
+  pointer-events: none !important;
+}

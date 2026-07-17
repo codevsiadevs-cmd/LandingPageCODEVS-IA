@@ -4,6 +4,21 @@
 # Dependencias
 node_modules/
 
+# Env / deploy
+.env
+.env.*
+.vercel/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Temporales Spline / migraciones
+.tmp-spline-page.html
+*.tmp.html
+
 # OS / editor
 .DS_Store
 Thumbs.db

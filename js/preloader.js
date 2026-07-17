@@ -1,6 +1,8 @@
 const DESKTOP_MIN_DURATION_MS = 2200;
 const MOBILE_MIN_DURATION_MS = 1300;
 const EXIT_MS = 900;
+/** Cierra el preloader aunque window.load no llegue (CDN lento / scripts rotos). */
+const MAX_WAIT_MS = 8000;
 
 function isMobileViewport() {
   return window.matchMedia("(max-width: 768px)").matches;
@@ -147,6 +149,9 @@ function initPreloader() {
   }
 
   markReadySoon();
+  window.setTimeout(() => {
+    loadDone = true;
+  }, MAX_WAIT_MS);
 
   setCounter(0);
   requestAnimationFrame(tick);

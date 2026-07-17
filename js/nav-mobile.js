@@ -26,6 +26,14 @@ function placeMobilePanel(nav, panel) {
   }
 }
 
+function getFocusable(panel) {
+  return [
+    ...panel.querySelectorAll(
+      'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    ),
+  ].filter((el) => !el.hasAttribute("disabled") && el.getAttribute("aria-hidden") !== "true");
+}
+
 function setMenuOpen(nav, toggle, panel, open) {
   nav.classList.toggle("nav--open", open);
   panel.classList.toggle("nav__links--open", open);
@@ -33,6 +41,13 @@ function setMenuOpen(nav, toggle, panel, open) {
   toggle.setAttribute("aria-label", open ? t("nav.closeMenu") : t("nav.openMenu"));
   panel.setAttribute("aria-hidden", String(!open));
   document.body.classList.toggle("nav-menu-open", open);
+
+  if (open) {
+    const focusable = getFocusable(panel);
+    (focusable[0] || panel).focus?.();
+  } else {
+    toggle.focus?.();
+  }
 }
 
 function closeMenu(nav, toggle, panel) {
@@ -63,7 +78,27 @@ function initNavMobile() {
   });
 
   document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape") closeMenu(nav, toggle, panel);
+    if (event.key === "Escape") {
+      closeMenu(nav, toggle, panel);
+      return;
+    }
+
+    if (event.key !== "Tab" || !nav.classList.contains("nav--open")) return;
+
+    const focusable = getFocusable(panel);
+    if (focusable.length === 0) return;
+
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    const active = document.activeElement;
+
+    if (event.shiftKey && (active === first || active === panel)) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && active === last) {
+      event.preventDefault();
+      first.focus();
+    }
   });
 
   document.addEventListener("codevs:langchange", () => {

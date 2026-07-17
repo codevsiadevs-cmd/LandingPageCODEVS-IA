@@ -39,18 +39,18 @@
 }
 
 @media (pointer: fine) {
-  body,
-  a,
-  button,
-  input,
-  select,
-  textarea,
-  label,
-  .projects__row,
-  .nav__lang-toggle,
-  .nav__lang-option,
-  .hero__canvas-wrap canvas,
-  .hero__brain-canvas {
+  html.has-custom-cursor body,
+  html.has-custom-cursor a,
+  html.has-custom-cursor button,
+  html.has-custom-cursor input,
+  html.has-custom-cursor select,
+  html.has-custom-cursor textarea,
+  html.has-custom-cursor label,
+  html.has-custom-cursor .projects__row,
+  html.has-custom-cursor .nav__lang-toggle,
+  html.has-custom-cursor .nav__lang-option,
+  html.has-custom-cursor .hero__canvas-wrap canvas,
+  html.has-custom-cursor .hero__brain-canvas {
     cursor: none;
   }
 }
@@ -449,21 +449,6 @@
     justify-self: end;
     align-self: center;
   }
-  .hero__scroll {
-    right: clamp(1rem, 4vw, 1.5rem);
-    bottom: clamp(1rem, 3vh, 1.75rem);
-  }
-  .hero__content {
-    margin-top: clamp(1rem, 3vh, 2rem);
-  }
-  .hero__ctas {
-    width: 100%;
-    flex-direction: column;
-    align-items: center;
-  }
-  .hero__ctas .btn {
-    width: min(100%, 21rem);
-  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -552,10 +537,7 @@
   }
 
   .hero__bg-dots,
-  .hero__scroll-line,
-  .hero__scroll-icon,
-  .tech-row__track,
-  .why__quote-shell::before {
+  .tech-row__track {
     animation: none !important;
   }
 
@@ -644,21 +626,6 @@
     min-height: 100svh;
   }
 
-  .why__meta {
-    top: calc(var(--nav-height) + 1rem);
-    left: clamp(1rem, 4vw, 1.5rem);
-    right: clamp(1rem, 4vw, 1.5rem);
-  }
-
-  .why__badge {
-    font-size: 0.625rem;
-    letter-spacing: 0.18em;
-  }
-
-  .why__counter {
-    font-size: 0.75rem;
-  }
-
   .why__panel {
     width: calc(100vw - 2.5rem);
     max-width: 100%;
@@ -688,45 +655,9 @@
     padding-inline: 1.15rem;
   }
 
-  .why__meta {
-    left: 1.15rem;
-    right: 1.15rem;
-  }
-
   .why__panel-title {
     font-size: clamp(1.1rem, 5.2vw, 1.8rem);
     line-height: 1.08;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .why__quote-shell::before {
-    animation: none;
-    opacity: 0.45;
-  }
-}
-
-@media (min-width: 900px) {
-  .testimonials__grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    overflow: visible;
-    scroll-snap-type: none;
-    padding-bottom: 0;
-  }
-}
-
-@media (min-width: 900px) {
-  .testimonial-card {
-    flex: none;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .testimonial-card {
-    opacity: 1;
-    transform: none;
-    transition: border-color 0.3s ease;
   }
 }
 
@@ -800,7 +731,6 @@
 
   .proceso,
   .why,
-  .testimonials,
   .contact {
     padding-left: 1rem;
     padding-right: 1rem;

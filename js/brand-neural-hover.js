@@ -51,6 +51,7 @@ export function initBrandNeuralHover(panel, canvas, options = {}) {
   const target = { x: 0, y: 0 };
   let sceneRevision = 0;
   let animating = false;
+  let wanderActive = false;
   let hoverBlend = 0;
   let rafId = null;
   let lingerTimer = null;
@@ -174,8 +175,22 @@ export function initBrandNeuralHover(panel, canvas, options = {}) {
     }
   }
 
+  function stopWander() {
+    wanderActive = false;
+    sceneRevision += 1;
+  }
+
+  function startWander() {
+    if (wander <= 0 || prefersReducedMotionGlobal) return;
+    wanderActive = true;
+    const rev = sceneRevision;
+    for (let i = 0; i < points.length; i += 1) {
+      animatePoint(points[i], rev);
+    }
+  }
+
   function animatePoint(point, rev) {
-    if (wander <= 0) return;
+    if (wander <= 0 || !wanderActive) return;
 
     const fromX = point.x;
     const fromY = point.y;
@@ -185,7 +200,7 @@ export function initBrandNeuralHover(panel, canvas, options = {}) {
     const start = performance.now();
 
     function step(now) {
-      if (rev !== sceneRevision) return;
+      if (rev !== sceneRevision || !wanderActive) return;
       const elapsed = now - start;
       const t = Math.min(1, elapsed / duration);
       const e = easeInOutCubic(t);
@@ -193,7 +208,7 @@ export function initBrandNeuralHover(panel, canvas, options = {}) {
       point.y = fromY + (toY - fromY) * e;
       if (t < 1) {
         requestAnimationFrame(step);
-      } else {
+      } else if (wanderActive && rev === sceneRevision) {
         animatePoint(point, rev);
       }
     }
@@ -214,13 +229,12 @@ export function initBrandNeuralHover(panel, canvas, options = {}) {
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
 
-  function rebuildScene() {
-    sceneRevision += 1;
+  function rebuildScene({ withWander = false } = {}) {
+    stopWander();
     resize();
     buildPoints();
-    const rev = sceneRevision;
-    for (let i = 0; i < points.length; i += 1) {
-      animatePoint(points[i], rev);
+    if (withWander || ambient || animating) {
+      startWander();
     }
   }
 
@@ -443,12 +457,13 @@ export function initBrandNeuralHover(panel, canvas, options = {}) {
   function deactivateNow() {
     /* Solo apaga el blend; la clase se quita al terminar el fade (evita corte brusco). */
     animating = false;
+    if (!ambient) stopWander();
     startLoop();
   }
 
   function activateFromEvent(event) {
     clearLinger();
-    rebuildScene();
+    rebuildScene({ withWander: true });
     setTargetFromEvent(event);
     animating = true;
     panel.classList.add(hoverClass);
@@ -508,16 +523,20 @@ export function initBrandNeuralHover(panel, canvas, options = {}) {
     panel.addEventListener("pointercancel", endTouch, { passive: true });
   }
 
-  window.addEventListener("resize", rebuildScene);
+  function onLayoutChange() {
+    rebuildScene({ withWander: ambient || animating });
+  }
+
+  window.addEventListener("resize", onLayoutChange);
 
   if (typeof ResizeObserver !== "undefined") {
-    new ResizeObserver(rebuildScene).observe(panel);
+    new ResizeObserver(onLayoutChange).observe(panel);
   }
 
   resize();
 
   if (ambient) {
-    rebuildScene();
+    rebuildScene({ withWander: true });
     target.x = Math.max(width * 0.5, 1);
     target.y = Math.max(height * 0.48, 1);
     animating = true;
@@ -528,10 +547,10 @@ export function initBrandNeuralHover(panel, canvas, options = {}) {
 
   /* API para re-sincronizar tras fitEndLogo / resize del logo final */
   panel.__brandNeural = {
-    rebuild: rebuildScene,
+    rebuild: () => rebuildScene({ withWander: ambient || animating }),
     activateAt(clientX, clientY) {
       clearLinger();
-      rebuildScene();
+      rebuildScene({ withWander: true });
       const local = clientToLocal(clientX, clientY);
       target.x = local.x;
       target.y = local.y;

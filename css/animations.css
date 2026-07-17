@@ -33,30 +33,6 @@
   }
 }
 
-@keyframes scrollPulse {
-  0%,
-  100% {
-    opacity: 0.35;
-    transform: scaleY(0.6);
-  }
-  50% {
-    opacity: 1;
-    transform: scaleY(1);
-  }
-}
-
-@keyframes scrollBounce {
-  0%,
-  100% {
-    transform: translateY(0);
-    opacity: 0.5;
-  }
-  50% {
-    transform: translateY(6px);
-    opacity: 1;
-  }
-}
-
 @keyframes techMarqueeScroll {
   0% {
     transform: translateX(0);
@@ -75,19 +51,4 @@
     opacity: 1;
     transform: translateY(0);
   }
-}
-
-@keyframes whyBorderGlow {
-  to {
-    transform: translate(-50%, -50%) rotate(360deg);
-  }
-}
-
-@keyframes whyAurora {
-  0% { transform: translate3d(0, 0, 0) scale(1); }
-  100% { transform: translate3d(2%, -3%, 0) scale(1.06); }
-}
-
-@keyframes whyCardShine {
-  to { transform: rotate(360deg); }
 }

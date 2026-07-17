@@ -134,9 +134,10 @@ def main() -> None:
     print("  CODEVS IA — servidor local")
     print("  NO uses: python -m http.server  (rompe .js en Windows)")
     print("=" * 56)
-    with ThreadedServer(("", PORT), DevHandler) as httpd:
+    with ThreadedServer(("127.0.0.1", PORT), DevHandler) as httpd:
         print(f"  Carpeta: {ROOT}")
-        print(f"  URL:     http://localhost:{PORT}")
+        print(f"  URL:     http://127.0.0.1:{PORT}")
+        print("  (solo localhost)")
         print("  Ctrl+C para detener")
         print("=" * 56)
         try:

@@ -1,9 +1,4 @@
-import * as THREE from "three";
-import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
-import { DRACOLoader } from "three/addons/loaders/DRACOLoader.js";
-import { Application } from "https://cdn.jsdelivr.net/npm/@splinetool/runtime@1.12.67/build/runtime.js";
 import { latestScrollY, sceneMotion, prefersReducedMotionGlobal, isMobileBg } from "./scroll.js";
-
 import {
   initParticles,
   updateBackgroundCanvasSize,
@@ -12,7 +7,33 @@ import {
   updateNebula,
   syncBrainRectFromWrap,
 } from "./background.js";
-import { drawNeuralNetwork, initNeuralBackground } from "./neural-background.js";
+import { drawNeuralNetwork, initNeuralBackground, NEURAL_BACKGROUND_ENABLED } from "./neural-background.js";
+
+const SPLINE_RUNTIME_URL =
+  "https://cdn.jsdelivr.net/npm/@splinetool/runtime@1.12.67/build/runtime.js";
+
+/** @type {Function | null} */
+let SplineApplication = null;
+
+async function ensureSplineRuntime() {
+  if (SplineApplication) return SplineApplication;
+  const mod = await import(SPLINE_RUNTIME_URL);
+  SplineApplication = mod.Application;
+  return SplineApplication;
+}
+
+function markBrainFailed(wrap) {
+  if (!wrap) return;
+  wrap.classList.add("brain-failed");
+  wrap.setAttribute("data-brain-failed", "1");
+  wrap.querySelectorAll("canvas").forEach((canvas) => canvas.remove());
+}
+
+/** API pública o privada de Spline según versión del runtime. */
+function getSplineEventManager(app) {
+  if (!app) return null;
+  return app.eventManager ?? app._eventManager ?? null;
+}
 
 const SPLINE_SCENE_URL = "./assets/3d/particle-ai-brain.splinecode";
 /** Zoom Spline = cerebro más grande en pantalla (sin solo desplazar el contenedor). */
@@ -20,6 +41,25 @@ const HERO_BRAIN_ZOOM_DESKTOP = 2.28;
 const HERO_BRAIN_ZOOM_MOBILE = 1.55;
 /** Perfil lateral del logo nav al inicio (lado opuesto). */
 const NAV_BRAIN_BASE_ROT_Y = Math.PI * 0.5;
+
+/** Helpers esféricos (antes Three.Vector3 / Three.Spherical) para orbit Spline. */
+function sphericalFromOffset(ox, oy, oz) {
+  const radius = Math.hypot(ox, oy, oz) || 1;
+  return {
+    radius,
+    theta: Math.atan2(ox, oz),
+    phi: Math.acos(Math.min(1, Math.max(-1, oy / radius))),
+  };
+}
+
+function offsetFromSpherical(spherical) {
+  const sinPhiRadius = Math.sin(spherical.phi) * spherical.radius;
+  return {
+    x: sinPhiRadius * Math.sin(spherical.theta),
+    y: Math.cos(spherical.phi) * spherical.radius,
+    z: sinPhiRadius * Math.cos(spherical.theta),
+  };
+}
 
 const navWrap = document.getElementById("nav-brain-wrap");
 const footerWrap = document.getElementById("footer-brain-wrap");
@@ -31,8 +71,6 @@ const hasFooterBrain = Boolean(footerWrap);
 const hasEndLogoBrain = Boolean(endLogoWrap);
 const hasEndLogoMirrorBrain = Boolean(endLogoMirrorWrap);
 const hasHeroBrain = Boolean(heroWrap);
-/** Logos usan el cerebro Spline del hero; ya no el GLB Three.js. */
-const hasBrandBrain = false;
 const hasLogoSplineBrain =
   hasNavBrain || hasFooterBrain || hasEndLogoBrain || hasEndLogoMirrorBrain;
 const hasBrainScene = hasHeroBrain || hasLogoSplineBrain;
@@ -120,222 +158,6 @@ function syncHeroBrainWithScroll() {
   heroWrap.classList.toggle("hero__canvas-wrap--interactive", interactive);
 }
 
-/* ——— Nav: cerebro GLB original (Three.js) ——— */
-export const scene = new THREE.Scene();
-export const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100);
-camera.position.set(0, 0.05, 2.15);
-
-export const spinGroup = new THREE.Group();
-export const tiltGroup = new THREE.Group();
-scene.add(spinGroup);
-spinGroup.add(tiltGroup);
-
-let navRenderer = null;
-let footerRenderer = null;
-
-function createBrandRenderer(wrap, onContextRestore) {
-  if (!wrap) return null;
-  const targetRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-  targetRenderer.outputColorSpace = THREE.SRGBColorSpace;
-  targetRenderer.toneMapping = THREE.ACESFilmicToneMapping;
-  targetRenderer.toneMappingExposure = 1.22;
-  wrap.appendChild(targetRenderer.domElement);
-
-  targetRenderer.domElement.addEventListener("webglcontextlost", (event) => {
-    event.preventDefault();
-  });
-  targetRenderer.domElement.addEventListener("webglcontextrestored", () => {
-    onContextRestore?.();
-  });
-
-  return targetRenderer;
-}
-
-function updateBrandRendererSize(renderer, wrap) {
-  if (!renderer || !wrap) return;
-  const size = Math.max(Math.round(wrap.clientWidth), 1);
-  camera.aspect = 1;
-  camera.updateProjectionMatrix();
-  renderer.setSize(size, size, false);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobileBg ? 1 : 2));
-}
-
-const hemi = new THREE.HemisphereLight(0xffffff, 0x0a0a0a, 0.82);
-scene.add(hemi);
-const dir = new THREE.DirectionalLight(0xffffff, 0.95);
-dir.position.set(1.5, 2.5, 2);
-scene.add(dir);
-const fill = new THREE.DirectionalLight(0xd0d0d0, 0.34);
-fill.position.set(-2, 0.5, -1);
-scene.add(fill);
-const rim = new THREE.DirectionalLight(0xffffff, 0.2);
-rim.position.set(0, 0, -2);
-scene.add(rim);
-
-export const innerPulseLight = new THREE.PointLight(0xffffff, 0.42, 6, 2);
-innerPulseLight.position.set(0, 0.1, 0.35);
-tiltGroup.add(innerPulseLight);
-
-const whiteColor = new THREE.Color(0xffffff);
-const softGrayColor = new THREE.Color(0xb0b0b0);
-const pulseColor = new THREE.Color();
-
-/** Convierte la textura base del GLB a escala de grises (el color neón viene del map, no de mat.color). */
-function textureToMonochrome(texture) {
-  const image = texture?.image;
-  if (!image?.width || !image?.height) return texture;
-
-  const canvas = document.createElement("canvas");
-  canvas.width = image.width;
-  canvas.height = image.height;
-  const ctx = canvas.getContext("2d", { willReadFrequently: true });
-  ctx.drawImage(image, 0, 0);
-
-  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-  const { data } = imageData;
-  for (let i = 0; i < data.length; i += 4) {
-    const lum = data[i] * 0.2126 + data[i + 1] * 0.7152 + data[i + 2] * 0.0722;
-    const contrast = 1.2;
-    const centered = (lum / 255 - 0.5) * contrast + 0.5;
-    const v = Math.round(Math.min(255, Math.max(0, centered * 255)));
-    data[i] = data[i + 1] = data[i + 2] = v;
-  }
-  ctx.putImageData(imageData, 0, 0);
-
-  const grayTex = new THREE.CanvasTexture(canvas);
-  grayTex.colorSpace = THREE.SRGBColorSpace;
-  grayTex.flipY = Boolean(texture.flipY);
-  grayTex.needsUpdate = true;
-  return grayTex;
-}
-
-function applyNavBrainMonochromeMaterials(root) {
-  root.traverse((child) => {
-    if (!child.isMesh || !child.material) return;
-    const materials = Array.isArray(child.material) ? child.material : [child.material];
-    materials.forEach((mat) => {
-      if (!mat) return;
-      mat.vertexColors = false;
-
-      if (mat.map) {
-        mat.map = textureToMonochrome(mat.map);
-      }
-      if (mat.emissiveMap) {
-        mat.emissiveMap.dispose?.();
-        mat.emissiveMap = null;
-      }
-
-      mat.color.set(0xffffff);
-      if ("emissive" in mat) {
-        mat.emissive.set(0x000000);
-        mat.emissiveIntensity = 0;
-      }
-      if ("metalness" in mat) mat.metalness = 0.42;
-      if ("roughness" in mat) mat.roughness = 0.48;
-      mat.needsUpdate = true;
-    });
-  });
-}
-
-let fallbackMesh = null;
-
-function addFallbackMesh() {
-  if (!hasBrandBrain || fallbackMesh) return;
-  const geo = new THREE.IcosahedronGeometry(0.62, 1);
-  const mat = new THREE.MeshStandardMaterial({
-    color: 0xf2f2f2,
-    metalness: 0.52,
-    roughness: 0.34,
-    emissive: 0x141414,
-    emissiveIntensity: 0.12,
-  });
-  const mesh = new THREE.Mesh(geo, mat);
-  const edges = new THREE.EdgesGeometry(geo);
-  const line = new THREE.LineSegments(
-    edges,
-    new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.42 })
-  );
-  mesh.add(line);
-  tiltGroup.add(mesh);
-  fallbackMesh = mesh;
-}
-
-function removeFallbackMesh() {
-  if (!fallbackMesh) return;
-  tiltGroup.remove(fallbackMesh);
-  fallbackMesh.traverse((node) => {
-    if (node.geometry?.dispose) node.geometry.dispose();
-    if (node.material) {
-      if (Array.isArray(node.material)) node.material.forEach((m) => m.dispose?.());
-      else node.material.dispose?.();
-    }
-  });
-  fallbackMesh = null;
-}
-
-const loader = new GLTFLoader();
-const dracoLoader = new DRACOLoader();
-dracoLoader.setDecoderPath("https://www.gstatic.com/draco/versioned/decoders/1.5.6/");
-loader.setDRACOLoader(dracoLoader);
-
-let glbLoadTriggered = false;
-
-function loadNavBrainModel() {
-  if (!hasBrandBrain || glbLoadTriggered) return;
-  glbLoadTriggered = true;
-
-  loader.load(
-    "./assets/3d/logo.glb",
-    (gltf) => {
-      removeFallbackMesh();
-      const model = gltf.scene;
-      const box = new THREE.Box3().setFromObject(model);
-      const size = box.getSize(new THREE.Vector3());
-      const maxDim = Math.max(size.x, size.y, size.z) || 1;
-      const scale = 1.42 / maxDim;
-      model.scale.setScalar(scale);
-      box.setFromObject(model);
-      const center = box.getCenter(new THREE.Vector3());
-      model.position.sub(center);
-
-      applyNavBrainMonochromeMaterials(model);
-
-      tiltGroup.add(model);
-    },
-    undefined,
-    () => {
-      /* fallback mesh ya visible */
-    }
-  );
-}
-
-if (hasBrandBrain) {
-  addFallbackMesh();
-  loadNavBrainModel();
-}
-
-function applyNavBrainRotation({ scrollRot, scrollBlend }) {
-  if (prefersReducedMotionGlobal) {
-    spinGroup.rotation.y = NAV_BRAIN_BASE_ROT_Y + scrollRot * 0.35;
-    tiltGroup.rotation.x = 0;
-    tiltGroup.rotation.y = 0;
-    return;
-  }
-
-  spinGroup.rotation.y = NAV_BRAIN_BASE_ROT_Y + scrollRot;
-  tiltGroup.rotation.y = currentMouseX * 0.18 * scrollBlend;
-  tiltGroup.rotation.x = -currentMouseY * 0.12 * scrollBlend;
-}
-
-function updateNavRendererSize() {
-  refreshWrapRects();
-  updateBrandRendererSize(navRenderer, navWrap);
-}
-
-function updateFooterRendererSize() {
-  updateBrandRendererSize(footerRenderer, footerWrap);
-}
-
 /* ——— Hero: Particle AI Brain (Spline) ——— */
 const splineTargets = [];
 
@@ -363,7 +185,7 @@ function setHeroBrainOrbit(target, enabled) {
 
 /** Spline puede bloquear touchmove si preventTouchScroll está activo en la escena. */
 function patchSplineScrollFlags(target) {
-  const eventManager = target.app.eventManager;
+  const eventManager = getSplineEventManager(target.app);
   if (!eventManager) return;
   eventManager.preventScroll = false;
   eventManager.preventTouchScroll = false;
@@ -533,8 +355,16 @@ function applyHeroBrainZoom(target) {
   target.app.setZoom?.(lockedHeroBrainZoom);
 }
 
-function createHeroSplineBrain() {
+async function createHeroSplineBrain() {
   if (!heroWrap) return null;
+
+  let Application;
+  try {
+    Application = await ensureSplineRuntime();
+  } catch {
+    markBrainFailed(heroWrap);
+    return null;
+  }
 
   const canvas = document.createElement("canvas");
   canvas.className = "hero__brain-canvas";
@@ -545,18 +375,21 @@ function createHeroSplineBrain() {
   const target = { wrap: heroWrap, canvas, app, ready: false, rotRoot: null };
   splineTargets.push(target);
 
-  app
-    .load(SPLINE_SCENE_URL)
-    .then(() => {
-      target.ready = true;
-      target.rotRoot = pickRotationRoot(app);
-      app.play?.();
-      applyHeroBrainZoom(target);
-      configureHeroBrainInteraction(target);
-      syncSplineDomRect(target);
-      resizeHeroSpline();
-    })
-    .catch(() => {});
+  try {
+    await app.load(SPLINE_SCENE_URL);
+    target.ready = true;
+    target.rotRoot = pickRotationRoot(app);
+    app.play?.();
+    applyHeroBrainZoom(target);
+    configureHeroBrainInteraction(target);
+    syncSplineDomRect(target);
+    resizeHeroSpline();
+  } catch {
+    const idx = splineTargets.indexOf(target);
+    if (idx >= 0) splineTargets.splice(idx, 1);
+    markBrainFailed(heroWrap);
+    return null;
+  }
 
   return target;
 }
@@ -614,8 +447,9 @@ function captureNavLogoOrbitBaseline(target) {
   if (!target?.ready) return;
   const orbit = getHeroBrainOrbit(target);
   if (!orbit?.object || !orbit.target) return;
-  const offset = new THREE.Vector3().subVectors(orbit.object.position, orbit.target);
-  const spherical = new THREE.Spherical().setFromVector3(offset);
+  const pos = orbit.object.position;
+  const tgt = orbit.target;
+  const spherical = sphericalFromOffset(pos.x - tgt.x, pos.y - tgt.y, pos.z - tgt.z);
   target._navOrbitPhi = spherical.phi;
   target._navOrbitRadius = spherical.radius;
 }
@@ -632,12 +466,14 @@ function applyNavLogoSplineScrollSpin(scrollRot) {
 
     if (orbit?.object && orbit.target) {
       if (target._navOrbitRadius == null) captureNavLogoOrbitBaseline(target);
-      const offset = new THREE.Vector3().subVectors(orbit.object.position, orbit.target);
-      const spherical = new THREE.Spherical().setFromVector3(offset);
+      const pos = orbit.object.position;
+      const tgt = orbit.target;
+      const spherical = sphericalFromOffset(pos.x - tgt.x, pos.y - tgt.y, pos.z - tgt.z);
       spherical.radius = target._navOrbitRadius ?? spherical.radius;
       spherical.phi = target._navOrbitPhi ?? spherical.phi;
       spherical.theta = theta;
-      orbit.object.position.setFromSpherical(spherical).add(orbit.target);
+      const next = offsetFromSpherical(spherical);
+      orbit.object.position.set(next.x + tgt.x, next.y + tgt.y, next.z + tgt.z);
       orbit.object.lookAt(orbit.target);
       orbit.update?.();
       continue;
@@ -652,9 +488,17 @@ function resizeAllLogoSplines() {
   logoSplineTargets.forEach(resizeLogoSpline);
 }
 
-function createLogoSplineBrain(wrap, kind = "nav") {
+async function createLogoSplineBrain(wrap, kind = "nav") {
   if (!wrap || wrap.dataset.splineMounted === "1") return null;
   wrap.dataset.splineMounted = "1";
+
+  let Application;
+  try {
+    Application = await ensureSplineRuntime();
+  } catch {
+    markBrainFailed(wrap);
+    return null;
+  }
 
   wrap.classList.add("logo-brain");
 
@@ -667,27 +511,30 @@ function createLogoSplineBrain(wrap, kind = "nav") {
   const target = { wrap, canvas, app, ready: false, kind, _playing: false, _visible: false };
   logoSplineTargets.push(target);
 
-  app
-    .load(SPLINE_SCENE_URL)
-    .then(() => {
-      target.ready = true;
-      applyLogoBrainZoom(target);
-      setHeroBrainOrbit(target, false);
-      if (kind === "nav") {
-        captureNavLogoOrbitBaseline(target);
-        const docMaxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
-        const docProgress = Math.min(Math.max(latestScrollY / docMaxScroll, 0), 1);
-        applyNavLogoSplineScrollSpin(docProgress * Math.PI * 2.75);
-      }
-      patchSplineScrollFlags(target);
+  try {
+    await app.load(SPLINE_SCENE_URL);
+    target.ready = true;
+    applyLogoBrainZoom(target);
+    setHeroBrainOrbit(target, false);
+    if (kind === "nav") {
+      captureNavLogoOrbitBaseline(target);
+      const docMaxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
+      const docProgress = Math.min(Math.max(latestScrollY / docMaxScroll, 0), 1);
+      applyNavLogoSplineScrollSpin(docProgress * Math.PI * 2.75);
+    }
+    patchSplineScrollFlags(target);
+    resizeLogoSpline(target);
+    setSplinePlaying(target, target._visible);
+    requestAnimationFrame(() => {
       resizeLogoSpline(target);
-      setSplinePlaying(target, target._visible);
-      requestAnimationFrame(() => {
-        resizeLogoSpline(target);
-        applyLogoBrainZoom(target);
-      });
-    })
-    .catch(() => {});
+      applyLogoBrainZoom(target);
+    });
+  } catch {
+    const idx = logoSplineTargets.indexOf(target);
+    if (idx >= 0) logoSplineTargets.splice(idx, 1);
+    markBrainFailed(wrap);
+    return null;
+  }
 
   if (typeof IntersectionObserver !== "undefined") {
     const io = new IntersectionObserver(
@@ -802,7 +649,8 @@ function scheduleEndLogoFit() {
 /** Spline cachea getBoundingClientRect(); refrescarlo si el wrap se mueve o rota. */
 function syncSplineDomRect(target) {
   if (!target?.ready || !target.canvas) return;
-  const ctx = target.app._eventManager?.eventContext;
+  const eventManager = getSplineEventManager(target.app);
+  const ctx = eventManager?.eventContext ?? eventManager?._eventContext;
   if (ctx) ctx.domRect = target.canvas.getBoundingClientRect();
 }
 
@@ -828,8 +676,7 @@ function resizeHeroSpline() {
 
 function resizeBrains() {
   fitEndLogoToWidth();
-  updateNavRendererSize();
-  updateFooterRendererSize();
+  refreshWrapRects();
   resizeHeroSpline();
   resizeAllLogoSplines();
 }
@@ -903,7 +750,9 @@ window.addEventListener("end-logo-needs-fit", () => {
   }
 }
 
-initNeuralBackground();
+if (NEURAL_BACKGROUND_ENABLED) {
+  initNeuralBackground();
+}
 
 export let targetMouseX = 0;
 export let targetMouseY = 0;
@@ -995,7 +844,9 @@ function animate(now) {
     drawPerspectiveGrid(docProgress);
     drawParticles(docProgress, elapsed);
   }
-  drawNeuralNetwork();
+  if (NEURAL_BACKGROUND_ENABLED) {
+    drawNeuralNetwork();
+  }
   updateNebula(docProgress, currentMouseX * 0.02, currentMouseY * 0.02);
 }
 

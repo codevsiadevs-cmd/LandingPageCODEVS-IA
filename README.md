@@ -1,65 +1,67 @@
 # CODEVS IA — Landing Page
 
-Sitio estático con animación 3D (Three.js), fondo con canvas, secciones con scroll e Intersection Observers.
+Sitio estático con cerebro 3D (Spline), fondos en canvas, secciones con scroll e Intersection Observers.
+
+Dominio canónico: [https://www.codevsia.com](https://www.codevsia.com)
 
 ## Stack
 
-- HTML5
-- CSS3 (variables, animaciones, `prefers-reduced-motion`, capas de fondo)
+- HTML5 + CSS3 (variables, animaciones, `prefers-reduced-motion`)
 - JavaScript (módulos ES, sin bundler)
-- [Three.js](https://threejs.org/) (vía import map y CDN)
-- `GLTFLoader` para `assets/3d/logo.glb`
+- [Spline Runtime](https://spline.design/) (CDN) para `assets/3d/particle-ai-brain.splinecode`
+- Canvas 2D para grid, partículas y efectos de marca
 
-## Estructura de carpetas
+## Estructura
 
 ```text
-/codevs-ia/
+/
 ├── index.html
 ├── robots.txt
 ├── sitemap.xml
-├── README.md
+├── vercel.json
+├── start-dev.bat
 ├── assets/
-│   ├── 3d/logo.glb
-│   ├── images/og-cover.png   ← coloca aquí la imagen Open Graph
-│   └── fonts/                ← reservado para fuentes autohospedadas
+│   ├── 3d/particle-ai-brain.splinecode
+│   ├── images/          (logos, flags, posters, OG)
+│   ├── videos/soluciones/
+│   └── ...
 ├── css/
 │   ├── base.css
+│   ├── preloader.css
 │   ├── layout.css
+│   ├── proceso.css
 │   ├── components.css
 │   ├── animations.css
 │   └── responsive.css
-└── js/
-    ├── main.js
-    ├── console-easter.js
-    ├── scroll.js
-    ├── background.js
-    ├── three-scene.js
-    ├── interactions.js
-    └── sections.js
+├── js/
+│   ├── main.js          (entrada)
+│   ├── three-scene.js   (Spline + loop visual)
+│   ├── scroll.js
+│   ├── i18n.js
+│   └── ...
+└── scripts/
+    ├── dev-server.py    (servidor local)
+    └── legacy/          (migraciones one-off; no ejecutar)
 ```
 
 ## Cómo correr localmente
 
-Al usar módulos ES y rutas relativas, hay que servir el proyecto por HTTP (no abrir `index.html` como `file://`).
+Hay que servir por HTTP (no abrir `index.html` como `file://`).
 
-**En Windows**, `python -m http.server` sirve `.js` como `text/plain` y el navegador bloquea los módulos (la página queda en blanco). En Vercel/Netlify esto no pasa.
-
-Usa el servidor del proyecto:
+**En Windows**, no uses `python -m http.server` (rompe módulos `.js`). Usa:
 
 ```bash
 python scripts/dev-server.py
 ```
 
-O en Windows, doble clic en `start-dev.bat`.
+O doble clic en `start-dev.bat`. Abre `http://localhost:8080`.
 
-Abre `http://localhost:8080` y recarga con Ctrl+Shift+R.
+## Deploy
 
-## Cómo hacer deploy
-
-- Sube la carpeta completa (manteniendo rutas `./css/`, `./js/`, `./assets/`) a cualquier hosting estático (GitHub Pages, Netlify, Vercel, S3, etc.).
-- Asegúrate de que `robots.txt` y `sitemap.xml` estén en la raíz del sitio si quieres que se sirvan en `https://tudominio/robots.txt`.
-- Coloca `assets/images/og-cover.png` para las meta `og:image` y redes sociales.
+- Hosting estático en la raíz del dominio (Vercel, Netlify, etc.).
+- Las rutas absolutas (`/favicon.ico`, `/assets/...`) asumen el sitio en el dominio raíz, no en subruta.
+- `robots.txt` y `sitemap.xml` deben quedar en la raíz pública.
 
 ## Créditos
 
-Diseño y contenido: **CODEVS IA**. Fuentes: Google Fonts (Syne, IBM Plex Sans). Three.js y addons según licencias del proyecto three.js.
+Diseño y contenido: **CODEVS IA**. Fuente: Google Fonts (Syne). Spline Runtime según licencia del proveedor.

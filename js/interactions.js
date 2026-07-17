@@ -4,6 +4,8 @@ import { t } from "./i18n.js";
 const customCursor = document.getElementById("custom-cursor");
 
 if (customCursor && window.matchMedia("(pointer: fine)").matches && !prefersReducedMotionGlobal) {
+  document.documentElement.classList.add("has-custom-cursor");
+
   let mouseX = window.innerWidth / 2;
   let mouseY = window.innerHeight / 2;
   let cursorX = mouseX;

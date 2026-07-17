@@ -1,5 +1,4 @@
 function mostrarArteASCII() {
-  console.clear();
   console.groupCollapsed("CODEVS IA");
 
   console.log(
