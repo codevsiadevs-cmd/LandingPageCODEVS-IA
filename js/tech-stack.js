@@ -2,22 +2,22 @@ import { prefersReducedMotionGlobal, sharedScrollVelocity } from "./scroll.js";
 
 const TECH_ROWS = [
   [
-    { name: "React", icon: "react.svg", mark: "Re" },
-    { name: "Next.js", icon: "nextdotjs.svg", mark: "Nx" },
-    { name: "TypeScript", icon: "typescript.svg", mark: "TS" },
-    { name: "Python", icon: "python.svg", mark: "Py" },
-    { name: "Node.js", icon: "nodedotjs.svg", mark: "No" },
-    { name: "FastAPI", icon: "fastapi.svg", mark: "Fa" },
-    { name: "Docker", icon: "docker.svg", mark: "Dk" },
+    { name: "React", icon: "react.svg" },
+    { name: "Next.js", icon: "nextdotjs.svg" },
+    { name: "TypeScript", icon: "typescript.svg" },
+    { name: "Python", icon: "python.svg" },
+    { name: "Node.js", icon: "nodedotjs.svg" },
+    { name: "FastAPI", icon: "fastapi.svg" },
+    { name: "Docker", icon: "docker.svg" },
   ],
   [
-    { name: "PostgreSQL", icon: "postgresql.svg", mark: "Pg" },
-    { name: "MongoDB", icon: "mongodb.svg", mark: "Mg" },
-    { name: "AWS", icon: "amazonwebservices.svg", mark: "Aw" },
-    { name: "GCP", icon: "googlecloud.svg", mark: "Gc" },
-    { name: "OpenAI", icon: "openai.svg", mark: "Oi" },
-    { name: "LangChain", icon: "langchain.svg", mark: "Lc" },
-    { name: "Kubernetes", icon: "kubernetes.svg", mark: "K8" },
+    { name: "PostgreSQL", icon: "postgresql.svg" },
+    { name: "MongoDB", icon: "mongodb.svg" },
+    { name: "AWS", icon: "amazonwebservices.svg" },
+    { name: "GCP", icon: "googlecloud.svg" },
+    { name: "OpenAI", icon: "openai.svg" },
+    { name: "LangChain", icon: "langchain.svg" },
+    { name: "Kubernetes", icon: "kubernetes.svg" },
   ],
 ];
 
@@ -59,14 +59,7 @@ function createFace(modifier, content) {
   const face = document.createElement("div");
   face.className = `tech-die__face tech-die__face--${modifier}`;
   face.setAttribute("aria-hidden", "true");
-  if (typeof content === "string") {
-    const mark = document.createElement("span");
-    mark.className = "tech-die__mark";
-    mark.textContent = content;
-    face.appendChild(mark);
-  } else {
-    face.appendChild(content);
-  }
+  face.appendChild(content);
   return face;
 }
 
@@ -75,7 +68,7 @@ function setDieRotation(tile, rx, ry) {
   tile.style.setProperty("--die-ry", `${ry}deg`);
 }
 
-function createTechTile({ name, icon, mark }) {
+function createTechTile({ name, icon }) {
   const tile = document.createElement("div");
   tile.className = "tech-tile";
   tile.setAttribute("role", "img");
@@ -89,18 +82,12 @@ function createTechTile({ name, icon, mark }) {
   const cube = document.createElement("div");
   cube.className = "tech-die__cube";
 
-  const nameFace = document.createElement("span");
-  nameFace.className = "tech-die__name";
-  nameFace.textContent = name;
-
-  cube.append(
-    createFace("front", createLogo(icon, name)),
-    createFace("back", createLogo(icon, name, true)),
-    createFace("right", mark || name.slice(0, 2)),
-    createFace("left", nameFace),
-    createFace("top", mark || name.slice(0, 2)),
-    createFace("bottom", createLogo(icon, name, true))
-  );
+  const faces = ["front", "back", "right", "left", "top", "bottom"];
+  faces.forEach((face) => {
+    cube.appendChild(
+      createFace(face, createLogo(icon, name, face !== "front"))
+    );
+  });
 
   die.appendChild(cube);
   tile.appendChild(die);
