@@ -5,12 +5,12 @@
   --proceso-ink: #f5f5f2;
   --proceso-muted: #adadb4;
   --proceso-dim: #75757c;
-  --proceso-bg: #000000;
+  --proceso-bg: transparent;
   scroll-margin-top: var(--nav-height);
   position: relative;
   height: auto;
   padding: 0;
-  background: #000000;
+  background: transparent;
   color: var(--proceso-ink);
   overflow: visible;
 }
@@ -40,7 +40,7 @@
   position: relative;
   /* Último tramo (Soporte) más corto: 50vh en vez de 90vh */
   height: calc((var(--proceso-steps) - 2) * 90vh + 50vh + 100vh);
-  background: #000000;
+  background: transparent;
 }
 
 .proceso__stage {
@@ -51,7 +51,7 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  background: #000000;
+  background: transparent;
   font-family: var(--font-body);
 }
 
