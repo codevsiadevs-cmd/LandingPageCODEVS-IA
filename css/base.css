@@ -130,6 +130,7 @@ body[data-section="tecnologias"] {
 }
 
 body[data-section="soluciones"] {
+  background: #000000;
   --section-factor: 1.2;
 }
 

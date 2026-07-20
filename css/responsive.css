@@ -474,12 +474,11 @@
     border-radius: 1.35rem;
   }
 
-  .projects__title {
+  .projects__title,
+  .tech__title,
+  .proceso__title,
+  .why__title {
     font-size: clamp(1.7rem, 7vw, 2.4rem);
-  }
-
-  .proceso__title {
-    font-size: clamp(1.55rem, 5.5vw, 2rem);
   }
 
   .proceso__board {
@@ -605,7 +604,7 @@
 
 @media (max-width: 900px) {
   .proceso {
-    background: transparent;
+    background: #000000;
     height: auto;
     overflow: visible;
   }
@@ -624,7 +623,8 @@
   }
 
   .proceso__title,
-  .why__title {
+  .why__title,
+  .tech__title {
     font-size: clamp(1.55rem, 5.5vw, 2rem);
     text-align: center;
   }
