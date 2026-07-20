@@ -870,6 +870,7 @@ main > section:not(.hero) {
 .tech-tile {
   --die-rx: -18deg;
   --die-ry: 22deg;
+  position: relative;
   flex-shrink: 0;
   width: var(--tech-tile-size);
   height: var(--tech-tile-size);
@@ -884,13 +885,50 @@ main > section:not(.hero) {
   -webkit-tap-highlight-color: transparent;
 }
 
-.tech-tile:active {
-  cursor: grabbing;
+.tech-tile:hover,
+.tech-tile.is-named,
+.tech-tile:focus-visible {
+  z-index: 5;
 }
 
 .tech-tile:focus-visible {
   outline: 2px solid rgba(255, 255, 255, 0.55);
   outline-offset: 4px;
+}
+
+.tech-tile__label {
+  position: absolute;
+  left: 50%;
+  top: 0.45rem;
+  z-index: 6;
+  transform: translateX(-50%) translateY(0.25rem);
+  padding: 0.3rem 0.65rem;
+  border-radius: 0.4rem;
+  background: rgba(8, 8, 8, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+  color: #ffffff;
+  font-family: var(--font-body);
+  font-size: clamp(0.72rem, 1.35vw, 0.88rem);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.18s ease,
+    transform 0.18s ease,
+    visibility 0.18s;
+}
+
+.tech-tile:hover .tech-tile__label,
+.tech-tile.is-named .tech-tile__label,
+.tech-tile:focus-visible .tech-tile__label {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(0);
 }
 
 .tech-die {

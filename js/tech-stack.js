@@ -40,6 +40,24 @@ let bottomLoopWidth = 0;
 let rafId = null;
 let lastFrameTime = 0;
 let activePointerId = null;
+/** @type {typeof TECH_ROWS} */
+let shuffledRows = TECH_ROWS.map((row) => [...row]);
+let hasLeftSection = false;
+
+function shuffle(items) {
+  const arr = [...items];
+  for (let i = arr.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    const tmp = arr[i];
+    arr[i] = arr[j];
+    arr[j] = tmp;
+  }
+  return arr;
+}
+
+function reshuffleRows() {
+  shuffledRows = TECH_ROWS.map((row) => shuffle(row));
+}
 
 function createLogo(icon, name, decorative = false) {
   const img = document.createElement("img");
@@ -76,6 +94,11 @@ function createTechTile({ name, icon }) {
   tile.tabIndex = 0;
   setDieRotation(tile, REST_RX, REST_RY);
 
+  const label = document.createElement("span");
+  label.className = "tech-tile__label";
+  label.textContent = name;
+  label.setAttribute("aria-hidden", "true");
+
   const die = document.createElement("div");
   die.className = "tech-die";
 
@@ -90,11 +113,9 @@ function createTechTile({ name, icon }) {
   });
 
   die.appendChild(cube);
-  tile.appendChild(die);
+  tile.append(label, die);
 
-  if (!prefersReducedMotionGlobal) {
-    bindDieInteraction(tile);
-  }
+  bindDieInteraction(tile);
 
   return tile;
 }
@@ -111,13 +132,15 @@ function pointerOffset(tile, clientX, clientY) {
 
 function bindDieInteraction(tile) {
   tile.addEventListener("pointerenter", (event) => {
-    if (activePointerId !== null) return;
+    tile.classList.add("is-named");
+    if (prefersReducedMotionGlobal || activePointerId !== null) return;
     tile.classList.add("is-tilting");
     const { nx, ny } = pointerOffset(tile, event.clientX, event.clientY);
     setDieRotation(tile, -ny * TILT_MAX, nx * TILT_MAX);
   });
 
   tile.addEventListener("pointermove", (event) => {
+    if (prefersReducedMotionGlobal) return;
     if (tile.classList.contains("is-tumbling")) return;
     if (activePointerId !== null && event.pointerId !== activePointerId) return;
     tile.classList.add("is-tilting");
@@ -126,10 +149,22 @@ function bindDieInteraction(tile) {
   });
 
   tile.addEventListener("pointerleave", () => {
+    tile.classList.remove("is-named");
+    if (prefersReducedMotionGlobal) return;
     if (tile.classList.contains("is-tumbling")) return;
     tile.classList.remove("is-tilting");
     setDieRotation(tile, REST_RX, REST_RY);
   });
+
+  tile.addEventListener("focus", () => {
+    tile.classList.add("is-named");
+  });
+
+  tile.addEventListener("blur", () => {
+    tile.classList.remove("is-named");
+  });
+
+  if (prefersReducedMotionGlobal) return;
 
   tile.addEventListener("pointerdown", (event) => {
     if (event.button !== undefined && event.button !== 0) return;
@@ -146,7 +181,7 @@ function bindDieInteraction(tile) {
 
   tile.addEventListener("pointercancel", () => {
     activePointerId = null;
-    tile.classList.remove("is-tilting", "is-tumbling");
+    tile.classList.remove("is-tilting", "is-tumbling", "is-named");
     setDieRotation(tile, REST_RX, REST_RY);
   });
 
@@ -217,8 +252,8 @@ function buildInfiniteTrack(track, items) {
 function buildAllTracks() {
   if (!topTrack || !bottomTrack) return;
 
-  topLoopWidth = buildInfiniteTrack(topTrack, TECH_ROWS[0]);
-  bottomLoopWidth = buildInfiniteTrack(bottomTrack, TECH_ROWS[1]);
+  topLoopWidth = buildInfiniteTrack(topTrack, shuffledRows[0]);
+  bottomLoopWidth = buildInfiniteTrack(bottomTrack, shuffledRows[1]);
 }
 
 function wrapOffset(value, cycleWidth) {
@@ -285,9 +320,36 @@ function refreshTracks() {
   applyMarqueeTransform();
 }
 
-function initTechStack() {
+function rebuildWithNewOrder() {
+  reshuffleRows();
+  marqueePos = 0;
   buildAllTracks();
   applyMarqueeTransform();
+}
+
+function watchSectionReentry() {
+  if (!techSection || !("IntersectionObserver" in window)) return;
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          if (hasLeftSection) rebuildWithNewOrder();
+        } else if (entry.intersectionRatio === 0) {
+          hasLeftSection = true;
+        }
+      });
+    },
+    { threshold: [0, 0.15] }
+  );
+  observer.observe(techSection);
+}
+
+function initTechStack() {
+  reshuffleRows();
+  buildAllTracks();
+  applyMarqueeTransform();
+  watchSectionReentry();
 
   if (prefersReducedMotionGlobal) return;
 
