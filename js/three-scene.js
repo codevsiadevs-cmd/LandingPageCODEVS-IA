@@ -67,14 +67,21 @@ const endLogoWrap = document.getElementById("end-logo-brain-wrap");
 const endLogoMirrorWrap = document.getElementById("end-logo-brain-wrap-mirror");
 const heroWrap = document.getElementById("hero-brain-wrap");
 const solucionesBrainWrap = document.getElementById("soluciones-brain-wrap");
+const procesoBrainWrap = document.getElementById("proceso-brain-wrap");
 const hasNavBrain = Boolean(navWrap);
 const hasFooterBrain = Boolean(footerWrap);
 const hasEndLogoBrain = Boolean(endLogoWrap);
 const hasEndLogoMirrorBrain = Boolean(endLogoMirrorWrap);
 const hasHeroBrain = Boolean(heroWrap);
 const hasSolucionesBrain = Boolean(solucionesBrainWrap);
+const hasProcesoBrain = Boolean(procesoBrainWrap);
 const hasLogoSplineBrain =
-  hasNavBrain || hasFooterBrain || hasEndLogoBrain || hasEndLogoMirrorBrain || hasSolucionesBrain;
+  hasNavBrain ||
+  hasFooterBrain ||
+  hasEndLogoBrain ||
+  hasEndLogoMirrorBrain ||
+  hasSolucionesBrain ||
+  hasProcesoBrain;
 const hasBrainScene = hasHeroBrain || hasLogoSplineBrain;
 
 /** Tamaño y zoom del hero Spline fijados al valor inicial (no cambian con el scroll). */
@@ -385,8 +392,10 @@ const END_LOGO_BRAIN_ZOOM_DESKTOP = 0.55;
 const END_LOGO_BRAIN_ZOOM_MOBILE = 0.18;
 const SOLUCIONES_BRAIN_ZOOM_DESKTOP = 0.72;
 const SOLUCIONES_BRAIN_ZOOM_MOBILE = 0.52;
+const PROCESO_BRAIN_ZOOM_DESKTOP = SOLUCIONES_BRAIN_ZOOM_DESKTOP;
+const PROCESO_BRAIN_ZOOM_MOBILE = SOLUCIONES_BRAIN_ZOOM_MOBILE;
 
-/** @type {{ wrap: HTMLElement, canvas: HTMLCanvasElement, app: *, ready: boolean, kind: "nav" | "footer" | "end" | "soluciones" }[]} */
+/** @type {{ wrap: HTMLElement, canvas: HTMLCanvasElement, app: *, ready: boolean, kind: "nav" | "footer" | "end" | "soluciones" | "proceso" }[]} */
 const logoSplineTargets = [];
 
 function applyLogoBrainZoom(target) {
@@ -397,8 +406,8 @@ function applyLogoBrainZoom(target) {
     zoom = isMobile ? END_LOGO_BRAIN_ZOOM_MOBILE : END_LOGO_BRAIN_ZOOM_DESKTOP;
   } else if (target.kind === "footer") {
     zoom = isMobile ? FOOTER_LOGO_BRAIN_ZOOM_MOBILE : FOOTER_LOGO_BRAIN_ZOOM_DESKTOP;
-  } else if (target.kind === "soluciones") {
-    zoom = isMobile ? SOLUCIONES_BRAIN_ZOOM_MOBILE : SOLUCIONES_BRAIN_ZOOM_DESKTOP;
+  } else if (target.kind === "soluciones" || target.kind === "proceso") {
+    zoom = isMobile ? PROCESO_BRAIN_ZOOM_MOBILE : PROCESO_BRAIN_ZOOM_DESKTOP;
   } else {
     zoom = isMobile ? NAV_LOGO_BRAIN_ZOOM_MOBILE : NAV_LOGO_BRAIN_ZOOM_DESKTOP;
   }
@@ -417,7 +426,7 @@ function resizeLogoSpline(target) {
   target.canvas.style.height = "100%";
   applyLogoBrainZoom(target);
   if (target.kind === "nav") captureNavLogoOrbitBaseline(target);
-  if (target.kind === "soluciones") captureLogoOrbitBaseline(target);
+  if (target.kind === "soluciones" || target.kind === "proceso") captureLogoOrbitBaseline(target);
   syncSplineDomRect(target);
 }
 
@@ -458,8 +467,9 @@ function applyNavLogoSplineScrollSpin(scrollRot) {
   }
 }
 
-/** Soluciones: rota la figura 3D de izquierda a derecha según el progreso de la sección. */
+/** Soluciones/Proceso: rota la figura 3D de derecha a izquierda según el progreso. */
 const SOLUCIONES_BRAIN_BASE_ROT_Y = 0;
+const PROCESO_BRAIN_BASE_ROT_Y = SOLUCIONES_BRAIN_BASE_ROT_Y;
 
 function applyLogoOrbitTheta(target, theta, useNavBaseline) {
   const orbit = getHeroBrainOrbit(target);
@@ -482,25 +492,35 @@ function applyLogoOrbitTheta(target, theta, useNavBaseline) {
     orbit.update?.();
     return;
   }
-
-  /* Fallback: no rotar el DOM 2D; sin orbit no hay yaw 3D. */
 }
 
-function applySolucionesBrainScrollSpin(progress) {
+function applySectionBrainScrollSpin(progress, kind) {
   const p = Math.min(1, Math.max(0, Number(progress) || 0));
   const spin = prefersReducedMotionGlobal ? p * Math.PI * 0.35 : p * Math.PI * 2.4;
-  /* Derecha → izquierda al bajar (theta decrece). */
-  const theta = SOLUCIONES_BRAIN_BASE_ROT_Y - spin;
+  const base = kind === "proceso" ? PROCESO_BRAIN_BASE_ROT_Y : SOLUCIONES_BRAIN_BASE_ROT_Y;
+  const theta = base - spin;
 
   for (const target of logoSplineTargets) {
-    if (target.kind !== "soluciones" || !target.ready) continue;
+    if (target.kind !== kind || !target.ready) continue;
     applyLogoOrbitTheta(target, theta, false);
   }
 }
 
-/** API para GSAP ScrollTrigger en Soluciones. */
+function applySolucionesBrainScrollSpin(progress) {
+  applySectionBrainScrollSpin(progress, "soluciones");
+}
+
+function applyProcesoBrainScrollSpin(progress) {
+  applySectionBrainScrollSpin(progress, "proceso");
+}
+
+/** API para GSAP ScrollTrigger. */
 export function setSolucionesBrainScrollProgress(progress) {
   applySolucionesBrainScrollSpin(progress);
+}
+
+export function setProcesoBrainScrollProgress(progress) {
+  applyProcesoBrainScrollSpin(progress);
 }
 
 function resizeAllLogoSplines() {
@@ -543,6 +563,9 @@ async function createLogoSplineBrain(wrap, kind = "nav") {
     } else if (kind === "soluciones") {
       captureLogoOrbitBaseline(target);
       applySolucionesBrainScrollSpin(0);
+    } else if (kind === "proceso") {
+      captureLogoOrbitBaseline(target);
+      applyProcesoBrainScrollSpin(0);
     }
     patchSplineScrollFlags(target);
     resizeLogoSpline(target);
@@ -611,6 +634,7 @@ if (hasNavBrain) scheduleLogoSplineBrain(navWrap, "nav");
 if (hasFooterBrain) scheduleLogoSplineBrain(footerWrap, "footer");
 if (hasEndLogoBrain) scheduleLogoSplineBrain(endLogoWrap, "end");
 if (hasSolucionesBrain) scheduleLogoSplineBrain(solucionesBrainWrap, "soluciones");
+if (hasProcesoBrain) scheduleLogoSplineBrain(procesoBrainWrap, "proceso");
 /* El panel espejo queda oculto en CSS (móvil y web); no montar segundo Spline. */
 
 /** Escala el logo final al viewport (ancho y alto) para que nunca se recorte. */

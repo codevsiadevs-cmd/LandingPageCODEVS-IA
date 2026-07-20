@@ -61,7 +61,8 @@
   {
     "imports": {
       "gsap": "https://cdn.jsdelivr.net/npm/gsap@3.13.0/index.js",
-      "gsap/ScrollTrigger": "https://cdn.jsdelivr.net/npm/gsap@3.13.0/ScrollTrigger.js"
+      "gsap/ScrollTrigger": "https://cdn.jsdelivr.net/npm/gsap@3.13.0/ScrollTrigger.js",
+      "matter-js": "https://cdn.jsdelivr.net/npm/matter-js@0.20.0/+esm"
     }
   }
   </script>
@@ -258,134 +259,90 @@
       </div>
     </section>
 
-    <section
-      class="projects"
-      id="soluciones"
-      aria-labelledby="soluciones-title"
-      data-projects-count="6"
-    >
-      <div class="projects__heading-wrap">
+    <section class="projects" id="soluciones" aria-labelledby="soluciones-title">
+      <div class="projects__frame">
         <h2 class="projects__title" id="soluciones-title" data-i18n="projects.title">Soluciones</h2>
-      </div>
 
-      <div class="projects__board" data-projects-board>
-        <div class="projects__divider" aria-hidden="true"></div>
-
-        <div class="projects__brain" data-projects-brain aria-hidden="true">
-          <div class="projects__brain-wrap" id="soluciones-brain-wrap"></div>
-        </div>
-
-        <div class="projects__list" role="list">
-          <article class="projects__item projects__item--left is-active" data-projects-item role="listitem">
-            <div class="projects__item-body">
-              <span class="projects__index" aria-hidden="true">01</span>
-              <h3 class="projects__item-name" data-i18n="projects.1.title">Páginas Web</h3>
-              <p class="projects__item-desc" data-i18n="projects.1.desc">
-                Sitios corporativos, landings y experiencias digitales de alto impacto con diseño moderno y rendimiento optimizado
-              </p>
-            </div>
-          </article>
-
-          <article class="projects__item projects__item--right" data-projects-item role="listitem">
-            <div class="projects__item-body">
-              <span class="projects__index" aria-hidden="true">02</span>
-              <h3 class="projects__item-name" data-i18n="projects.2.title">Automatiza&shy;ciones</h3>
-              <p class="projects__item-desc" data-i18n="projects.2.desc">
-                Automatizamos procesos de negocio conectando tus herramientas y eliminando tareas repetitivas para aumentar la productividad.
-              </p>
-            </div>
-          </article>
-
-          <article class="projects__item projects__item--left" data-projects-item role="listitem">
-            <div class="projects__item-body">
-              <span class="projects__index" aria-hidden="true">03</span>
-              <h3 class="projects__item-name" data-i18n="projects.3.title">Agentes IA</h3>
-              <p class="projects__item-desc" data-i18n="projects.3.desc">
-                Sistemas autónomos que planifican, ejecutan y resuelven flujos de trabajo con modelos de lenguaje
-              </p>
-            </div>
-          </article>
-
-          <article class="projects__item projects__item--right" data-projects-item role="listitem">
-            <div class="projects__item-body">
-              <span class="projects__index" aria-hidden="true">04</span>
-              <h3 class="projects__item-name" data-i18n="projects.4.title">Chatbot IA</h3>
-              <p class="projects__item-desc" data-i18n="projects.4.desc">
-                Asistente conversacional para atención al cliente, soporte y respuestas inteligentes 24/7
-              </p>
-            </div>
-          </article>
-
-          <article class="projects__item projects__item--left" data-projects-item role="listitem">
-            <div class="projects__item-body">
-              <span class="projects__index" aria-hidden="true">05</span>
-              <h3 class="projects__item-name" data-i18n="projects.5.title">API Gateway</h3>
-              <p class="projects__item-desc" data-i18n="projects.5.desc">
-                Infraestructura escalable para conectar, proteger y orquestar microservicios empresariales
-              </p>
-            </div>
-          </article>
-
-          <article class="projects__item projects__item--right" data-projects-item role="listitem">
-            <div class="projects__item-body">
-              <span class="projects__index" aria-hidden="true">06</span>
-              <h3 class="projects__item-name" data-i18n="projects.6.title">¿Necesitas algo diferente?</h3>
-              <p class="projects__item-desc" data-i18n="projects.6.desc">
-                Desarrollamos soluciones personalizadas para las necesidades específicas de tu empresa.
-              </p>
-            </div>
-          </article>
+        <div class="projects__arena" data-projects-arena aria-hidden="true">
+          <button type="button" class="projects__bubble" data-bubble data-i18n="projects.1.title" style="--r: 5.2rem">Páginas Web</button>
+          <button type="button" class="projects__bubble" data-bubble data-i18n="projects.2.title" style="--r: 6.1rem">Automatizaciones</button>
+          <button type="button" class="projects__bubble" data-bubble data-i18n="projects.3.title" style="--r: 5.4rem">Agentes IA</button>
+          <button type="button" class="projects__bubble" data-bubble data-i18n="projects.4.title" style="--r: 5.6rem">Chatbot IA</button>
+          <button type="button" class="projects__bubble" data-bubble data-i18n="projects.5.title" style="--r: 5.3rem">API Gateway</button>
+          <button type="button" class="projects__bubble" data-bubble data-i18n="projects.bubble.custom" style="--r: 5.8rem">Personalizado</button>
+          <button type="button" class="projects__bubble" data-bubble data-i18n="projects.bubble.landings" style="--r: 4.8rem">Landings</button>
+          <button type="button" class="projects__bubble" data-bubble data-i18n="projects.bubble.integrations" style="--r: 5.5rem">Integraciones</button>
+          <button type="button" class="projects__bubble" data-bubble data-i18n="projects.bubble.llm" style="--r: 4.6rem">LLMs</button>
+          <button type="button" class="projects__bubble" data-bubble data-i18n="projects.bubble.micro" style="--r: 5.9rem">Microservicios</button>
+          <button type="button" class="projects__bubble" data-bubble data-i18n="projects.bubble.support" style="--r: 4.9rem">Soporte 24/7</button>
+          <button type="button" class="projects__bubble" data-bubble data-i18n="projects.bubble.ux" style="--r: 4.7rem">UX</button>
+          <button type="button" class="projects__bubble" data-bubble data-i18n="projects.bubble.automation" style="--r: 5.1rem">Workflows</button>
+          <button type="button" class="projects__bubble" data-bubble data-i18n="projects.bubble.security" style="--r: 5rem">Seguridad</button>
         </div>
       </div>
     </section>
 
-    <section class="proceso" id="proceso" aria-labelledby="proceso-heading">
-      <div class="proceso__track" data-proceso-track style="--proceso-steps: 6">
-      <div class="proceso__stage" data-proceso-stage>
-        <div class="proceso__heading-wrap">
-          <h2 class="proceso__title" id="proceso-heading" data-i18n="process.title">Cómo trabajamos</h2>
-        </div>
-        <div
-          class="proceso__phases"
-          data-proceso-phases
-          id="proceso-phases"
-          role="region"
-          aria-label="Pasos de cómo trabajamos"
-          data-i18n-aria-label="process.carouselAria"
-        >
-          <article class="proceso__phase" data-proceso-phase data-proceso-title="Descubrimiento">
-            <h3 class="proceso__phase-title" data-proceso-title data-i18n="process.1.title">Descubrimiento</h3>
-            <p class="proceso__phase-desc" data-i18n="process.1.desc">Entendemos tu negocio y definimos objetivos claros.</p>
-          </article>
-
-          <article class="proceso__phase" data-proceso-phase data-proceso-title="Diseño">
-            <h3 class="proceso__phase-title" data-proceso-title data-i18n="process.2.title">Diseño</h3>
-            <p class="proceso__phase-desc" data-i18n="process.2.desc">Arquitectura técnica y prototipo de experiencia.</p>
-          </article>
-
-          <article class="proceso__phase" data-proceso-phase data-proceso-title="Desarrollo">
-            <h3 class="proceso__phase-title" data-proceso-title data-i18n="process.3.title">Desarrollo</h3>
-            <p class="proceso__phase-desc" data-i18n="process.3.desc">Código limpio, tests y entregas incrementales.</p>
-          </article>
-
-          <article class="proceso__phase" data-proceso-phase data-proceso-title="QA &amp; Pruebas">
-            <h3 class="proceso__phase-title" data-proceso-title data-i18n="process.4.title">QA &amp; Pruebas</h3>
-            <p class="proceso__phase-desc" data-i18n="process.4.desc">Validación rigurosa antes de cada release.</p>
-          </article>
-
-          <article class="proceso__phase" data-proceso-phase data-proceso-title="Deploy">
-            <h3 class="proceso__phase-title" data-proceso-title data-i18n="process.5.title">Deploy</h3>
-            <p class="proceso__phase-desc" data-i18n="process.5.desc">Lanzamiento seguro con monitoreo en tiempo real.</p>
-          </article>
-
-          <article class="proceso__phase" data-proceso-phase data-proceso-title="Soporte">
-            <h3 class="proceso__phase-title" data-proceso-title data-i18n="process.6.title">Soporte</h3>
-            <p class="proceso__phase-desc" data-i18n="process.6.desc">Acompañamiento continuo post-lanzamiento.</p>
-          </article>
-        </div>
-
-        <p class="proceso__live visually-hidden" aria-live="polite"></p>
+    <section class="proceso" id="proceso" aria-labelledby="proceso-heading" data-proceso-count="6">
+      <div class="proceso__heading-wrap">
+        <h2 class="proceso__title" id="proceso-heading" data-i18n="process.title">Cómo trabajamos</h2>
       </div>
+
+      <div class="proceso__board" data-proceso-board>
+        <div class="proceso__divider" aria-hidden="true"></div>
+
+        <div class="proceso__brain" data-proceso-brain aria-hidden="true">
+          <div class="proceso__brain-wrap" id="proceso-brain-wrap"></div>
+        </div>
+
+        <div class="proceso__list" role="list">
+          <article class="proceso__item proceso__item--left is-active" data-proceso-item role="listitem">
+            <div class="proceso__item-body">
+              <span class="proceso__index" aria-hidden="true">01</span>
+              <h3 class="proceso__item-name" data-i18n="process.1.title">Descubrimiento</h3>
+              <p class="proceso__item-desc" data-i18n="process.1.desc">Entendemos tu negocio y definimos objetivos claros</p>
+            </div>
+          </article>
+
+          <article class="proceso__item proceso__item--right" data-proceso-item role="listitem">
+            <div class="proceso__item-body">
+              <span class="proceso__index" aria-hidden="true">02</span>
+              <h3 class="proceso__item-name" data-i18n="process.2.title">Diseño</h3>
+              <p class="proceso__item-desc" data-i18n="process.2.desc">Arquitectura técnica y prototipo de experiencia</p>
+            </div>
+          </article>
+
+          <article class="proceso__item proceso__item--left" data-proceso-item role="listitem">
+            <div class="proceso__item-body">
+              <span class="proceso__index" aria-hidden="true">03</span>
+              <h3 class="proceso__item-name" data-i18n="process.3.title">Desarrollo</h3>
+              <p class="proceso__item-desc" data-i18n="process.3.desc">Código limpio, tests y entregas incrementales</p>
+            </div>
+          </article>
+
+          <article class="proceso__item proceso__item--right" data-proceso-item role="listitem">
+            <div class="proceso__item-body">
+              <span class="proceso__index" aria-hidden="true">04</span>
+              <h3 class="proceso__item-name" data-i18n="process.4.title">QA &amp; Pruebas</h3>
+              <p class="proceso__item-desc" data-i18n="process.4.desc">Validación rigurosa antes de cada release</p>
+            </div>
+          </article>
+
+          <article class="proceso__item proceso__item--left" data-proceso-item role="listitem">
+            <div class="proceso__item-body">
+              <span class="proceso__index" aria-hidden="true">05</span>
+              <h3 class="proceso__item-name" data-i18n="process.5.title">Deploy</h3>
+              <p class="proceso__item-desc" data-i18n="process.5.desc">Lanzamiento seguro con monitoreo en tiempo real</p>
+            </div>
+          </article>
+
+          <article class="proceso__item proceso__item--right" data-proceso-item role="listitem">
+            <div class="proceso__item-body">
+              <span class="proceso__index" aria-hidden="true">06</span>
+              <h3 class="proceso__item-name" data-i18n="process.6.title">Soporte</h3>
+              <p class="proceso__item-desc" data-i18n="process.6.desc">Acompañamiento continuo post-lanzamiento</p>
+            </div>
+          </article>
+        </div>
       </div>
     </section>
 
