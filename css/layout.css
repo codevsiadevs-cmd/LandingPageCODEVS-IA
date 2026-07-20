@@ -1227,6 +1227,61 @@ main > section:not(.hero) {
   touch-action: none;
 }
 
+/* Touch: arrastre al instante; scroll en el hueco del arena */
+.projects--touch-physics .projects__arena {
+  pointer-events: none;
+  touch-action: pan-y;
+}
+
+.projects--touch-physics .projects__bubble {
+  pointer-events: auto;
+  touch-action: none;
+}
+
+/* Solo prefers-reduced-motion: layout estático sin física */
+.projects--static-bubbles .projects__title {
+  position: relative;
+  left: auto;
+  top: auto;
+  transform: none;
+  margin: 0 auto 1.5rem;
+  display: block;
+}
+
+.projects--static-bubbles .projects__frame {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding-bottom: 1.75rem;
+}
+
+.projects--static-bubbles .projects__arena {
+  position: relative;
+  inset: auto;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-content: center;
+  gap: 0.55rem 0.45rem;
+  min-height: 0;
+  margin-top: 0.25rem;
+  overflow: visible;
+  pointer-events: none;
+  touch-action: auto;
+}
+
+.projects--static-bubbles .projects__bubble {
+  position: relative;
+  top: auto;
+  left: auto;
+  width: clamp(4.4rem, 22vw, 5.6rem) !important;
+  height: clamp(4.4rem, 22vw, 5.6rem) !important;
+  transform: none !important;
+  cursor: default;
+  pointer-events: none;
+  touch-action: auto;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .projects__arena {
     position: relative;
