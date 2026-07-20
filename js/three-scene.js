@@ -66,13 +66,15 @@ const footerWrap = document.getElementById("footer-brain-wrap");
 const endLogoWrap = document.getElementById("end-logo-brain-wrap");
 const endLogoMirrorWrap = document.getElementById("end-logo-brain-wrap-mirror");
 const heroWrap = document.getElementById("hero-brain-wrap");
+const solucionesBrainWrap = document.getElementById("soluciones-brain-wrap");
 const hasNavBrain = Boolean(navWrap);
 const hasFooterBrain = Boolean(footerWrap);
 const hasEndLogoBrain = Boolean(endLogoWrap);
 const hasEndLogoMirrorBrain = Boolean(endLogoMirrorWrap);
 const hasHeroBrain = Boolean(heroWrap);
+const hasSolucionesBrain = Boolean(solucionesBrainWrap);
 const hasLogoSplineBrain =
-  hasNavBrain || hasFooterBrain || hasEndLogoBrain || hasEndLogoMirrorBrain;
+  hasNavBrain || hasFooterBrain || hasEndLogoBrain || hasEndLogoMirrorBrain || hasSolucionesBrain;
 const hasBrainScene = hasHeroBrain || hasLogoSplineBrain;
 
 /** Tamaño y zoom del hero Spline fijados al valor inicial (no cambian con el scroll). */
@@ -381,8 +383,10 @@ const FOOTER_LOGO_BRAIN_ZOOM_MOBILE = NAV_LOGO_BRAIN_ZOOM_MOBILE;
 const END_LOGO_BRAIN_ZOOM_DESKTOP = 0.55;
 /** Móvil: zoom más abierto para que el mesh+partículas entren enteros en la caja. */
 const END_LOGO_BRAIN_ZOOM_MOBILE = 0.18;
+const SOLUCIONES_BRAIN_ZOOM_DESKTOP = 0.72;
+const SOLUCIONES_BRAIN_ZOOM_MOBILE = 0.52;
 
-/** @type {{ wrap: HTMLElement, canvas: HTMLCanvasElement, app: *, ready: boolean, kind: "nav" | "footer" | "end" }[]} */
+/** @type {{ wrap: HTMLElement, canvas: HTMLCanvasElement, app: *, ready: boolean, kind: "nav" | "footer" | "end" | "soluciones" }[]} */
 const logoSplineTargets = [];
 
 function applyLogoBrainZoom(target) {
@@ -393,6 +397,8 @@ function applyLogoBrainZoom(target) {
     zoom = isMobile ? END_LOGO_BRAIN_ZOOM_MOBILE : END_LOGO_BRAIN_ZOOM_DESKTOP;
   } else if (target.kind === "footer") {
     zoom = isMobile ? FOOTER_LOGO_BRAIN_ZOOM_MOBILE : FOOTER_LOGO_BRAIN_ZOOM_DESKTOP;
+  } else if (target.kind === "soluciones") {
+    zoom = isMobile ? SOLUCIONES_BRAIN_ZOOM_MOBILE : SOLUCIONES_BRAIN_ZOOM_DESKTOP;
   } else {
     zoom = isMobile ? NAV_LOGO_BRAIN_ZOOM_MOBILE : NAV_LOGO_BRAIN_ZOOM_DESKTOP;
   }
@@ -411,6 +417,7 @@ function resizeLogoSpline(target) {
   target.canvas.style.height = "100%";
   applyLogoBrainZoom(target);
   if (target.kind === "nav") captureNavLogoOrbitBaseline(target);
+  if (target.kind === "soluciones") captureLogoOrbitBaseline(target);
   syncSplineDomRect(target);
 }
 
@@ -422,15 +429,21 @@ function setSplinePlaying(target, playing) {
   else target.app.stop?.();
 }
 
-function captureNavLogoOrbitBaseline(target) {
+function captureLogoOrbitBaseline(target) {
   if (!target?.ready) return;
   const orbit = getHeroBrainOrbit(target);
   if (!orbit?.object || !orbit.target) return;
   const pos = orbit.object.position;
   const tgt = orbit.target;
   const spherical = sphericalFromOffset(pos.x - tgt.x, pos.y - tgt.y, pos.z - tgt.z);
-  target._navOrbitPhi = spherical.phi;
-  target._navOrbitRadius = spherical.radius;
+  target._orbitPhi = spherical.phi;
+  target._orbitRadius = spherical.radius;
+}
+
+function captureNavLogoOrbitBaseline(target) {
+  captureLogoOrbitBaseline(target);
+  target._navOrbitPhi = target._orbitPhi;
+  target._navOrbitRadius = target._orbitRadius;
 }
 
 /** Solo navbar: gira el cerebro Spline según el scroll (no footer ni logo final). */
@@ -441,26 +454,53 @@ function applyNavLogoSplineScrollSpin(scrollRot) {
     const spin = prefersReducedMotionGlobal ? scrollRot * 0.2 : scrollRot;
     /* Gira hacia la izquierda al scrollear; mantiene el perfil inicial. */
     const theta = NAV_BRAIN_BASE_ROT_Y - spin;
-    const orbit = getHeroBrainOrbit(target);
-
-    if (orbit?.object && orbit.target) {
-      if (target._navOrbitRadius == null) captureNavLogoOrbitBaseline(target);
-      const pos = orbit.object.position;
-      const tgt = orbit.target;
-      const spherical = sphericalFromOffset(pos.x - tgt.x, pos.y - tgt.y, pos.z - tgt.z);
-      spherical.radius = target._navOrbitRadius ?? spherical.radius;
-      spherical.phi = target._navOrbitPhi ?? spherical.phi;
-      spherical.theta = theta;
-      const next = offsetFromSpherical(spherical);
-      orbit.object.position.set(next.x + tgt.x, next.y + tgt.y, next.z + tgt.z);
-      orbit.object.lookAt(orbit.target);
-      orbit.update?.();
-      continue;
-    }
-
-    const deg = ((theta * 180) / Math.PI) % 360;
-    target.canvas.style.transform = `translate(-50%, -50%) rotate(${deg}deg)`;
+    applyLogoOrbitTheta(target, theta, true);
   }
+}
+
+/** Soluciones: rota la figura 3D de izquierda a derecha según el progreso de la sección. */
+const SOLUCIONES_BRAIN_BASE_ROT_Y = 0;
+
+function applyLogoOrbitTheta(target, theta, useNavBaseline) {
+  const orbit = getHeroBrainOrbit(target);
+
+  if (orbit?.object && orbit.target) {
+    if (useNavBaseline) {
+      if (target._navOrbitRadius == null) captureNavLogoOrbitBaseline(target);
+    } else if (target._orbitRadius == null) {
+      captureLogoOrbitBaseline(target);
+    }
+    const pos = orbit.object.position;
+    const tgt = orbit.target;
+    const spherical = sphericalFromOffset(pos.x - tgt.x, pos.y - tgt.y, pos.z - tgt.z);
+    spherical.radius = (useNavBaseline ? target._navOrbitRadius : target._orbitRadius) ?? spherical.radius;
+    spherical.phi = (useNavBaseline ? target._navOrbitPhi : target._orbitPhi) ?? spherical.phi;
+    spherical.theta = theta;
+    const next = offsetFromSpherical(spherical);
+    orbit.object.position.set(next.x + tgt.x, next.y + tgt.y, next.z + tgt.z);
+    orbit.object.lookAt(orbit.target);
+    orbit.update?.();
+    return;
+  }
+
+  /* Fallback: no rotar el DOM 2D; sin orbit no hay yaw 3D. */
+}
+
+function applySolucionesBrainScrollSpin(progress) {
+  const p = Math.min(1, Math.max(0, Number(progress) || 0));
+  const spin = prefersReducedMotionGlobal ? p * Math.PI * 0.35 : p * Math.PI * 2.4;
+  /* Derecha → izquierda al bajar (theta decrece). */
+  const theta = SOLUCIONES_BRAIN_BASE_ROT_Y - spin;
+
+  for (const target of logoSplineTargets) {
+    if (target.kind !== "soluciones" || !target.ready) continue;
+    applyLogoOrbitTheta(target, theta, false);
+  }
+}
+
+/** API para GSAP ScrollTrigger en Soluciones. */
+export function setSolucionesBrainScrollProgress(progress) {
+  applySolucionesBrainScrollSpin(progress);
 }
 
 function resizeAllLogoSplines() {
@@ -500,6 +540,9 @@ async function createLogoSplineBrain(wrap, kind = "nav") {
       const docMaxScroll = Math.max(document.documentElement.scrollHeight - window.innerHeight, 1);
       const docProgress = Math.min(Math.max(latestScrollY / docMaxScroll, 0), 1);
       applyNavLogoSplineScrollSpin(docProgress * Math.PI * 2.75);
+    } else if (kind === "soluciones") {
+      captureLogoOrbitBaseline(target);
+      applySolucionesBrainScrollSpin(0);
     }
     patchSplineScrollFlags(target);
     resizeLogoSpline(target);
@@ -567,6 +610,7 @@ if (hasHeroBrain) {
 if (hasNavBrain) scheduleLogoSplineBrain(navWrap, "nav");
 if (hasFooterBrain) scheduleLogoSplineBrain(footerWrap, "footer");
 if (hasEndLogoBrain) scheduleLogoSplineBrain(endLogoWrap, "end");
+if (hasSolucionesBrain) scheduleLogoSplineBrain(solucionesBrainWrap, "soluciones");
 /* El panel espejo queda oculto en CSS (móvil y web); no montar segundo Spline. */
 
 /** Escala el logo final al viewport (ancho y alto) para que nunca se recorte. */

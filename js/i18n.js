@@ -55,7 +55,7 @@ const translations = {
     "projects.1.title": "Páginas Web",
     "projects.1.desc":
       "Sitios corporativos, landings y experiencias digitales de alto impacto con diseño moderno y rendimiento optimizado",
-    "projects.2.title": "Automatizaciones",
+    "projects.2.title": "Automatiza\u00ADciones",
     "projects.2.desc":
       "Automatizamos procesos de negocio conectando tus herramientas y eliminando tareas repetitivas para aumentar la productividad.",
     "projects.3.title": "Agentes IA",

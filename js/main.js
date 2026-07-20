@@ -19,7 +19,7 @@ import("./three-scene.js").catch(() => {
   document.documentElement.classList.add("no-3d");
   document
     .querySelectorAll(
-      "#hero-brain-wrap, #nav-brain-wrap, #footer-brain-wrap, #end-logo-brain-wrap, #end-logo-brain-wrap-mirror"
+      "#hero-brain-wrap, #nav-brain-wrap, #footer-brain-wrap, #end-logo-brain-wrap, #end-logo-brain-wrap-mirror, #soluciones-brain-wrap"
     )
     .forEach((el) => {
       el.classList.add("brain-failed");

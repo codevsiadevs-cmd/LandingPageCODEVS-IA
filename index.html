@@ -57,6 +57,14 @@
   <link rel="stylesheet" href="./css/animations.css" />
   <link rel="stylesheet" href="./css/responsive.css" />
   <link rel="modulepreload" href="./js/main.js" />
+  <script type="importmap">
+  {
+    "imports": {
+      "gsap": "https://cdn.jsdelivr.net/npm/gsap@3.13.0/index.js",
+      "gsap/ScrollTrigger": "https://cdn.jsdelivr.net/npm/gsap@3.13.0/ScrollTrigger.js"
+    }
+  }
+  </script>
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -250,142 +258,83 @@
       </div>
     </section>
 
-            <section
+    <section
       class="projects"
       id="soluciones"
       aria-labelledby="soluciones-title"
       data-projects-count="6"
     >
-      <div class="projects__track" data-projects-track>
-        <div class="projects__pin">
-          <div class="projects__progress" aria-hidden="true">
-            <div class="projects__progress-bar" data-projects-progress></div>
-          </div>
+      <div class="projects__heading-wrap">
+        <h2 class="projects__title" id="soluciones-title" data-i18n="projects.title">Soluciones</h2>
+      </div>
 
-          <div class="projects__heading-wrap">
-            <h2 class="projects__title" id="soluciones-title" data-i18n="projects.title">Soluciones</h2>
-          </div>
+      <div class="projects__board" data-projects-board>
+        <div class="projects__divider" aria-hidden="true"></div>
 
-          <div class="projects__list">
-          <article class="projects__row" data-projects-row>
-            <div class="projects__row-head">
-              <h3 class="projects__row-title" data-i18n="projects.1.title">Páginas Web</h3>
-            </div>
-            <div class="projects__row-panel" data-projects-panel>
-              <p class="projects__row-desc" data-i18n="projects.1.desc">Sitios corporativos, landings y experiencias digitales de alto impacto con diseño moderno y rendimiento optimizado</p>
-              <div class="projects__row-media">
-                <video
-                  class="projects__row-gif"
-                  data-src-webm="./assets/videos/soluciones/web-pages-ia.webm"
-                  data-src-mp4="./assets/videos/soluciones/web-pages-ia.mp4"
-                  poster="./assets/images/soluciones/web-pages-ia.jpg"
-                  muted
-                  loop
-                  playsinline
-                  preload="none"
-                  aria-hidden="true"
-                ></video>
-              </div>
+        <div class="projects__brain" data-projects-brain aria-hidden="true">
+          <div class="projects__brain-wrap" id="soluciones-brain-wrap"></div>
+        </div>
+
+        <div class="projects__list" role="list">
+          <article class="projects__item projects__item--left is-active" data-projects-item role="listitem">
+            <div class="projects__item-body">
+              <span class="projects__index" aria-hidden="true">01</span>
+              <h3 class="projects__item-name" data-i18n="projects.1.title">Páginas Web</h3>
+              <p class="projects__item-desc" data-i18n="projects.1.desc">
+                Sitios corporativos, landings y experiencias digitales de alto impacto con diseño moderno y rendimiento optimizado
+              </p>
             </div>
           </article>
 
-          <article class="projects__row" data-projects-row>
-            <div class="projects__row-head">
-              <h3 class="projects__row-title" data-i18n="projects.2.title">Automatizaciones</h3>
-            </div>
-            <div class="projects__row-panel" data-projects-panel>
-              <p class="projects__row-desc" data-i18n="projects.2.desc">Automatizamos procesos de negocio conectando tus herramientas y eliminando tareas repetitivas para aumentar la productividad.</p>
-              <div class="projects__row-media">
-                <video
-                  class="projects__row-gif"
-                  data-src-webm="./assets/videos/soluciones/automatizacion-documentos.webm"
-                  data-src-mp4="./assets/videos/soluciones/automatizacion-documentos.mp4"
-                  poster="./assets/images/soluciones/automatizacion-documentos.jpg"
-                  muted
-                  loop
-                  playsinline
-                  preload="none"
-                  aria-hidden="true"
-                ></video>
-              </div>
+          <article class="projects__item projects__item--right" data-projects-item role="listitem">
+            <div class="projects__item-body">
+              <span class="projects__index" aria-hidden="true">02</span>
+              <h3 class="projects__item-name" data-i18n="projects.2.title">Automatiza&shy;ciones</h3>
+              <p class="projects__item-desc" data-i18n="projects.2.desc">
+                Automatizamos procesos de negocio conectando tus herramientas y eliminando tareas repetitivas para aumentar la productividad.
+              </p>
             </div>
           </article>
 
-          <article class="projects__row" data-projects-row>
-            <div class="projects__row-head">
-              <h3 class="projects__row-title" data-i18n="projects.3.title">Agentes IA</h3>
-            </div>
-            <div class="projects__row-panel" data-projects-panel>
-              <p class="projects__row-desc" data-i18n="projects.3.desc">Sistemas autónomos que planifican, ejecutan y resuelven flujos de trabajo con modelos de lenguaje</p>
-              <div class="projects__row-media">
-                <video
-                  class="projects__row-gif"
-                  data-src-webm="./assets/videos/soluciones/agentes-ia.webm"
-                  data-src-mp4="./assets/videos/soluciones/agentes-ia.mp4"
-                  poster="./assets/images/soluciones/agentes-ia.jpg"
-                  muted
-                  loop
-                  playsinline
-                  preload="none"
-                  aria-hidden="true"
-                ></video>
-              </div>
+          <article class="projects__item projects__item--left" data-projects-item role="listitem">
+            <div class="projects__item-body">
+              <span class="projects__index" aria-hidden="true">03</span>
+              <h3 class="projects__item-name" data-i18n="projects.3.title">Agentes IA</h3>
+              <p class="projects__item-desc" data-i18n="projects.3.desc">
+                Sistemas autónomos que planifican, ejecutan y resuelven flujos de trabajo con modelos de lenguaje
+              </p>
             </div>
           </article>
 
-          <article class="projects__row" data-projects-row>
-            <div class="projects__row-head">
-              <h3 class="projects__row-title" data-i18n="projects.4.title">Chatbot IA</h3>
-            </div>
-            <div class="projects__row-panel" data-projects-panel>
-              <p class="projects__row-desc" data-i18n="projects.4.desc">Asistente conversacional para atención al cliente, soporte y respuestas inteligentes 24/7</p>
-              <div class="projects__row-media">
-                <video
-                  class="projects__row-gif"
-                  data-src-webm="./assets/videos/soluciones/chatboyia.webm"
-                  data-src-mp4="./assets/videos/soluciones/chatboyia.mp4"
-                  poster="./assets/images/soluciones/chatboyia.jpg"
-                  muted
-                  loop
-                  playsinline
-                  preload="none"
-                  aria-hidden="true"
-                ></video>
-              </div>
+          <article class="projects__item projects__item--right" data-projects-item role="listitem">
+            <div class="projects__item-body">
+              <span class="projects__index" aria-hidden="true">04</span>
+              <h3 class="projects__item-name" data-i18n="projects.4.title">Chatbot IA</h3>
+              <p class="projects__item-desc" data-i18n="projects.4.desc">
+                Asistente conversacional para atención al cliente, soporte y respuestas inteligentes 24/7
+              </p>
             </div>
           </article>
 
-          <article class="projects__row" data-projects-row>
-            <div class="projects__row-head">
-              <h3 class="projects__row-title" data-i18n="projects.5.title">API Gateway</h3>
-            </div>
-            <div class="projects__row-panel" data-projects-panel>
-              <p class="projects__row-desc" data-i18n="projects.5.desc">Infraestructura escalable para conectar, proteger y orquestar microservicios empresariales</p>
-              <div class="projects__row-media">
-                <video
-                  class="projects__row-gif"
-                  data-src-webm="./assets/videos/soluciones/api-gateway.webm"
-                  data-src-mp4="./assets/videos/soluciones/api-gateway.mp4"
-                  poster="./assets/images/soluciones/api-gateway.jpg"
-                  muted
-                  loop
-                  playsinline
-                  preload="none"
-                  aria-hidden="true"
-                ></video>
-              </div>
+          <article class="projects__item projects__item--left" data-projects-item role="listitem">
+            <div class="projects__item-body">
+              <span class="projects__index" aria-hidden="true">05</span>
+              <h3 class="projects__item-name" data-i18n="projects.5.title">API Gateway</h3>
+              <p class="projects__item-desc" data-i18n="projects.5.desc">
+                Infraestructura escalable para conectar, proteger y orquestar microservicios empresariales
+              </p>
             </div>
           </article>
 
-          <article class="projects__row" data-projects-row>
-            <div class="projects__row-head">
-              <h3 class="projects__row-title" data-i18n="projects.6.title">¿Necesitas algo diferente?</h3>
-            </div>
-            <div class="projects__row-panel" data-projects-panel>
-              <p class="projects__row-desc" data-i18n="projects.6.desc">Desarrollamos soluciones personalizadas para las necesidades específicas de tu empresa.</p>
+          <article class="projects__item projects__item--right" data-projects-item role="listitem">
+            <div class="projects__item-body">
+              <span class="projects__index" aria-hidden="true">06</span>
+              <h3 class="projects__item-name" data-i18n="projects.6.title">¿Necesitas algo diferente?</h3>
+              <p class="projects__item-desc" data-i18n="projects.6.desc">
+                Desarrollamos soluciones personalizadas para las necesidades específicas de tu empresa.
+              </p>
             </div>
           </article>
-          </div>
         </div>
       </div>
     </section>

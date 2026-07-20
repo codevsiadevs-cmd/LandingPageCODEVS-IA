@@ -1,102 +1,47 @@
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { prefersReducedMotionGlobal } from "./scroll.js";
+
+gsap.registerPlugin(ScrollTrigger);
 
 function clamp(v, a, b) {
   return Math.min(b, Math.max(a, v));
 }
 
-function ensureVideoSources(video) {
-  if (!(video instanceof HTMLVideoElement) || video.dataset.sourcesReady === "1") return;
-  const webm = video.dataset.srcWebm;
-  const mp4 = video.dataset.srcMp4;
-  if (!webm && !mp4) return;
+/** @type {null | ((progress: number) => void)} */
+let setSolucionesBrainScrollProgress = null;
 
-  if (webm) {
-    const source = document.createElement("source");
-    source.src = webm;
-    source.type = "video/webm";
-    video.appendChild(source);
-  }
-  if (mp4) {
-    const source = document.createElement("source");
-    source.src = mp4;
-    source.type = "video/mp4";
-    video.appendChild(source);
-  }
-  video.dataset.sourcesReady = "1";
-  video.load();
-}
+import("./three-scene.js")
+  .then((mod) => {
+    setSolucionesBrainScrollProgress = mod.setSolucionesBrainScrollProgress;
+  })
+  .catch(() => {
+    setSolucionesBrainScrollProgress = null;
+  });
 
-function restartProjectMedia(media) {
-  if (media instanceof HTMLVideoElement) {
-    ensureVideoSources(media);
-    try {
-      media.currentTime = 0;
-      const play = media.play();
-      if (play?.catch) play.catch(() => {});
-    } catch {
-      /* ignore autoplay/seek errors */
-    }
-    return;
-  }
+function measureAnchors(board, items) {
+  const boardRect = board.getBoundingClientRect();
+  const centerX = boardRect.width / 2;
+  const isNarrow = boardRect.width < 720;
+  /* Zigzag amplio; en móvil un poco más contenido para no salir del board */
+  const zigzag = Math.min(
+    boardRect.width * (isNarrow ? 0.36 : 0.42),
+    isNarrow ? 120 : 280
+  );
+  const halfBrain = Math.min(
+    isNarrow ? 68 : 176,
+    boardRect.width * (isNarrow ? 0.18 : 0.22)
+  );
+  const minX = halfBrain;
+  const maxX = boardRect.width - halfBrain;
 
-  if (media instanceof HTMLImageElement) {
-    const src = media.getAttribute("src");
-    if (!src) return;
-    media.src = "";
-    media.src = src;
-  }
-}
-
-function paintProjectsScroll() {
-  const section = document.querySelector(".projects");
-  if (!section) return;
-
-  const track = section.querySelector("[data-projects-track]");
-  const rows = [...section.querySelectorAll("[data-projects-row]")];
-  const bar = section.querySelector("[data-projects-progress]");
-  if (!track || !rows.length) return;
-
-  const n = rows.length;
-  const rect = track.getBoundingClientRect();
-  const total = rect.height - window.innerHeight;
-  const p = clamp(total > 0 ? -rect.top / total : 0, 0, 1);
-  const pos = p * n;
-
-  if (bar) bar.style.width = `${(p * 100).toFixed(2)}%`;
-
-  rows.forEach((row, i) => {
-    const d = pos - (i + 0.5);
-    const open = prefersReducedMotionGlobal
-      ? 1
-      : clamp(1 - Math.abs(d) * 1.6, 0, 1);
-    const isOpen = open > 0.4;
-    const wasOpen = row.classList.contains("is-open");
-
-    const titleSize = 42 + open * 26;
-    const titleColor = `rgba(255,255,255,${(0.42 + open * 0.58).toFixed(3)})`;
-    const panelOp = clamp((open - 0.28) / 0.72, 0, 1);
-    const titleOnly = row.hasAttribute("data-projects-title-only");
-    const panelMax = titleOnly
-      ? 0
-      : panelOp * (window.innerWidth <= 1023 ? 280 : 340);
-
-    row.style.setProperty("--open", open.toFixed(4));
-    row.style.setProperty("--title-size", `${titleSize.toFixed(1)}px`);
-    row.style.setProperty("--title-color", titleColor);
-    row.style.setProperty("--panel-max", `${panelMax.toFixed(1)}px`);
-    row.style.setProperty("--panel-op", panelOp.toFixed(3));
-    row.style.setProperty("--row-pad", "0.45rem");
-    row.style.setProperty("--panel-mt", `${(panelOp * 10).toFixed(1)}px`);
-
-    row.classList.toggle("is-open", isOpen);
-
-    const media = row.querySelector(".projects__row-gif");
-    if (isOpen && !wasOpen && media) {
-      restartProjectMedia(media);
-    }
-    if (!isOpen && media instanceof HTMLVideoElement && !media.paused) {
-      media.pause();
-    }
+  return items.map((item) => {
+    const body = item.querySelector(".projects__item-body") || item;
+    const rect = body.getBoundingClientRect();
+    const isLeft = item.classList.contains("projects__item--left");
+    const x = clamp(isLeft ? centerX + zigzag : centerX - zigzag, minX, maxX);
+    const y = rect.top + rect.height / 2 - boardRect.top;
+    return { x, y };
   });
 }
 
@@ -104,38 +49,74 @@ function initProjectsScroll() {
   const section = document.querySelector(".projects");
   if (!section) return;
 
-  const count = Number(section.dataset.projectsCount) || 6;
-  section.style.setProperty("--projects-count", String(count));
+  const board = section.querySelector("[data-projects-board]");
+  const brain = section.querySelector("[data-projects-brain]");
+  const items = [...section.querySelectorAll("[data-projects-item]")];
+  if (!board || !brain || !items.length) return;
 
-  let rafId = null;
-  function onScroll() {
-    if (rafId) return;
-    rafId = requestAnimationFrame(() => {
-      rafId = null;
-      paintProjectsScroll();
-    });
+  gsap.set(brain, { xPercent: -50, yPercent: -50, force3D: true, rotation: 0 });
+
+  if (prefersReducedMotionGlobal) {
+    const pts = measureAnchors(board, items);
+    gsap.set(brain, { x: pts[0].x, y: pts[0].y });
+    items.forEach((item, i) => item.classList.toggle("is-active", i === 0));
+    setSolucionesBrainScrollProgress?.(0);
+    return;
   }
 
-  window.addEventListener("scroll", onScroll, { passive: true });
-  window.addEventListener("resize", onScroll, { passive: true });
-  paintProjectsScroll();
+  let tl;
 
-  const videos = [...section.querySelectorAll("video.projects__row-gif")];
-  if ("IntersectionObserver" in window && videos.length) {
-    const mediaObserver = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (!entry.isIntersecting) return;
-          ensureVideoSources(entry.target);
-          mediaObserver.unobserve(entry.target);
-        });
+  function buildTimeline() {
+    if (tl) {
+      tl.scrollTrigger?.kill();
+      tl.kill();
+    }
+
+    const pts = measureAnchors(board, items);
+    gsap.set(brain, { x: pts[0].x, y: pts[0].y, rotation: 0 });
+    items.forEach((item, i) => item.classList.toggle("is-active", i === 0));
+    setSolucionesBrainScrollProgress?.(0);
+
+    tl = gsap.timeline({
+      defaults: { ease: "none" },
+      scrollTrigger: {
+        id: "soluciones-brain",
+        trigger: board,
+        start: "top 58%",
+        end: "bottom 42%",
+        scrub: 0.75,
+        invalidateOnRefresh: true,
+        onUpdate: (self) => {
+          const idx = Math.round(self.progress * (items.length - 1));
+          items.forEach((item, i) => {
+            item.classList.toggle("is-active", i === idx);
+          });
+          /* Rota la figura 3D Spline (yaw izq → der), no el DOM 2D */
+          setSolucionesBrainScrollProgress?.(self.progress);
+        },
       },
-      { rootMargin: "320px 0px" }
-    );
-    videos.forEach((video) => mediaObserver.observe(video));
-  } else {
-    videos.forEach(ensureVideoSources);
+    });
+
+    for (let i = 1; i < items.length; i += 1) {
+      const index = i;
+      tl.to(brain, {
+        x: () => measureAnchors(board, items)[index].x,
+        y: () => measureAnchors(board, items)[index].y,
+        duration: 1,
+        ease: "power1.inOut",
+      });
+    }
   }
+
+  buildTimeline();
+
+  const onResize = () => {
+    buildTimeline();
+    ScrollTrigger.refresh();
+  };
+
+  window.addEventListener("resize", onResize, { passive: true });
+  window.addEventListener("load", () => ScrollTrigger.refresh(), { once: true });
 }
 
 if (document.readyState === "loading") {
