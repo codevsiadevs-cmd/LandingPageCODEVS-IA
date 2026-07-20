@@ -2,28 +2,31 @@ import { prefersReducedMotionGlobal, sharedScrollVelocity } from "./scroll.js";
 
 const TECH_ROWS = [
   [
-    { name: "React", icon: "react.svg" },
-    { name: "Next.js", icon: "nextdotjs.svg" },
-    { name: "TypeScript", icon: "typescript.svg" },
-    { name: "Python", icon: "python.svg" },
-    { name: "Node.js", icon: "nodedotjs.svg" },
-    { name: "FastAPI", icon: "fastapi.svg" },
-    { name: "Docker", icon: "docker.svg" },
+    { name: "React", icon: "react.svg", mark: "Re" },
+    { name: "Next.js", icon: "nextdotjs.svg", mark: "Nx" },
+    { name: "TypeScript", icon: "typescript.svg", mark: "TS" },
+    { name: "Python", icon: "python.svg", mark: "Py" },
+    { name: "Node.js", icon: "nodedotjs.svg", mark: "No" },
+    { name: "FastAPI", icon: "fastapi.svg", mark: "Fa" },
+    { name: "Docker", icon: "docker.svg", mark: "Dk" },
   ],
   [
-    { name: "PostgreSQL", icon: "postgresql.svg" },
-    { name: "MongoDB", icon: "mongodb.svg" },
-    { name: "AWS", icon: "amazonwebservices.svg" },
-    { name: "GCP", icon: "googlecloud.svg" },
-    { name: "OpenAI", icon: "openai.svg" },
-    { name: "LangChain", icon: "langchain.svg" },
-    { name: "Kubernetes", icon: "kubernetes.svg" },
+    { name: "PostgreSQL", icon: "postgresql.svg", mark: "Pg" },
+    { name: "MongoDB", icon: "mongodb.svg", mark: "Mg" },
+    { name: "AWS", icon: "amazonwebservices.svg", mark: "Aw" },
+    { name: "GCP", icon: "googlecloud.svg", mark: "Gc" },
+    { name: "OpenAI", icon: "openai.svg", mark: "Oi" },
+    { name: "LangChain", icon: "langchain.svg", mark: "Lc" },
+    { name: "Kubernetes", icon: "kubernetes.svg", mark: "K8" },
   ],
 ];
 
 const AUTO_SPEED = 42;
 const SCROLL_SPEED_BOOST = 0.22;
 const MIN_SET_COPIES = 2;
+const REST_RX = -18;
+const REST_RY = 22;
+const TILT_MAX = 28;
 
 const techSection = document.getElementById("tecnologias");
 const topTrack = techSection?.querySelector(".tech-row--ltr .tech-row__track");
@@ -36,23 +39,156 @@ let topLoopWidth = 0;
 let bottomLoopWidth = 0;
 let rafId = null;
 let lastFrameTime = 0;
+let activePointerId = null;
 
-function createTechTile({ name, icon }) {
-  const tile = document.createElement("div");
-  tile.className = "tech-tile";
-  tile.setAttribute("aria-label", name);
-
+function createLogo(icon, name, decorative = false) {
   const img = document.createElement("img");
-  img.className = "tech-tile__logo";
+  img.className = "tech-die__logo";
   img.src = `./assets/images/stack/${icon}`;
-  img.alt = name;
+  img.alt = decorative ? "" : name;
+  if (decorative) img.setAttribute("aria-hidden", "true");
   img.width = 48;
   img.height = 48;
   img.loading = "lazy";
   img.decoding = "async";
+  img.draggable = false;
+  return img;
+}
 
-  tile.appendChild(img);
+function createFace(modifier, content) {
+  const face = document.createElement("div");
+  face.className = `tech-die__face tech-die__face--${modifier}`;
+  face.setAttribute("aria-hidden", "true");
+  if (typeof content === "string") {
+    const mark = document.createElement("span");
+    mark.className = "tech-die__mark";
+    mark.textContent = content;
+    face.appendChild(mark);
+  } else {
+    face.appendChild(content);
+  }
+  return face;
+}
+
+function setDieRotation(tile, rx, ry) {
+  tile.style.setProperty("--die-rx", `${rx}deg`);
+  tile.style.setProperty("--die-ry", `${ry}deg`);
+}
+
+function createTechTile({ name, icon, mark }) {
+  const tile = document.createElement("div");
+  tile.className = "tech-tile";
+  tile.setAttribute("role", "img");
+  tile.setAttribute("aria-label", name);
+  tile.tabIndex = 0;
+  setDieRotation(tile, REST_RX, REST_RY);
+
+  const die = document.createElement("div");
+  die.className = "tech-die";
+
+  const cube = document.createElement("div");
+  cube.className = "tech-die__cube";
+
+  const nameFace = document.createElement("span");
+  nameFace.className = "tech-die__name";
+  nameFace.textContent = name;
+
+  cube.append(
+    createFace("front", createLogo(icon, name)),
+    createFace("back", createLogo(icon, name, true)),
+    createFace("right", mark || name.slice(0, 2)),
+    createFace("left", nameFace),
+    createFace("top", mark || name.slice(0, 2)),
+    createFace("bottom", createLogo(icon, name, true))
+  );
+
+  die.appendChild(cube);
+  tile.appendChild(die);
+
+  if (!prefersReducedMotionGlobal) {
+    bindDieInteraction(tile);
+  }
+
   return tile;
+}
+
+function pointerOffset(tile, clientX, clientY) {
+  const rect = tile.getBoundingClientRect();
+  const x = (clientX - rect.left) / rect.width;
+  const y = (clientY - rect.top) / rect.height;
+  return {
+    nx: Math.min(1, Math.max(0, x)) * 2 - 1,
+    ny: Math.min(1, Math.max(0, y)) * 2 - 1,
+  };
+}
+
+function bindDieInteraction(tile) {
+  tile.addEventListener("pointerenter", (event) => {
+    if (activePointerId !== null) return;
+    tile.classList.add("is-tilting");
+    const { nx, ny } = pointerOffset(tile, event.clientX, event.clientY);
+    setDieRotation(tile, -ny * TILT_MAX, nx * TILT_MAX);
+  });
+
+  tile.addEventListener("pointermove", (event) => {
+    if (tile.classList.contains("is-tumbling")) return;
+    if (activePointerId !== null && event.pointerId !== activePointerId) return;
+    tile.classList.add("is-tilting");
+    const { nx, ny } = pointerOffset(tile, event.clientX, event.clientY);
+    setDieRotation(tile, -ny * TILT_MAX, nx * TILT_MAX);
+  });
+
+  tile.addEventListener("pointerleave", () => {
+    if (tile.classList.contains("is-tumbling")) return;
+    tile.classList.remove("is-tilting");
+    setDieRotation(tile, REST_RX, REST_RY);
+  });
+
+  tile.addEventListener("pointerdown", (event) => {
+    if (event.button !== undefined && event.button !== 0) return;
+    activePointerId = event.pointerId;
+    tile.setPointerCapture?.(event.pointerId);
+    tile.classList.add("is-tilting");
+  });
+
+  tile.addEventListener("pointerup", (event) => {
+    if (activePointerId !== null && event.pointerId !== activePointerId) return;
+    activePointerId = null;
+    tumbleDie(tile);
+  });
+
+  tile.addEventListener("pointercancel", () => {
+    activePointerId = null;
+    tile.classList.remove("is-tilting", "is-tumbling");
+    setDieRotation(tile, REST_RX, REST_RY);
+  });
+
+  tile.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      tumbleDie(tile);
+    }
+  });
+}
+
+function tumbleDie(tile) {
+  if (tile.classList.contains("is-tumbling")) return;
+
+  const spinsX = (Math.random() > 0.5 ? 1 : -1) * (360 + Math.floor(Math.random() * 2) * 360);
+  const spinsY = (Math.random() > 0.5 ? 1 : -1) * (360 + Math.floor(Math.random() * 2) * 360);
+
+  tile.classList.remove("is-tilting");
+  tile.classList.add("is-tumbling");
+  setDieRotation(tile, REST_RX + spinsX, REST_RY + spinsY);
+
+  window.setTimeout(() => {
+    tile.classList.remove("is-tumbling");
+    tile.classList.add("is-tilting");
+    setDieRotation(tile, REST_RX, REST_RY);
+    requestAnimationFrame(() => {
+      tile.classList.remove("is-tilting");
+    });
+  }, 900);
 }
 
 function measureCycleWidth(track, itemCount) {
@@ -83,6 +219,7 @@ function buildInfiniteTrack(track, items) {
     items.forEach((item) => {
       const tile = createTechTile(item);
       tile.setAttribute("aria-hidden", "true");
+      tile.tabIndex = -1;
       track.appendChild(tile);
     });
   }
@@ -110,11 +247,8 @@ function applyMarqueeTransform() {
   const topPos = wrapOffset(marqueePos, topLoopWidth);
   const bottomPos = wrapOffset(marqueePos, bottomLoopWidth);
 
-  /* Arriba → derecha: empieza en -1 ciclo para loop sin hueco al reiniciar */
   topTrack.style.transform =
-    topLoopWidth > 0
-      ? `translate3d(${topPos - topLoopWidth}px, 0, 0)`
-      : "";
+    topLoopWidth > 0 ? `translate3d(${topPos - topLoopWidth}px, 0, 0)` : "";
   bottomTrack.style.transform =
     bottomLoopWidth > 0 ? `translate3d(${-bottomPos}px, 0, 0)` : "";
 }
